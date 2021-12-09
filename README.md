@@ -5,7 +5,7 @@
 1. [React](https://reactjs.org/docs/getting-started.html)
 2. [Semantic UI](https://react.semantic-ui.com/)
 3. [React-Redux](https://react-redux.js.org/introduction/getting-started)
-
+4. TypeScript
 
 ## Getting Started
 
@@ -36,6 +36,18 @@ TODO
 
 
 ## Documentation
+
+The project utilises 
+
+TODO
+
+
+
+### (backend #1) Speech Gateway Docs
+
+The backend documentation can be found in this [gitbook](https://speech-ntu.gitbook.io/speech-gateway/).
+
+### (backend #2) 
 
 TODO
 
