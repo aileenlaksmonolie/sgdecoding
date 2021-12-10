@@ -12,6 +12,7 @@ const LoginPage: React.FC = () => {
 	const dispatch = useDispatch();
 	const { login, logout } = bindActionCreators(actionCreators, dispatch);
 
+	console.log("[DEBUG] isLoggedIn " + isLoggedIn) 	
 	
 	const handleLogin = () => {
 		login()
