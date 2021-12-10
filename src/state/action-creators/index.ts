@@ -1,5 +1,5 @@
 import { Dispatch } from "redux"
-import { TestType } from "../action-types"
+import { TestType } from "../types/index"
 
 
 export const addToStoreTest = (num: number) => {
@@ -19,3 +19,6 @@ export const subToStoreTest = (num: number) => {
 		})
 	}
 }
+
+export * from './auth'
+

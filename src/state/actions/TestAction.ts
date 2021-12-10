@@ -1,4 +1,4 @@
-import { TestType } from './../action-types/index';
+import { TestType } from '../types/index';
 
 interface AddAction{
 	type: TestType.ADD,

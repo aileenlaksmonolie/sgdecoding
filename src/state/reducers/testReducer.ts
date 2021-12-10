@@ -1,5 +1,5 @@
-import { TestType } from './../action-types/index';
-import { Action } from './../actions/index';
+import { Action } from '../actions/TestAction';
+import { TestType } from '../types/index';
 
 const reducer = (state: number=0, action: Action): number => {
 	switch(action.type){
