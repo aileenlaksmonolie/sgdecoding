@@ -14,8 +14,8 @@ const LoginPage: React.FC = () => {
 
 	console.log("[DEBUG] isLoggedIn " + isLoggedIn) 	
 	
-	const handleLogin = () => {
-		login()
+	const handleLogin = async() => {
+		await login()
 		navigate('/')
 	}
 

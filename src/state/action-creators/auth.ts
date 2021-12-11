@@ -1,9 +1,11 @@
 import { Dispatch } from "redux";
 import { AuthTypes } from '../types/index';
+import { loginOneUser } from './../../api/auth';
 import { AuthAction } from './../actions/AuthAction';
 
+
 export const login = () => {
-	return (dispatch: Dispatch) => {
+	return async (dispatch: Dispatch) => {
 		console.log("[DEBUG] login called");
 		let loginAction: AuthAction = {
 			type: AuthTypes.LOGIN,
@@ -11,6 +13,12 @@ export const login = () => {
 			password: "Password123",
 			rmbMe: true
 		}
+
+		await loginOneUser().then(({data}) => {
+			console.log(data);
+		});
+
+		console.log("login successfully")
 
 		dispatch(loginAction)
 	}
