@@ -8,10 +8,19 @@ import { AuthTypes } from '../types/index';
 export const login = (userCreds: UserLoginModel) => {
 	return async (dispatch: Dispatch) => {
 		console.log("[DEBUG] login dispatched");
+
+		if(userCreds.rmbMe){
+			let rmbMe: AuthAction = {
+				type: AuthTypes.RMB_ME,
+				rmbMeEmail: userCreds.email
+			}
+			console.log("[DEBUG] Remember Me Action dispatched") 
+			dispatch(rmbMe)
+		}
+
 		await loginOneUser(userCreds)
 			.then(({data}) => {
 				console.log("Login Successful")
-				console.log(data)
 				let loginSuccess: AuthAction = {
 					type: AuthTypes.LOGIN_SUCCESS,
 					token: data.accessToken

@@ -10,9 +10,8 @@ import { RootState } from "../../state/reducers";
 import classes from './LoginCard.module.scss';
 
 const LoginCard: React.FC = () => {
-
 	/* Declarations */
-	const navigate = useNavigate();
+	const navigate = useNavigate()
 	const {
 		register,
 		handleSubmit,
@@ -20,7 +19,8 @@ const LoginCard: React.FC = () => {
 		formState: { errors }
 	} = useForm({ mode: 'onBlur' })
 
-	const isLoggedIn = useSelector((state: RootState) => state.authReducer)
+	const { rmbMeEmail, token } = useSelector((state: RootState) => state.authReducer) 
+	const isLoggedIn = token !== ''
 
 	const dispatch = useDispatch();
 	const { login, logout } = bindActionCreators(actionCreators, dispatch)
@@ -46,6 +46,12 @@ const LoginCard: React.FC = () => {
 
 		if(isLoggedIn)
 			navigate('/')
+		
+		console.log("[DEBUG] rmbMeEmail: " + rmbMeEmail) 
+		if(rmbMeEmail !== ''){
+			setValue('email', rmbMeEmail)
+			setValue('rmbMe', true)
+		}
 	}, [isLoggedIn])
 
 
@@ -65,6 +71,7 @@ const LoginCard: React.FC = () => {
 	}
 
 	const onSubmit = async (data: {email: string, password: string, rmbMe: undefined|boolean}) => {
+		console.log("[DEBUG] LoginCard rmbMe: " + data.rmbMe) 
 		const userCreds: UserLoginModel = {
 			email: data.email,
 			password: data.password,
@@ -92,6 +99,7 @@ const LoginCard: React.FC = () => {
 						label='Email'
 						fluid
 						type='email'
+						defaultValue={rmbMeEmail}
 						placeholder='example@ntu.edu.sg'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
@@ -115,6 +123,7 @@ const LoginCard: React.FC = () => {
 						name="rmbMe" 
 						label='Remember Me?'
 						onChange={onRmbMeChange}
+						defaultChecked={rmbMeEmail !== ''}
 					/>
 				</Form.Field>
 

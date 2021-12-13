@@ -11,7 +11,7 @@ export type ProtectedRouteProps = {
 
 // export default function ProtectedRoute({isAuthenticated, authenticationPath, ...routeProps}: ProtectedRouteProps) {
 export default function ProtectedRoute({ children }: { children: JSX.Element }) {
-	const isLoggedIn = useSelector((state: RootState) => state.authReducer)
+	const isLoggedIn = useSelector((state: RootState) => state.authReducer.token) !== ''
 
 	console.log(isLoggedIn)
 

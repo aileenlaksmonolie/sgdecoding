@@ -1,8 +1,13 @@
 import { AuthTypes } from './../types/index';
 
+interface RememberMeAction{
+	type: AuthTypes.RMB_ME,
+	rmbMeEmail: string
+}
+
 interface LoginSuccessAction{
 	type: AuthTypes.LOGIN_SUCCESS,
-	token: string
+	token: string,
 }
 
 interface LoginFailureAction{
@@ -14,4 +19,4 @@ interface LogoutAction{
 }
 
 
-export type AuthAction = LoginSuccessAction | LoginFailureAction | LogoutAction;
+export type AuthAction = RememberMeAction | LoginSuccessAction | LoginFailureAction | LogoutAction;
