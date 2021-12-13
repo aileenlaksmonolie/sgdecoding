@@ -1,6 +1,9 @@
+import { AuthAction } from '../actions/AuthAction';
 import { AuthTypes } from '../types/index';
-import { AuthAction } from './../actions/AuthAction';
 
+export const INITIAL_STATE = {
+	accessToken : '' 
+}
 
 const reducer = (isLoggedIn: boolean = false, action: AuthAction): boolean => {
 	switch (action.type) {

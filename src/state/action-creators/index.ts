@@ -20,5 +20,5 @@ export const subToStoreTest = (num: number) => {
 	}
 }
 
-export * from './auth'
+export * from './AuthAC'
 

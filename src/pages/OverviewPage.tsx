@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../state/reducers';
 
 const OverviewPage:React.FC = () => {
-	const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn)
+	const isLoggedIn = useSelector((state: RootState) => state.authReducer)
 	
 	console.log(isLoggedIn) 
 

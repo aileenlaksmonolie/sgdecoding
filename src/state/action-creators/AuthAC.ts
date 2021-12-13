@@ -1,8 +1,8 @@
 import { Dispatch } from "redux";
 import { loginOneUser } from "../../api/auth";
+import { UserLoginModel } from '../../models/UserLogin.model';
+import { AuthAction } from '../actions/AuthAction';
 import { AuthTypes } from '../types/index';
-import { UserLoginModel } from './../../models/UserLogin.model';
-import { AuthAction } from './../actions/AuthAction';
 
 
 export const login = (userCreds: UserLoginModel) => {

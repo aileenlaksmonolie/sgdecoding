@@ -20,7 +20,7 @@ const LoginCard: React.FC = () => {
 		formState: { errors }
 	} = useForm({ mode: 'onBlur' })
 
-	const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn)
+	const isLoggedIn = useSelector((state: RootState) => state.authReducer)
 
 	const dispatch = useDispatch();
 	const { login, logout } = bindActionCreators(actionCreators, dispatch)
