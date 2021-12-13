@@ -6,4 +6,4 @@ const ForgotPwdPage: React.FC = () => {
 	)
 }
 
-export default ForgotPwdPage
+export default React.memo(ForgotPwdPage)

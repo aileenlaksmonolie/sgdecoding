@@ -5,20 +5,20 @@ import { BrowserRouter } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 import 'semantic-ui-less/semantic.less';
 import App from './App';
-import './index.css';
+import './index.scss';
 import reportWebVitals from './reportWebVitals';
 import { persistor, store } from './state';
 
 ReactDOM.render(
-	<React.StrictMode>
+	// <React.StrictMode>
+		// </React.StrictMode>, // Giving long warnings with React-Semantic-Ui
 		<Provider store={store}>
 			<PersistGate loading={null} persistor={persistor}>
 				<BrowserRouter>
 					<App />
 				</BrowserRouter>
 			</PersistGate>
-		</Provider>
-	</React.StrictMode>,
+		</Provider>,
 	document.getElementById('root')
 );
 

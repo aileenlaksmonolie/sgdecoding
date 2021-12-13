@@ -1,26 +1,31 @@
 import { Dispatch } from "redux";
+import { loginOneUser } from "../../api/auth";
 import { AuthTypes } from '../types/index';
-import { loginOneUser } from './../../api/auth';
+import { UserLoginModel } from './../../models/UserLogin.model';
 import { AuthAction } from './../actions/AuthAction';
 
 
-export const login = () => {
+export const login = (userCreds: UserLoginModel) => {
 	return async (dispatch: Dispatch) => {
-		console.log("[DEBUG] login called");
-		let loginAction: AuthAction = {
-			type: AuthTypes.LOGIN,
-			username: "Hello World",
-			password: "Password123",
-			rmbMe: true
-		}
-
-		await loginOneUser().then(({data}) => {
-			console.log(data);
-		});
-
-		console.log("login successfully")
-
-		dispatch(loginAction)
+		console.log("[DEBUG] login dispatched");
+		await loginOneUser(userCreds)
+			.then(({data}) => {
+				console.log("Login Successful")
+				console.log(data)
+				let loginSuccess: AuthAction = {
+					type: AuthTypes.LOGIN_SUCCESS,
+					token: data.accessToken
+				}
+				dispatch(loginSuccess)
+				return Promise.resolve();
+			}).catch(({ error }) => {
+				console.error(error);
+				let loginFail: AuthAction = {
+					type: AuthTypes.LOGIN_FAIL
+				}
+				dispatch(loginFail)
+				return Promise.resolve();
+			})
 	}
 }
 
@@ -33,13 +38,5 @@ export const logout = () => {
 		}
 
 		dispatch(logoutAction)
-	}
-}
-
-export const isLoggedIn = (callback: Function) => {
-	return (dispatch : Dispatch) => {
-		dispatch({
-			type: AuthTypes.ISLOGGEDIN
-		})
 	}
 }

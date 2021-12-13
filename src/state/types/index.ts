@@ -5,8 +5,8 @@ export enum TestType{
 }
 
 export enum AuthTypes {
-	LOGIN = 'login',
+	LOGIN_SUCCESS = 'login_succ',
+	LOGIN_FAIL = 'login_fail',
 	LOGOUT = 'logout',
-	ISLOGGEDIN = 'isLoggedIn',
 	ISADMIN = 'isAdmin'
 }

@@ -1,10 +1,12 @@
-import { AuthTypes } from '../types';
+import { AuthTypes } from './../types/index';
 
-interface ILoginAction{
-	type: AuthTypes.LOGIN,
-	username: string,
-	password: string,
-	rmbMe: boolean
+interface ILoginSuccessAction{
+	type: AuthTypes.LOGIN_SUCCESS,
+	token: string
+}
+
+interface ILoginFailureAction{
+	type: AuthTypes.LOGIN_FAIL
 }
 
 interface ILogoutAction{
@@ -12,4 +14,4 @@ interface ILogoutAction{
 }
 
 
-export type AuthAction = ILoginAction | ILogoutAction;
+export type AuthAction = ILoginSuccessAction | ILoginFailureAction | ILogoutAction;

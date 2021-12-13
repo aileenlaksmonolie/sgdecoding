@@ -1,7 +1,11 @@
+import { UserLoginModel } from './../models/UserLogin.model';
 import { speechGatewayApi } from "./api";
 
-export const loginOneUser = () => {
-	return speechGatewayApi.get(`https://api.github.com/users/defunkt`)
+export const loginOneUser = (userCreds: UserLoginModel) => {
+	return speechGatewayApi.post(
+		`/auth/login`, 
+		{ email: userCreds.email, password: userCreds.password }
+	)
 }
 
 export const registerOneUser = () => {

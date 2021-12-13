@@ -13,9 +13,13 @@ export type ProtectedRouteProps = {
 export default function ProtectedRoute({ children }: { children: JSX.Element }) {
 	const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn)
 
+	console.log(isLoggedIn)
+
   if(isLoggedIn) {
-		console.log("user is logged in, navigate to child node")
+		console.info("[DEBUG] ProtectedRoute: User is logged in, navigating to protected route") 
 		return children;
   }
+
+	console.info("[DEBUG] ProtectedRoute: User is NOT logged in, going to /login") 
   return <Navigate to='/login' />;
 };

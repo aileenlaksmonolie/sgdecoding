@@ -1,35 +1,16 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
-import { actionCreators } from '../state';
-import { RootState } from '../state/reducers';
+import { Grid } from 'semantic-ui-react';
+import LoginCard from '../components/authentication/LoginCard';
 
 const LoginPage: React.FC = () => {
-	const navigate = useNavigate();
-	const isLoggedIn = useSelector((state: RootState) => state.isLoggedIn)
-
-	const dispatch = useDispatch();
-	const { login, logout } = bindActionCreators(actionCreators, dispatch);
-
-	console.log("[DEBUG] isLoggedIn " + isLoggedIn) 	
-	
-	const handleLogin = async() => {
-		await login()
-		navigate('/')
-	}
-
-	const handleLogout = () => {
-		logout()
-	}
 
 	return (
-		<div>
-			LoginPage
-			<button onClick={handleLogin}>Login</button>
-			<button onClick={handleLogout}>Logout</button>
-		</div>
+		<Grid centered verticalAlign='middle'>
+			<Grid.Row>
+				<LoginCard />
+			</Grid.Row>
+		</Grid>
 	)
 }
 
-export default LoginPage
+export default React.memo(LoginPage)
