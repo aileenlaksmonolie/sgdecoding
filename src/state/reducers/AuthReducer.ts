@@ -15,8 +15,9 @@ const reducer = (state = INITIAL_STATE, action: AuthAction) => {
 			const { token } = action
 			return { ...state, token }
 		case AuthTypes.LOGOUT:
-			state.token = ''
-			return state
+		case AuthTypes.LOGIN_FAIL:
+			console.log("[DEBUG] Reducer: logging out?") 
+			return { ...state, token: '' }
 		default:
 			return state
 	}

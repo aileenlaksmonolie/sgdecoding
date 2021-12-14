@@ -27,13 +27,13 @@ export const login = (userCreds: UserLoginModel) => {
 				}
 				dispatch(loginSuccess)
 				return Promise.resolve();
-			}).catch(({ error }) => {
+			}).catch((error) => {
 				console.error(error);
 				let loginFail: AuthAction = {
 					type: AuthTypes.LOGIN_FAIL
 				}
 				dispatch(loginFail)
-				return Promise.resolve();
+				return Promise.reject();
 			})
 	}
 }
@@ -41,7 +41,7 @@ export const login = (userCreds: UserLoginModel) => {
 export const logout = () => {
 
 	return (dispatch: Dispatch) => {
-
+		console.log("[DEBUG] logout action creator called") 
 		let logoutAction: AuthAction = {
 			type: AuthTypes.LOGOUT
 		}
