@@ -14,6 +14,7 @@ interface LoginFailureAction{
 	type: AuthTypes.LOGIN_FAIL
 }
 
+
 interface LogoutAction{
 	type: AuthTypes.LOGOUT
 }

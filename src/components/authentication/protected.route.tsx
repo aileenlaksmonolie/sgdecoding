@@ -21,5 +21,5 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
   }
 
 	console.info("[DEBUG] ProtectedRoute: User is NOT logged in, going to /login") 
-  return <Navigate to='/login' />;
+  return <Navigate to='/auth/login' />;
 };

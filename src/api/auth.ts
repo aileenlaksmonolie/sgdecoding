@@ -1,4 +1,5 @@
 import { UserLoginModel } from './../models/UserLogin.model';
+import { NewUserRegistration } from './../models/UserRegister.model';
 import { speechGatewayApi } from "./api";
 
 export const loginOneUser = (userCreds: UserLoginModel) => {
@@ -8,7 +9,11 @@ export const loginOneUser = (userCreds: UserLoginModel) => {
 	)
 }
 
-export const registerOneUser = () => {
+export const registerOneUser = (newUser: NewUserRegistration) => {
 	//TODO
-	console.warn('TO BE DONE')
+	return speechGatewayApi.post(
+		`/auth/register`,
+		{ name: newUser.name, email: newUser.email, password: newUser.password },
+		{ responseType: 'json' }
+	)
 }

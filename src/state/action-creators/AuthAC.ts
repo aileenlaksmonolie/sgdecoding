@@ -7,7 +7,7 @@ import { AuthTypes } from '../types/index';
 
 export const login = (userCreds: UserLoginModel) => {
 	return async (dispatch: Dispatch) => {
-		console.log("[DEBUG] login dispatched");
+		console.log("[DEBUG] login action creator");
 
 		if(userCreds.rmbMe){
 			let rmbMe: AuthAction = {
@@ -26,17 +26,36 @@ export const login = (userCreds: UserLoginModel) => {
 					token: data.accessToken
 				}
 				dispatch(loginSuccess)
-				return Promise.resolve();
+				return Promise.resolve()
 			}).catch((error) => {
 				console.error(error);
 				let loginFail: AuthAction = {
 					type: AuthTypes.LOGIN_FAIL
 				}
 				dispatch(loginFail)
-				return Promise.reject();
+				return Promise.reject()
 			})
 	}
 }
+
+// export const register = (newUser: UserRegisterModel) => {
+// 	return async (dispatch: Dispatch) => {
+// 		console.log("[DEBUG] register action creator")
+
+// 		await registerOneUser(newUser)
+// 			.then(({data}) => {
+// 				console.log("[DEBUG] Registration Successful") 
+// 				console.log(data)
+				
+// 				return Promise.resolve()
+// 			})
+// 			.catch((error) => {
+// 				console.log(error)
+// 				return Promise.reject()
+// 			})
+
+// 	}
+// }
 
 export const logout = () => {
 

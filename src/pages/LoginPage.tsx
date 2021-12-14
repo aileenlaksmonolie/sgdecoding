@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => (
 					</Container>
 					<LoginForm />
 					<h4>Don't have an account?
-						<em><Link to='/register'> Register here</Link></em>
+						<em><Link to='/auth/register'> Register here</Link></em>
 					</h4>
 				</Card.Content>
 			</Card>
