@@ -4,6 +4,7 @@ import { Card, Grid } from 'semantic-ui-react';
 import ForgotPwdPage from './ForgotPwdPage';
 import LoginPage from "./LoginPage";
 import RegisterPage from './RegisterPage';
+import ResetPasswordPage from './ResetPasswordPage';
 
 
 const AuthenticationModule: React.FC = () => {
@@ -16,6 +17,7 @@ const AuthenticationModule: React.FC = () => {
 							<Route path='login' element={<LoginPage />} />
 							<Route path='register' element={<RegisterPage />} />
 							<Route path='forgotpassword' element={<ForgotPwdPage />} />
+							<Route path='resetpassword' element={<ResetPasswordPage/>} />
 						</Routes>
 				</Card>
 			</Grid.Row>

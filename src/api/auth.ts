@@ -1,5 +1,6 @@
 import { UserLoginModel } from './../models/UserLogin.model';
 import { NewUserRegistration } from './../models/UserRegister.model';
+import { UserResetPassword } from './../models/UserResetPassword.model';
 import { speechGatewayApi } from "./api";
 
 export const loginOneUser = (userCreds: UserLoginModel) => {
@@ -24,5 +25,13 @@ export const sendForgotPasswordRequest = (email: string) => {
 		`/auth/forgot-password`,
 		{ email },
 		{ responseType: 'json'}
+	)
+}
+
+export const sendResetPasswordRequest = (newPasswordRequest: UserResetPassword) => {
+	return speechGatewayApi.post(
+		`/auth/reset-password`,
+		newPasswordRequest,
+		{responseType: 'json'}	
 	)
 }
