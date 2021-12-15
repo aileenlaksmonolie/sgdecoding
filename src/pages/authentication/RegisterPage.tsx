@@ -1,13 +1,11 @@
 import { AxiosError, AxiosResponse } from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { bindActionCreators } from "redux";
 import { Button, Card, Container, Form, InputOnChangeData, Message } from "semantic-ui-react";
 import { registerOneUser } from "../../api/auth";
 import { NewUserRegistration, NewUserRegistrationResponse } from "../../models/UserRegister.model";
-import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
 import classes from './Authentication.module.scss';
 
@@ -27,11 +25,6 @@ const RegisterPage: React.FC = () => {
 
 	const { token } = useSelector((state: RootState) => state.authReducer)
 	const isLoggedIn = token !== ''
-
-	const dispatch = useDispatch();
-	const { login } = bindActionCreators(actionCreators, dispatch)
-
-	// console.log("[DEBUG] isLoggedIn " + isLoggedIn)
 
 	useEffect(() => {
 		register('name', {
@@ -66,7 +59,7 @@ const RegisterPage: React.FC = () => {
 		if (isLoggedIn)
 			navigate('/')
 
-	}, [isLoggedIn])
+	}, [isLoggedIn, navigate, register])
 
 
 	/* Event Handlers */
@@ -81,8 +74,8 @@ const RegisterPage: React.FC = () => {
 	}
 
 	const onSubmit = async (data: { email: string, name: string, password: string, passwordCfm: string }) => {
-		console.log("[DEBUG] onSubmit: ")
-		console.log(data)
+		// console.log("[DEBUG] onSubmit: ")
+		// console.log(data)
 
 		const newUser: NewUserRegistration = {
 			email: data.email,
@@ -97,14 +90,13 @@ const RegisterPage: React.FC = () => {
 				setRegMessage({ isShown: true, isError: false, msg: msg })
 			})
 			.catch((err: AxiosError) => {
-				console.log("[DEBUG] Error Registering!")
-				console.log(err.response)
+				// console.log("[DEBUG] Error Registering!")
+				// console.log(err.response)
 				let errMsg = 'Unknown Error, please contact an administrator!'
 				if (err.response?.data.statusCode === 422)
 					errMsg = 'Account Already Registered!'
 				setRegMessage({ isShown: true, isError: true, msg: errMsg })
 			})
-		console.log("[DEBUG] Submitted, is user logged in? " + isLoggedIn)
 	}
 	return (
 		<Card.Content>
@@ -122,7 +114,7 @@ const RegisterPage: React.FC = () => {
 					hidden={regMessage.isShown === false}
 					error={regMessage.isError === true}
 					positive={regMessage.isError === false}
-					header='Registration Unsuccessful'
+					header= {regMessage.isError ? 'Registration Unsuccessful' : 'Registration Successful'}
 					content={regMessage.msg}
 				/>
 				<Form.Field>

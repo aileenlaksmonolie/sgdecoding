@@ -1,11 +1,10 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../state';
-import { RootState } from '../state/reducers';
 
 const OverviewPage: React.FC = () => {
-	const isLoggedIn = useSelector((state: RootState) => state.authReducer.token) !== ''
+	// const isLoggedIn = useSelector((state: RootState) => state.authReducer.token) !== ''
 
 	const dispatch = useDispatch();
 	const { logout } = bindActionCreators(actionCreators, dispatch)

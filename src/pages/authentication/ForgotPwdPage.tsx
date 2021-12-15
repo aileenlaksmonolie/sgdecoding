@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
 import { Button, Card, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
 import { sendForgotPasswordRequest } from '../../api/auth';
-import { actionCreators } from '../../state';
 import { RootState } from '../../state/reducers';
 import classes from './Authentication.module.scss';
 
@@ -20,13 +18,8 @@ const ForgotPwdPage: React.FC = () => {
 		formState: { errors }
 	} = useForm({ mode: 'onBlur' })
 
-	const { rmbMeEmail, token } = useSelector((state: RootState) => state.authReducer)
+	const { token } = useSelector((state: RootState) => state.authReducer)
 	const isLoggedIn = token !== ''
-
-	const dispatch = useDispatch();
-	const { login } = bindActionCreators(actionCreators, dispatch)
-
-	// console.log("[DEBUG] isLoggedIn " + isLoggedIn)
 
 	useEffect(() => {
 		register("email", {
@@ -40,7 +33,7 @@ const ForgotPwdPage: React.FC = () => {
 		if (isLoggedIn)
 			navigate('/')
 
-	}, [isLoggedIn])
+	}, [isLoggedIn, navigate, register])
 
 
 	/* Event Handlers */

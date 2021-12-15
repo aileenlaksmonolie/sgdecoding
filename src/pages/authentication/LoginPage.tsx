@@ -24,10 +24,16 @@ const LoginPage: React.FC = () => {
 	const { rmbMeEmail, token } = useSelector((state: RootState) => state.authReducer)
 	const isLoggedIn = token !== ''
 
+	// console.log("[DEBUG] isLoggedIn " + isLoggedIn)
+
 	const dispatch = useDispatch();
 	const { login } = bindActionCreators(actionCreators, dispatch)
 
-	// console.log("[DEBUG] isLoggedIn " + isLoggedIn)
+	// console.log("[DEBUG] rmbMeEmail: " + rmbMeEmail)
+	if (rmbMeEmail !== '') {
+		setValue('email', rmbMeEmail)
+		setValue('rmbMe', true)
+	}
 
 	useEffect(() => {
 		register("email", {
@@ -48,13 +54,7 @@ const LoginPage: React.FC = () => {
 
 		if (isLoggedIn)
 			navigate('/')
-
-		console.log("[DEBUG] rmbMeEmail: " + rmbMeEmail)
-		if (rmbMeEmail !== '') {
-			setValue('email', rmbMeEmail)
-			setValue('rmbMe', true)
-		}
-	}, [isLoggedIn])
+	}, [isLoggedIn, navigate, register])
 
 
 	/* Event Handlers */
@@ -73,7 +73,7 @@ const LoginPage: React.FC = () => {
 	}
 
 	const onSubmit = async (data: { email: string, password: string, rmbMe: undefined | boolean }) => {
-		console.log("[DEBUG] LoginCard rmbMe: " + data.rmbMe)
+		// console.log("[DEBUG] LoginCard rmbMe: " + data.rmbMe)
 		const userCreds: UserLoginModel = {
 			email: data.email,
 			password: data.password,
@@ -82,11 +82,11 @@ const LoginPage: React.FC = () => {
 		try {
 			await login(userCreds)
 		} catch (err) {
-			console.log("[DEBUG] Error logging in!")
+			// console.log("[DEBUG] Error logging in!")
 			setShowError(true)
 		}
 
-		console.log("[DEBUG] Submitted, is user logged in? " + isLoggedIn)
+		// console.log("[DEBUG] Submitted, is user logged in? " + isLoggedIn)
 	}
 	return (
 		<Card.Content>
