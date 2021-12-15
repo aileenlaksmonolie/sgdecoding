@@ -1,14 +1,16 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { bindActionCreators } from "redux";
-import { Button, Checkbox, CheckboxProps, Form, InputOnChangeData, Message } from "semantic-ui-react";
-import { UserLoginModel } from "../../models/UserLogin.model";
-import { actionCreators } from "../../state";
-import { RootState } from "../../state/reducers";
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import { Button, Card, Checkbox, CheckboxProps, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
+import { UserLoginModel } from '../../models/UserLogin.model';
+import { actionCreators } from '../../state';
+import { RootState } from '../../state/reducers';
+import classes from './Authentication.module.scss';
 
-const LoginForm: React.FC = () => {
+
+const LoginPage: React.FC = () => {
 	/* Declarations */
 	const [showError, setShowError] = useState(false)
 	const navigate = useNavigate()
@@ -86,58 +88,66 @@ const LoginForm: React.FC = () => {
 
 		console.log("[DEBUG] Submitted, is user logged in? " + isLoggedIn)
 	}
-
 	return (
-		<Form 
-			onSubmit={handleSubmit(onSubmit)} 
-			error={showError}
-			noValidate>
-			<Message
-				error
-				header='Login Unsuccessful'
-				content='We cannot find the email and/or password that you had entered in our records. Please check and try again.' 
+		<Card.Content>
+			<Container className={classes.cardHeader}>
+				<h1>Welcome Back</h1>
+				<small>Sign in to continue</small>
+			</Container>
+			<Form
+				onSubmit={handleSubmit(onSubmit)}
+				error={showError}
+				noValidate>
+				<Message
+					error
+					header='Login Unsuccessful'
+					content='We cannot find the email and/or password that you had entered in our records. Please check and try again.'
 				/>
-			<Form.Field>
-				<Form.Input
-					name='email'
-					label='Email'
+				<Form.Field>
+					<Form.Input
+						name='email'
+						label='Email'
+						fluid
+						type='email'
+						defaultValue={rmbMeEmail}
+						placeholder='example@ntu.edu.sg'
+						onChange={onInputChange}
+						onBlur={onInputBlur}
+						error={errors.email ? { content: errors.email.message } : false}
+					/>
+				</Form.Field>
+				<Form.Field>
+					<Form.Input
+						fluid
+						label="Password"
+						name="password"
+						type='password'
+						placeholder='Password'
+						onChange={onInputChange}
+						onBlur={onInputBlur}
+						error={errors.password ? { content: errors.password.message } : false}
+					/>
+				</Form.Field>
+				<Form.Field>
+					<Checkbox
+						name="rmbMe"
+						label='Remember Me?'
+						onChange={onRmbMeChange}
+						defaultChecked={rmbMeEmail !== ''}
+					/>
+				</Form.Field>
+				<Button
 					fluid
-					type='email'
-					defaultValue={rmbMeEmail}
-					placeholder='example@ntu.edu.sg'
-					onChange={onInputChange}
-					onBlur={onInputBlur}
-					error={errors.email ? { content: errors.email.message } : false}
-				/>
-			</Form.Field>
-			<Form.Field>
-				<Form.Input
-					fluid
-					label="Password"
-					name="password"
-					type='password'
-					placeholder='Password'
-					onChange={onInputChange}
-					onBlur={onInputBlur}
-					error={errors.password ? { content: errors.password.message } : false}
-				/>
-			</Form.Field>
-			<Form.Field>
-				<Checkbox
-					name="rmbMe"
-					label='Remember Me?'
-					onChange={onRmbMeChange}
-					defaultChecked={rmbMeEmail !== ''}
-				/>
-			</Form.Field>
-			<Button
-				fluid
-				primary
-				type='submit'>
-				Login
-			</Button>
-		</Form>
-	);
+					primary
+					type='submit'>
+					Login
+				</Button>
+			</Form>
+			<Link to='/auth/forgotpassword'><em>Forgot your password?</em></Link>
+			<h4>Don't have an account?
+				<em><Link to='/auth/register'> Register here</Link></em>
+			</h4>
+		</Card.Content>);
 }
 
-export default LoginForm
+export default React.memo(LoginPage)

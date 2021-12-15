@@ -7,6 +7,7 @@ import { RootState } from '../../state/reducers';
 export type ProtectedRouteProps = {
   // isAuthenticated: boolean;
   // authenticationPath: string;
+	children: JSX.Element
 } & RouteProps;
 
 // export default function ProtectedRoute({isAuthenticated, authenticationPath, ...routeProps}: ProtectedRouteProps) {

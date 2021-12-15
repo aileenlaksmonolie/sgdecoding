@@ -17,3 +17,12 @@ export const registerOneUser = (newUser: NewUserRegistration) => {
 		{ responseType: 'json' }
 	)
 }
+
+
+export const sendForgotPasswordRequest = (email: string) => {
+	return speechGatewayApi.post(
+		`/auth/forgot-password`,
+		{ email },
+		{ responseType: 'json'}
+	)
+}
