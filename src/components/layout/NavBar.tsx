@@ -1,13 +1,19 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from 'react-router-dom';
+import { bindActionCreators } from "redux";
 import { Dropdown, Icon, Menu, MenuItemProps } from "semantic-ui-react";
+import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
-
 
 const NavBar: React.FC = () => {
 	const [activeItem, setActiveItem] = useState('features');
 
 	const { name } = useSelector((state: RootState) => state.authReducer)
+
+	const dispatch = useDispatch()
+	const { logout } = bindActionCreators(actionCreators, dispatch)
+
 
 	const handleItemClick =
 		(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -34,30 +40,18 @@ const NavBar: React.FC = () => {
 			/> */}
 
 			<Menu.Menu position='right'>
-				{/* <Icon name='user circle' /> */}
 				<Dropdown
 					trigger={(<span><Icon name='user' />{name}</span>)}
 					inline
 					item
-					icon='caret down'
-					text={name}>
+					icon='caret down'>
 					<Dropdown.Menu>
-						{/* <Dropdown.Item>Profile</Dropdown.Item>
-						<Dropdown.Item>Change Password</Dropdown.Item>
-						<Dropdown.Item>Log Out</Dropdown.Item> */}
+						<Dropdown.Item as={Link} to='profile'>Profile</Dropdown.Item>
+						<Dropdown.Item as={Link} to='changepassword'>Change Password</Dropdown.Item>
+						<Dropdown.Item onClick={logout}>Log Out</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
 			</Menu.Menu>
-			{/* <Header as='h4'>
-				<Icon name='trophy' />
-				<Header.Content>
-					Trending repos{' '}
-					<Dropdown
-						inline
-						header='Adjust time span'
-					/>
-				</Header.Content>
-			</Header> */}
 
 		</Menu>
 	);

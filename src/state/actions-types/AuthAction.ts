@@ -1,4 +1,4 @@
-import { AuthTypes } from './../types/index';
+import { AuthTypes } from '../types/index';
 
 interface RememberMeAction{
 	type: AuthTypes.RMB_ME,

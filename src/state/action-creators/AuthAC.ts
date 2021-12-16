@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 import { loginOneUser } from "../../api/auth";
 import { UserLoginModel } from '../../models/UserLogin.model';
-import { AuthAction } from '../actions/AuthAction';
+import { AuthAction } from '../actions-types/AuthAction';
 import { AuthTypes } from '../types/index';
 
 
@@ -26,9 +26,11 @@ export const login = (userCreds: UserLoginModel) => {
 				return Promise.resolve()
 			}).catch((error) => {
 				console.error(error);
+
 				let loginFail: AuthAction = {
 					type: AuthTypes.LOGIN_FAIL
 				}
+
 				dispatch(loginFail)
 				return Promise.reject()
 			})

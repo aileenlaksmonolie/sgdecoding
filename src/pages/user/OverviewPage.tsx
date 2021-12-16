@@ -10,7 +10,7 @@ const OverviewPage: React.FC = () => {
 
 	return (<div>
 		<h1>Overview Page</h1>
-		<caption>Logged In Successfully</caption>
+		<span>Logged In Successfully</span>
 		<button onClick={logout}>Logout</button>
 	</div>)
 }

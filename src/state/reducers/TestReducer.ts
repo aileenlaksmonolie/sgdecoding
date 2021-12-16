@@ -1,4 +1,4 @@
-import { Action } from '../actions/TestAction';
+import { Action } from '../actions-types/TestAction';
 import { TestType } from '../types/index';
 
 const reducer = (state: number=0, action: Action): number => {
