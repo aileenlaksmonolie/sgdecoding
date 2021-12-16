@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Dropdown, Menu, MenuItemProps } from "semantic-ui-react";
+import { Dropdown, Icon, Menu, MenuItemProps } from "semantic-ui-react";
 import { RootState } from "../../state/reducers";
 
 
@@ -22,7 +22,7 @@ const NavBar: React.FC = () => {
 				<img src='https://react.semantic-ui.com/logo.png' />
 			</Menu.Item>
 
-			<Menu.Item
+			{/* <Menu.Item
 				name='home'
 				active={activeItem === 'home'}
 				onClick={handleItemClick}
@@ -31,19 +31,20 @@ const NavBar: React.FC = () => {
 				name='messages'
 				active={activeItem === 'messages'}
 				onClick={handleItemClick}
-			/>
+			/> */}
 
 			<Menu.Menu position='right'>
 				{/* <Icon name='user circle' /> */}
 				<Dropdown
+					trigger={(<span><Icon name='user' />{name}</span>)}
 					inline
 					item
 					icon='caret down'
 					text={name}>
 					<Dropdown.Menu>
-						<Dropdown.Item>English</Dropdown.Item>
-						<Dropdown.Item>Russian</Dropdown.Item>
-						<Dropdown.Item>Spanish</Dropdown.Item>
+						{/* <Dropdown.Item>Profile</Dropdown.Item>
+						<Dropdown.Item>Change Password</Dropdown.Item>
+						<Dropdown.Item>Log Out</Dropdown.Item> */}
 					</Dropdown.Menu>
 				</Dropdown>
 			</Menu.Menu>
