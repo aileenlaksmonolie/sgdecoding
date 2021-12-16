@@ -9,21 +9,29 @@
 
 ## Getting Started
 
-**1. Install all dependencies first**
+**1. Create `.env` files**
+
+- Create two files: `.env.development.local` and `.env.production.local`
+
+```text
+REACT_APP_SPEECH_GATEWAY="https://gateway.speechlab.sg"
+```
+
+**2. Install all dependencies first**
 
 `npm install`
 
-**2a. Running in Development Mode**
+**3a. Running in Development Mode**
  `npm start`
 
 Runs app in [http://localhost:3000](http://localhost:3000).
 
-**2b. Compile Production Build**
+**3b. Compile Production Build**
 `npm run build`
 
 - Compiles ready-to-deploy bundle that is minimized and optimised.
 
-**2c. Run test runner (not implemented yet)**
+**3c. Run test runner (not implemented yet)**
  `npm test`
 
 Launches the test runner in the interactive watch mode.\
@@ -57,4 +65,4 @@ TODO
 TODO 
 
 ---
-*Last updated 8th December 2021*
+*Last updated 16th December 2021*
