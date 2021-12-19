@@ -46,7 +46,7 @@ const LoginPage: React.FC = () => {
 		register("password", {
 			required: 'Password field is empty!',
 			minLength: {
-				value: 8,
+				value: 6,
 				message: 'Password is too short!'
 			}
 		});
