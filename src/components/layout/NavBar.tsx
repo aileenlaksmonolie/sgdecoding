@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from "redux";
-import { Dropdown, Icon, Menu, MenuItemProps } from "semantic-ui-react";
+import { Dropdown, Icon, Menu } from "semantic-ui-react";
 import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
 
 const NavBar: React.FC = () => {
-	const [activeItem, setActiveItem] = useState('features');
 
 	const { name } = useSelector((state: RootState) => state.authReducer)
 
@@ -15,17 +14,11 @@ const NavBar: React.FC = () => {
 	const { logout } = bindActionCreators(actionCreators, dispatch)
 
 
-	const handleItemClick =
-		(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-			{ name }: MenuItemProps) => {
-			return setActiveItem(name!)
-		}
-
 	return (
 		<Menu stackable>
 			<Menu.Item>
 				{/* TODO */}
-				<img src='https://react.semantic-ui.com/logo.png' />
+				<img src='https://react.semantic-ui.com/logo.png' alt='TODO'/>
 			</Menu.Item>
 
 			{/* <Menu.Item
