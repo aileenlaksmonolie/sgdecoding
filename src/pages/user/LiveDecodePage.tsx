@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { Card, Container, Grid } from "semantic-ui-react";
+import { Card, Container, Grid, TextArea } from "semantic-ui-react";
 import { liveDecodeSocket } from "../../api/api";
 import BtnsArray from "../../components/audio/BtnsArray";
 import NoMicAccess from "../../components/audio/NoMicAccess";
 import VizFreqBars from "../../components/audio/VizFreqBars";
+import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
 import { RootState } from "../../state/reducers";
 
 const toWav = require('audiobuffer-to-wav');
@@ -20,8 +21,9 @@ const LiveDecodePage: React.FC = () => {
 	/*  */
 	const { token } = useSelector((state: RootState) => state.authReducer);
 	const [webSocket, setWebSocket] = useState<WebSocket>();
-	const webSocketRef = useRef<WebSocket>();
-	webSocketRef.current = webSocket
+	const [adaptationState, setAdaptationState] = useState<AdaptationState>();
+	const [finalTranscription, setFinalTranscription] = useState<String[]>([]);
+	const [nonFinalTranscription, setNonFinalTranscription] = useState<String>('');
 	const interval = useRef<NodeJS.Timeout>();
 
 	const [isLoading, setIsLoading] = useState(true);
@@ -32,12 +34,15 @@ const LiveDecodePage: React.FC = () => {
 		errorMsg: ""
 	});
 
-
 	var audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 	const fileReader = new FileReader();
 	const [downloadLink, setDownloadLink] = useState({ show: false, blob: new Blob() });
-	const downloadLinkRef = useRef<{show: boolean, blob: Blob}>();
-	downloadLinkRef.current = downloadLink // get updated val in cb
+
+	// For callbacks
+	const downloadLinkRef = useRef<{show: boolean, blob: Blob}>(); // TODO unnecessary now?
+	downloadLinkRef.current = downloadLink;
+	const webSocketRef = useRef<WebSocket>();
+	webSocketRef.current = webSocket;
 
 	fileReader.onloadend = (e:ProgressEvent<FileReader>) => {
 		const arrayBuffer = fileReader.result as ArrayBuffer
@@ -102,7 +107,7 @@ const LiveDecodePage: React.FC = () => {
 			console.log("[DEBUG] mimeType: " + mediaRecorder.mimeType);
 
 			mediaRecorder.addEventListener('dataavailable', async ({data}) => {
-				console.log('[DEBUG] media recorder dataavailable');
+				console.log('[DEBUG] mediaRecorder dataavailable');
 				currentChunk = []
 				if (data.size > 0){
 					allRecordedChunks.push(data);
@@ -151,9 +156,32 @@ const LiveDecodePage: React.FC = () => {
 			console.log(event)
 		}
 
-		socket.onmessage = (event) => {
+		socket.onmessage = (event: MessageEvent) => {
 			console.log("[DEBUG] onmessage") 
 			console.log(event)
+			const { data } = event;
+			const response: LiveDecodeResponse = JSON.parse(data);
+			if(response.status === 0){
+				if(isHypothesisResponse(response)){
+					console.log('Hypothesis detected')
+					const { final, hypotheses } = response.result
+					let transcript = hypotheses[0].transcript
+					if(final){ // 100% of what the word is
+						setFinalTranscription(fT => [...fT, transcript])
+					}else{ // not 100% what the word is
+						if(transcript.length > 80)
+							setNonFinalTranscription("... ... " + transcript.substring(transcript.length-4, transcript.length));
+					}
+
+				}else{
+					console.log('Adaptation detected')
+					setAdaptationState((response as AdaptationStateResponse).adaptation_state)
+				}
+
+			}else if(response.status === 200){
+				// TODO toast
+				console.log("Successfully connected to server")
+			}
 		}
 
 		socket.onerror = (error) => {
@@ -172,7 +200,7 @@ const LiveDecodePage: React.FC = () => {
 		interval.current = setInterval(() => {
 			if(recorder.instance)
 				(recorder.instance as MediaRecorder).requestData()
-			clearInterval(interval.current!)
+			// clearInterval(interval.current!)
 		},3000)
 	}
 
@@ -181,6 +209,11 @@ const LiveDecodePage: React.FC = () => {
 		recorder.instance.stop();
 		clearInterval(interval.current!)
 		webSocket?.close()
+
+		console.log("[DEBUG] Final Transcript") 
+		console.log(finalTranscription)
+		console.log("[DEBUG] Non Final Transcript") 
+		console.log(nonFinalTranscription)
 	}
 
 
@@ -234,7 +267,13 @@ const LiveDecodePage: React.FC = () => {
 
 							<Grid.Row>
 								<Grid.Column>
-									<p>Textarea</p>
+									<TextArea 
+										placeholder='Press "Start" to begin ...' 
+										rows={8}
+										style={{ minHeight: '200px', minWidth: '100%', padding: '16px' }}
+										disabled
+										value={finalTranscription.toString() + nonFinalTranscription }
+									/>
 								</Grid.Column>
 							</Grid.Row>
 							{/* Debug */}
