@@ -6,11 +6,7 @@ export const speechGatewayApi = axios.create({
 
 export const liveDecodeSocket = (accessToken: string) => { 
 	return new WebSocket(`wss://gateway.speechlab.sg/client/ws/speech?` +
-											`accessToken=${accessToken}` + 
-											`&model=eng_telephony`
-											+ `&content-type=audio/x-wav`
-											+ `&layout=interleaved` 
-											+ `&rate=48000` 
-											+ `&format=S16LE` 
-											+ `&channels=1`
+		`content-type=audio/x-raw,+layout=(string)interleaved,+rate=(int)16000,+format=(string)S16LE,+channels=(int)1` +
+		`&accessToken=${accessToken}` + 
+		`&model=eng_telephony`
 )}

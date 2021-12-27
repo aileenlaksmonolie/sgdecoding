@@ -60,6 +60,7 @@
   "devDependencies": {
     "@craco/craco": "^6.4.2",
     "@semantic-ui-react/craco-less": "^1.2.3",
+    "@types/audioworklet": "0.0.23",
     "semantic-ui-less": "^2.4.1"
   }
 }
