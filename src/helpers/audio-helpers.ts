@@ -1,10 +1,10 @@
 
 export const downsampleBuffer = (buffer: Float32Array, sampleRate: number, rate: number): Float32Array => {
-	if (rate == sampleRate) {
+	if (rate === sampleRate) {
 		return buffer;
 	}
 	if (rate > sampleRate) {
-		throw "downsampling rate show be smaller than original sample rate";
+		throw new Error("downsampling rate show be smaller than original sample rate");
 	}
 	var sampleRateRatio = sampleRate / rate;
 	var newLength = Math.round(buffer.length / sampleRateRatio);
