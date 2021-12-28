@@ -76,6 +76,7 @@ registerProcessor('buffer-detector', class extends AudioWorkletProcessor {
 	process(inputs, outputs, parameters) {
 		// console.log("In process(): this._isRecording " + this._isRecording)
 		if (this._isRecording === true) {
+			// console.log(sampleRate)
 			// console.log(inputs[0][0])
 			const offset = quantumSize * this.quantaCount
 			inputs[0][0].forEach((sample, idx) => this.frame_32Float[offset + idx] = sample)
