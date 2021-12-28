@@ -32,25 +32,13 @@ export interface ConvToWavConfig {
 	// desiredSampRate?: number,
 	sampleRate: number,
 	internalInterleavedLength: number,
-	leftBuffers: Array<Float32Array>,
+	monoChnlBuffer: Array<Float32Array>,
 }
 
-// var isEdge = navigator.userAgent.indexOf('Edge') !== -1 && (!!navigator.msSaveBlob || !!navigator.msSaveOrOpenBlob);
-// var isOpera = !!window.opera || navigator.userAgent.indexOf('OPR/') !== -1;
-// var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1 && ('netscape' in window) && / rv:/.test(navigator.userAgent);
-// var isChrome = (!isOpera && !isEdge && !!navigator.webkitGetUserMedia) || isElectron() || navigator.userAgent.toLowerCase().indexOf('chrome/') !== -1;
 
-// var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-// if (isSafari && !isChrome && navigator.userAgent.indexOf('CriOS') !== -1) {
-//     isSafari = false;
-//     isChrome = true;
-// }
-
-
-export function mergeLeftRightBuffers(config: ConvToWavConfig, callback: Function) {
+export function convertToWAVFile(config: ConvToWavConfig, callback: Function) {
 	function mergeAudioBuffers(config: ConvToWavConfig, cb: Function) {
-		var leftBuffers = config.leftBuffers.slice(0);
+		var leftBuffers = config.monoChnlBuffer.slice(0);
 		var sampleRate = config.sampleRate;
 		var internalInterleavedLength = config.internalInterleavedLength;
 		// var desiredSampRate = config.desiredSampRate;
@@ -58,14 +46,7 @@ export function mergeLeftRightBuffers(config: ConvToWavConfig, callback: Functio
 		var leftBuffersMerged: any
 
 		leftBuffersMerged = mergeBuffers(leftBuffers, internalInterleavedLength);
-		// if (desiredSampRate) {
-		// 	leftBuffersMerged = interpolateArray(leftBuffersMerged, desiredSampRate, sampleRate)
-		// }
 
-		// set sample rate as desired sample rate
-		// if (desiredSampRate) {
-		// 	sampleRate = desiredSampRate;
-		// }
 
 		/* combine Array of Float32Arrays into single Float64Array */
 		function mergeBuffers(channelBuffer: Array<Float32Array>, rLength: number) {
@@ -82,31 +63,6 @@ export function mergeLeftRightBuffers(config: ConvToWavConfig, callback: Functio
 
 			return result;
 		}
-
-		// for changing the sampling rate, reference:
-		// http://stackoverflow.com/a/28977136/552182
-		// function interpolateArray(data: Float64Array, newSampleRate: number, oldSampleRate: number) {
-		// 	var fitCount = Math.round(data.length * (newSampleRate / oldSampleRate));
-		// 	//var newData = new Array();
-		// 	var newData = [];
-		// 	//var springFactor = new Number((data.length - 1) / (fitCount - 1));
-		// 	var springFactor = Number((data.length - 1) / (fitCount - 1));
-		// 	newData[0] = data[0]; // for new allocation
-		// 	for (var i = 1; i < fitCount - 1; i++) {
-		// 		var tmp = i * springFactor;
-		// 		var before = Number(Number(Math.floor(tmp)).toFixed());
-		// 		var after = Number(Number(Math.ceil(tmp)).toFixed());
-		// 		var atPoint = tmp - before;
-		// 		newData[i] = linearInterpolate(data[before], data[after], atPoint);
-		// 	}
-		// 	newData[fitCount - 1] = data[data.length - 1]; // for new allocation
-		// 	return newData;
-		// }
-
-		// function linearInterpolate(before: number, after: number, atPoint: number) {
-		// 	return before + (after - before) * atPoint;
-		// }
-
 
 		/* Used for writing WAV headers */
 		function writeUTFBytes(view: DataView, offset: number, str: string) {
@@ -165,14 +121,6 @@ export function mergeLeftRightBuffers(config: ConvToWavConfig, callback: Functio
 			view: view
 		});
 	} // END 
-
-	// if (!isChrome) {
-	// 	// its Microsoft Edge
-	// 	mergeAudioBuffers(config, function (data) {
-	// 		callback(data.buffer, data.view);
-	// 	});
-	// 	return;
-	// }
 
 	var workerURL = createWorkerURL(mergeAudioBuffers)
 	var webWorker = processInWebWorker(workerURL);

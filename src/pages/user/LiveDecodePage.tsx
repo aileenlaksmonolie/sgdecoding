@@ -1,20 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Card, Container, Grid, TextArea } from "semantic-ui-react";
 import { liveDecodeSocket } from "../../api/api";
 import BtnsArray from "../../components/audio/BtnsArray";
 import NoMicAccess from "../../components/audio/NoMicAccess";
 import VizFreqBars from "../../components/audio/VizFreqBars";
-import { ConvToWavConfig, mergeLeftRightBuffers } from "../../helpers/audio-helpers";
+import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
 import { RootState } from "../../state/reducers";
 
-const toWav = require('audiobuffer-to-wav');
-
-const SAMPLE_SIZE = 16; // 16-bit audio
-const SAMPLE_RATE = 48000; // Sampling at 16khz
-
-const quantaPerFrame = 37
 
 interface MyRecorder {
 	isMicAccessGiven: boolean,
@@ -45,14 +39,10 @@ interface MyRecorder {
 		SHOW download button (downloads both transcription and recorded audio) 
 */
 const LiveDecodePage: React.FC = () => {
-	const IS_DEBUGGING: boolean = true;
-	const [fakeWebSocketConn, setFakeWebSocketConn] = useState<boolean>(false);
 	/* Declarations */
+	const IS_DEBUGGING: boolean = true;
 
-	// const [audioCtx, setAudioCtx] =
-	// 	useState<AudioContext>();
 	const { token } = useSelector((state: RootState) => state.authReducer);
-
 	const [recorder, setRecorder] = useState<MyRecorder>({
 		isMicAccessGiven: false,
 		stream: null,
@@ -80,16 +70,17 @@ const LiveDecodePage: React.FC = () => {
 	const reqMicrophoneAccess = async (): Promise<MediaStream> => {
 		const stream = await navigator.mediaDevices.getUserMedia({
 			audio: { // Shorthand to write MediaTrackConstraints
-				sampleRate: 48000,
-				sampleSize: SAMPLE_SIZE,
-				channelCount: 1,
+				sampleRate: 48000, // Changing to 16k does nothing because browser capability is limited to min 48k
+				sampleSize: 16,		 // 16-bits
+				channelCount: 1, 	 // mono
 				noiseSuppression: true,
 				echoCancellation: true
 			},
 			video: false
 		})
+		// console.log("stream.getAudioTracks()[0].getCapabilities():")
+		// console.log(stream.getAudioTracks()[0].getCapabilities());
 		return stream
-
 	}
 
 	const createAudioContext = (stream: MediaStream) => {
@@ -104,7 +95,7 @@ const LiveDecodePage: React.FC = () => {
 		Worklet files must be placed in /public directory in React project 
 		as addModule() looks for them in there
 	*/
-	const loadWorkletNode = async (audioCtx: AudioContext, stream: MediaStream) => {
+	const loadWorkletNode = useCallback(async (audioCtx: AudioContext, stream: MediaStream) => {
 		await audioCtx.audioWorklet.addModule('worklet/audio-worklet.js');
 		const source: MediaStreamAudioSourceNode = audioCtx.createMediaStreamSource(stream)
 		const audioWorklet = new AudioWorkletNode(audioCtx, 'buffer-detector', { outputChannelCount: [1] })
@@ -120,7 +111,7 @@ const LiveDecodePage: React.FC = () => {
 			temp?.push(frame32FloatDownsampled)
 			setAllRecordedChunks(temp!)
 
-			if (webSocketConn) {
+			if (!IS_DEBUGGING && webSocketConn) {
 				if (adaptationStateRef.current) {
 					console.log("[DEBUG] Sent adaptation state")
 					webSocketConn.send(JSON.stringify(adaptationStateRef.current))
@@ -134,7 +125,7 @@ const LiveDecodePage: React.FC = () => {
 
 		audioWorklet.port.start();
 		return audioWorklet;
-	}
+	}, [webSocketConn, IS_DEBUGGING]);
 
 	const onStartClick = () => {
 		if (!IS_DEBUGGING) {
@@ -186,7 +177,6 @@ const LiveDecodePage: React.FC = () => {
 			setWebSocketConn(conn)
 		} else {
 			recorder.audioWorklet?.port.postMessage({ isRecording: true })
-			setFakeWebSocketConn(true)
 		}
 	}
 
@@ -196,8 +186,6 @@ const LiveDecodePage: React.FC = () => {
 		if (!IS_DEBUGGING) {
 			webSocketConn?.close();
 			setWebSocketConn(undefined);
-		} else {
-			setFakeWebSocketConn(false);
 		}
 	}
 
@@ -208,10 +196,10 @@ const LiveDecodePage: React.FC = () => {
 				sampleRate: 16000,
 				// desiredSampRate: 16000,
 				internalInterleavedLength: allRecordedChunks.length * allRecordedChunks[0].length,
-				leftBuffers: allRecordedChunks,
+				monoChnlBuffer: allRecordedChunks,
 			}
 
-			mergeLeftRightBuffers(config, function (buffer: any, view: any) {
+			convertToWAVFile(config, function (buffer: any, view: any) {
 				var blob = new Blob([buffer], { type: 'audio/x-wav' });
 				console.log(blob)
 
@@ -229,38 +217,39 @@ const LiveDecodePage: React.FC = () => {
 				}
 				anchor.click()
 			})
-		}else{
-			console.error("[ERROR DEBUG] No recording found!") 
+		} else {
+			console.error("[ERROR DEBUG] No recording found!")
 		}
 
 	}
 
 
 	useEffect(() => {
-		/*	Workaround to prevent NoMicAccess from "blinking"
-				Ideally, we want to use Permissions API to check 'microphone' permissions beforehand
-					to know which state to present. However, available only in Chrome but not in Firefox.*/
+		/*	
+			Workaround to prevent NoMicAccess from "blinking"
+			Ideally, we want to use Permissions API to check 'microphone' permissions beforehand
+			to know which state to present. However, as of now available only in Chrome but not in Firefox.
+		*/
 		setTimeout(() => {
 			setIsLoading(false);
-		}, 500);
-
+		}, 750);
 
 		reqMicrophoneAccess()
 			.then((stream) => {
 				const audioContext = createAudioContext(stream);
 				loadWorkletNode(audioContext, stream).then(
 					(audioWorklet) => {
-						setRecorder({ ...recorder, isMicAccessGiven: true, stream, audioContext, audioWorklet })
+						setRecorder(r => ({ ...r, isMicAccessGiven: true, stream, audioContext, audioWorklet }))
 					});
 			}).catch(
 				(error) => {
 					console.error(`Error code: ${error.code}, Message: ${error.message}`);
 					let msg = error.name === "NotAllowedError" ? 'You have denied giving microphone permissions' :
 						'Something went terribly wrong, pleae contact an administrator!'
-					setRecorder({ ...recorder, isMicAccessGiven: false, errorMsg: msg })
+					setRecorder(r => ({ ...r, isMicAccessGiven: false, errorMsg: msg }))
 				});
 
-	}, [])
+	}, [loadWorkletNode])
 
 	if (isLoading)
 		return <Container></Container>
