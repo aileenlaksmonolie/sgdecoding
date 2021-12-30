@@ -7,7 +7,6 @@
 const quantumSize = 128
 
 // (1/48khz)*128*93 = 248ms (0.25s)
-// (1/48khz)*128*32 = 85.3333ms (0.85s)
 // (1/48khz)*128*37 = 98.6666ms (0.98s)
 const quantaPerFrame = 37
 
@@ -29,7 +28,7 @@ registerProcessor('buffer-detector', class extends AudioWorkletProcessor {
 
 		this.port.onmessage = ({ data }) => {
 			console.log("[DEBUG] Audioworklet onmessage, isRecording: " + data.isRecording);
-			this._isRecording = data.isRecording;
+			this.isRecording = data.isRecording;
 		}
 
 	}
@@ -74,8 +73,8 @@ registerProcessor('buffer-detector', class extends AudioWorkletProcessor {
 	}
 
 	process(inputs, outputs, parameters) {
-		// console.log("In process(): this._isRecording " + this._isRecording)
 		if (this._isRecording === true) {
+			console.log("In process(): this._isRecording " + this._isRecording)
 			// console.log(sampleRate)
 			// console.log(inputs[0][0])
 			const offset = quantumSize * this.quantaCount

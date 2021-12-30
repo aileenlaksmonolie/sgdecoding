@@ -11,7 +11,6 @@ export const loginOneUser = (userCreds: UserLoginModel) => {
 }
 
 export const registerOneUser = (newUser: NewUserRegistration) => {
-	//TODO
 	return speechGatewayApi.post(
 		`/auth/register`,
 		{ name: newUser.name, email: newUser.email, password: newUser.password },

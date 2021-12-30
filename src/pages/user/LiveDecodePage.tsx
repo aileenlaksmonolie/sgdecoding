@@ -52,6 +52,9 @@ const LiveDecodePage: React.FC = () => {
 	});
 
 	const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
+	const webSocketConnRef = useRef<WebSocket>();
+	webSocketConnRef.current = webSocketConn;
+
 	const [adaptationState, setAdaptationState] = useState<AdaptationState>();
 	const adaptationStateRef = useRef<AdaptationState>();
 	adaptationStateRef.current = adaptationState;
@@ -103,7 +106,7 @@ const LiveDecodePage: React.FC = () => {
 
 		audioWorklet.port.onmessage = async (event) => {
 			// console.log(" ")
-			// console.log("[DEBUG] WORKER onmessage")
+			console.log("[DEBUG] WORKER onmessage")
 			// console.log(event.data)
 			const { frame16Int, frame32FloatDownsampled } = event.data
 
@@ -111,13 +114,15 @@ const LiveDecodePage: React.FC = () => {
 			temp?.push(frame32FloatDownsampled)
 			setAllRecordedChunks(temp!)
 
-			if (!IS_DEBUGGING && webSocketConn) {
+			console.log(IS_DEBUGGING)
+			console.log(webSocketConnRef.current)
+			if (!IS_DEBUGGING && webSocketConnRef.current) {
 				if (adaptationStateRef.current) {
 					console.log("[DEBUG] Sent adaptation state")
-					webSocketConn.send(JSON.stringify(adaptationStateRef.current))
+					webSocketConnRef.current.send(JSON.stringify(adaptationStateRef.current))
 				}
 				var blob = new Blob([frame16Int], { type: 'audio/x-raw' });
-				webSocketConn.send(blob);
+				webSocketConnRef.current.send(blob);
 				// console.log("[DEBUG] Sent WAV blob to backend");
 			}
 			// console.log(" ");
@@ -156,7 +161,7 @@ const LiveDecodePage: React.FC = () => {
 					}
 				} else if (response.status === 200) {
 					console.log("Successfully connected to the server")
-					recorder.audioWorklet?.port.postMessage({ isRecordng: true })
+					recorder.audioWorklet?.port.postMessage({ isRecording: true })
 				}
 			}
 
@@ -248,6 +253,11 @@ const LiveDecodePage: React.FC = () => {
 						'Something went terribly wrong, pleae contact an administrator!'
 					setRecorder(r => ({ ...r, isMicAccessGiven: false, errorMsg: msg }))
 				});
+		
+		return () => {
+			if(recorder.audioContext)
+				recorder.audioContext.close()
+		}
 
 	}, [loadWorkletNode])
 
