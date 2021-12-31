@@ -15,7 +15,7 @@ const UserModule: React.FC = () => {
 			<Routes>
 				<Route path='/' element={<OverviewPage />}></Route>	
 				<Route path='overview' element={<OverviewPage />}></Route>	
-				<Route path='livedecoding' element={<LiveDecodePage />}></Route>	
+				<Route path='livetranscribe' element={<LiveDecodePage />}></Route>	
 				<Route path='viewalljobs' element={<ViewAllOfflineJobsPage />}></Route>	
 				<Route path='profile' element={<ProfilePage />}></Route>	
 				<Route path='changepassword' element={<ChangePasswordPage />}></Route>	

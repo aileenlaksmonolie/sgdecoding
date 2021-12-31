@@ -8,7 +8,7 @@ const quantumSize = 128
 
 // (1/48khz)*128*93 = 248ms (0.25s)
 // (1/48khz)*128*37 = 98.6666ms (0.98s)
-const quantaPerFrame = 37
+const quantaPerFrame = 93
 
 const micDefaultSampleRate = 48000
 const idealSampleRate = 16000
@@ -74,7 +74,7 @@ registerProcessor('buffer-detector', class extends AudioWorkletProcessor {
 
 	process(inputs, outputs, parameters) {
 		if (this._isRecording === true) {
-			console.log("In process(): this._isRecording " + this._isRecording)
+			// console.log("In process(): this._isRecording " + this._isRecording)
 			// console.log(sampleRate)
 			// console.log(inputs[0][0])
 			const offset = quantumSize * this.quantaCount

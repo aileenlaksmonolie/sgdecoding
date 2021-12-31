@@ -1,5 +1,6 @@
 import React from "react";
-import { Container } from "semantic-ui-react";
+import classes from './Layout.module.scss';
+import LeftNavBar from "./LeftNavBar";
 import NavBar from "./NavBar";
 
 interface Props {
@@ -10,14 +11,14 @@ interface Props {
 const Layout: React.FC<Props> = ({ children }) => {
 
 	return (
-		<div>
+		<div className={classes.layout}>
 			<NavBar />
-			<Container>
+			<LeftNavBar> 
 				{/* TOREFACTOR  */}
 				<main> 
 					{children}
 				</main>
-			</Container>
+			</LeftNavBar>
 		</div>
 	);
 }

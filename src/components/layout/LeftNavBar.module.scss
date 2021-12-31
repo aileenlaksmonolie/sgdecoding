@@ -1,0 +1,26 @@
+#sidebarContainer {
+	height: calc(100% - 55px);
+
+	.sidebar {
+		width: 256px;
+		position: sticky;
+
+		a {
+			text-align: left;
+
+			> i {
+				display: inline-block;
+				width: 48px;
+				padding-right: 16px;
+			}
+		}
+	}
+
+
+	#pusherContainer	{
+		width: calc(100% - 256px);
+		// left: 256px;
+		float: right;
+		padding-top: 64px;
+	}
+}

@@ -9,15 +9,14 @@ import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
 import { RootState } from "../../state/reducers";
 
-
-interface MyRecorder {
+export interface MyRecorder {
 	isMicAccessGiven: boolean,
+	isRecording: boolean,
 	stream: MediaStream | null,
 	audioContext: AudioContext | null,
 	audioWorklet: AudioWorkletNode | null,
 	errorMsg: string
 }
-
 /*
 	Pseudo
 	REQ user for mic permissions
@@ -46,6 +45,7 @@ const LiveDecodePage: React.FC = () => {
 	const [recorder, setRecorder] = useState<MyRecorder>({
 		isMicAccessGiven: false,
 		stream: null,
+		isRecording: false,
 		audioContext: null,
 		audioWorklet: null,
 		errorMsg: '',
@@ -106,7 +106,7 @@ const LiveDecodePage: React.FC = () => {
 
 		audioWorklet.port.onmessage = async (event) => {
 			// console.log(" ")
-			console.log("[DEBUG] WORKER onmessage")
+			// console.log("[DEBUG] WORKER onmessage")
 			// console.log(event.data)
 			const { frame16Int, frame32FloatDownsampled } = event.data
 
@@ -114,8 +114,8 @@ const LiveDecodePage: React.FC = () => {
 			temp?.push(frame32FloatDownsampled)
 			setAllRecordedChunks(temp!)
 
-			console.log(IS_DEBUGGING)
-			console.log(webSocketConnRef.current)
+			// console.log(IS_DEBUGGING)
+			// console.log(webSocketConnRef.current)
 			if (!IS_DEBUGGING && webSocketConnRef.current) {
 				if (adaptationStateRef.current) {
 					console.log("[DEBUG] Sent adaptation state")
@@ -133,6 +133,7 @@ const LiveDecodePage: React.FC = () => {
 	}, [webSocketConn, IS_DEBUGGING]);
 
 	const onStartClick = () => {
+		console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING) 
 		if (!IS_DEBUGGING) {
 			webSocketConn?.close()
 			const conn = liveDecodeSocket(token);
@@ -162,6 +163,7 @@ const LiveDecodePage: React.FC = () => {
 				} else if (response.status === 200) {
 					console.log("Successfully connected to the server")
 					recorder.audioWorklet?.port.postMessage({ isRecording: true })
+					setRecorder({ ...recorder, isRecording: true })
 				}
 			}
 
@@ -181,12 +183,14 @@ const LiveDecodePage: React.FC = () => {
 
 			setWebSocketConn(conn)
 		} else {
-			recorder.audioWorklet?.port.postMessage({ isRecording: true })
+			recorder.audioWorklet?.port.postMessage({ isRecording: true });
+			setRecorder({ ...recorder, isRecording: true });
 		}
 	}
 
 	const onStopClick = () => {
-		recorder.audioWorklet?.port.postMessage({ isRecording: false });
+		recorder.audioWorklet!.port.postMessage({ isRecording: false });
+		setRecorder({ ...recorder, isRecording: false });
 
 		if (!IS_DEBUGGING) {
 			webSocketConn?.close();
@@ -266,14 +270,13 @@ const LiveDecodePage: React.FC = () => {
 	if (recorder.isMicAccessGiven === false)
 		return (
 			<Container textAlign="center">
-				<h1>Live Decoding</h1>
 				<NoMicAccess errorMsg={recorder.errorMsg ? recorder.errorMsg : ''} />
 			</Container>
 		);
 	else
 		return (
 			<Container textAlign="center">
-				<h1>Live Decoding</h1>
+				<h1>Live Transcribe</h1>
 				<p>Live decoding transcribes your speech into text as you speak into the microphone. Click the start button to begin decoding!</p>
 				<Card fluid>
 					<Card.Content>
@@ -286,7 +289,7 @@ const LiveDecodePage: React.FC = () => {
 									{/* <VizSineWave stream={recorder.stream} /> */}
 									{
 										recorder.isMicAccessGiven && recorder.audioContext && recorder.stream ?
-											<VizFreqBars stream={recorder.stream} audioCtx={recorder.audioContext} /> :
+											<VizFreqBars recorder={recorder}  /> :
 											<p>Loading Stream....</p>
 									}
 								</Grid.Column>
