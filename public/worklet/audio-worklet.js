@@ -17,7 +17,7 @@ registerProcessor('buffer-detector', class extends AudioWorkletProcessor {
 	constructor(options) {
 		super()
 		// this._webSocket = null;
-		this._isRecording = false;
+		this._isRecording = "notstarted";
 
 		this.quantaPerFrame = quantaPerFrame;
 		this.quantaCount = 0;
@@ -80,7 +80,7 @@ registerProcessor('buffer-detector', class extends AudioWorkletProcessor {
 	}
 
 	process(inputs, outputs, parameters) {
-		if (this._isRecording === true) {
+		if (this._isRecording === "inprogress") {
 			// console.log("In process(): this._isRecording " + this._isRecording)
 			// console.log(sampleRate)
 			// console.log(inputs[0][0])

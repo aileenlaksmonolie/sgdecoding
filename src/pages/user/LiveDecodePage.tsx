@@ -1,51 +1,39 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
 import { Card, Container, Grid, TextArea } from "semantic-ui-react";
-import { liveDecodeSocket } from "../../api/api";
 import BtnsArray from "../../components/audio/BtnsArray";
 import NoMicAccess from "../../components/audio/NoMicAccess";
 import VizFreqBars from "../../components/audio/VizFreqBars";
 import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
-import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
-import { RootState } from "../../state/reducers";
+import styles from './LiveDecodePage.module.scss';
+
+export enum RecordingStates{
+	NOT_STARTED="notstarted",
+	INPROGRESS="inprogress",
+	STOPPED="stopped"
+}
 
 export interface MyRecorder {
 	isMicAccessGiven: boolean,
-	isRecording: boolean,
+	isRecording: RecordingStates,
 	stream: MediaStream | null,
 	audioContext: AudioContext | null,
 	audioWorklet: AudioWorkletNode | null,
 	errorMsg: string
 }
-/*
-	Pseudo
-	REQ user for mic permissions
-	IF granted
-		CREATE audio stream and audio worklet 
-	ELSE
-		SHOW error page
-	IF start is clicked
-		Start button is morphed into Stop button
-		Start WebSocket session
-		IF session cannot be started
-			Show error message at top
-			Disable all buttons
-		Start recording and send WAV/RAW??? audio chunks to server
-		SHOW transcription as it returned as message from server
-		Send Adapatation State back as it is received
-	IF stop is clicked
-		Stop button is morphed into Redo button
-		SHOW download button (downloads both transcription and recorded audio) 
-*/
+
+export interface Transcription { 
+	final: String[],
+	nonFinal: String
+}
+
 const LiveDecodePage: React.FC = () => {
 	/* Declarations */
-	const IS_DEBUGGING: boolean = false;
+	const IS_DEBUGGING: boolean = true;
 
-	const { token } = useSelector((state: RootState) => state.authReducer);
 	const [recorder, setRecorder] = useState<MyRecorder>({
 		isMicAccessGiven: false,
 		stream: null,
-		isRecording: false,
+		isRecording: RecordingStates.NOT_STARTED,
 		audioContext: null,
 		audioWorklet: null,
 		errorMsg: '',
@@ -53,17 +41,20 @@ const LiveDecodePage: React.FC = () => {
 	const recorderRef = useRef<MyRecorder>();
 	recorderRef.current = recorder;
 
-	const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
+	// const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
 	const webSocketConnRef = useRef<WebSocket>();
-	webSocketConnRef.current = webSocketConn;
+	// webSocketConnRef.current = webSocketConn;
 
-	const [adaptationState, setAdaptationState] = useState<AdaptationState>();
-	const adaptationStateRef = useRef<AdaptationState>();
-	adaptationStateRef.current = adaptationState;
+	// const [adaptationState, setAdaptationState] = useState<AdaptationState>();
+	// const adaptationStateRef = useRef<AdaptationState>();
+	// adaptationStateRef.current = adaptationState;
 
 	// TODO combine these 2 into 1
-	const [finalTranscription, setFinalTranscription] = useState<String[]>([]);
-	const [nonFinalTranscription, setNonFinalTranscription] = useState<String>('');
+	const [transcription, setTranscription] =
+		useState<Transcription>({
+			final: [],
+			nonFinal: ""
+		});
 
 	const [allRecordedChunks, setAllRecordedChunks] = useState<Float32Array[]>([]);
 	const allRecordedChunksRef = useRef<Array<Float32Array>>();
@@ -113,12 +104,12 @@ const LiveDecodePage: React.FC = () => {
 			const { frame16Int, frame32FloatDownsampled } = event.data
 
 			// console.log(recorderRef.current?.isRecording);
-			if (recorderRef.current?.isRecording === true) {
+			if (recorderRef.current?.isRecording === RecordingStates.INPROGRESS) {
 				if (!IS_DEBUGGING && webSocketConnRef.current) {
-					if (adaptationStateRef.current) {
-						console.log("[DEBUG] Sent adaptation state")
-						webSocketConnRef.current.send(JSON.stringify(adaptationStateRef.current))
-					}
+					// if (adaptationStateRef.current) {
+					// 	console.log("[DEBUG] Sent adaptation state")
+					// 	webSocketConnRef.current.send(JSON.stringify(adaptationStateRef.current))
+					// }
 					var blob = new Blob([frame16Int], { type: 'audio/x-raw' });
 					webSocketConnRef.current.send(blob);
 					// console.log("[DEBUG] Sent WAV blob to backend");
@@ -134,71 +125,6 @@ const LiveDecodePage: React.FC = () => {
 		return audioWorklet;
 	}, [IS_DEBUGGING]);
 
-	const onStartClick = () => {
-		console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING)
-		if (!IS_DEBUGGING) {
-			webSocketConn?.close()
-			const conn = liveDecodeSocket(token);
-
-			conn.onmessage = (event) => {
-				console.log("[DEBUG] Received response from gateway")
-				console.log(event)
-				const { data } = event;
-				const response: LiveDecodeResponse = JSON.parse(data);
-				if (response.status === 0) {
-					if (isHypothesisResponse(response)) {
-						console.log('[DEBUG] HYPOTHESIS RESPONSE RECEIVED')
-						const { final, hypotheses } = response.result
-						let transcript = hypotheses[0].transcript
-						if (final) { // 100% of what the word is
-							setFinalTranscription(fT => [...fT, transcript])
-							setNonFinalTranscription("")
-						} else { // not 100% what the word is
-							setNonFinalTranscription("... ... " + transcript);
-						}
-
-					} else {
-						console.log('[DEBUG] ADAPTATION RESPONSE RECEIVED')
-						setAdaptationState((response as AdaptationStateResponse).adaptation_state)
-						// webSocketConn?.send(JSON.stringify(adaptationStateRef.current))
-					}
-				} else if (response.status === 200) {
-					console.log("Successfully connected to the server")
-					recorder.audioWorklet?.port.postMessage({ isRecording: true })
-					setRecorder({ ...recorder, isRecording: true })
-				}
-			}
-
-			conn.onopen = (event) => {
-				console.log("Connection to backend opened")
-			}
-
-			conn.onerror = (error) => {
-				console.error("[ERROR DEBUG] Error with websocket connection")
-				console.log(error)
-			}
-
-			conn.onclose = (event) => {
-				console.log("[DEBUG] onclose")
-				console.log(event)
-			}
-
-			setWebSocketConn(conn)
-		} else {
-			recorder.audioWorklet?.port.postMessage({ isRecording: true });
-			setRecorder({ ...recorder, isRecording: true });
-		}
-	}
-
-	const onStopClick = () => {
-		recorder.audioWorklet!.port.postMessage({ isRecording: false });
-		setRecorder({ ...recorder, isRecording: false });
-
-		if (!IS_DEBUGGING) {
-			webSocketConn?.close();
-			setWebSocketConn(undefined);
-		}
-	}
 
 	const createDownloadLink = () => {
 		console.log("[DEBUG] createDownloadLink")
@@ -276,17 +202,25 @@ const LiveDecodePage: React.FC = () => {
 		);
 	else
 		return (
-			<Container textAlign="center">
+			<Container id={styles.livePgContainer} textAlign="center">
 				<h1>Live Transcribe</h1>
 				<p>Live decoding transcribes your speech into text as you speak into the microphone. Click the start button to begin decoding!</p>
 				<Card fluid>
 					<Card.Content>
 						<Grid padded>
 							<Grid.Row>
-								<Grid.Column width={5}>
-									<BtnsArray onStartCb={onStartClick} onStopCb={onStopClick} />
+								<Grid.Column width={3}>
+									<BtnsArray 
+										key={transcription.final.length}
+										IS_DEBUGGING={IS_DEBUGGING}
+										recorder={recorder}
+										setRecorder={setRecorder}
+										transcription={transcription }
+										setTranscription={setTranscription}
+										webSocketRef={webSocketConnRef}
+										/>
 								</Grid.Column>
-								<Grid.Column width={8}>
+								<Grid.Column width={13}>
 									{/* <VizSineWave stream={recorder.stream} /> */}
 									{
 										recorder.isMicAccessGiven && recorder.audioContext && recorder.stream ?
@@ -303,7 +237,7 @@ const LiveDecodePage: React.FC = () => {
 										rows={8}
 										style={{ minHeight: '200px', minWidth: '100%', padding: '16px' }}
 										disabled
-										value={finalTranscription.toString() + nonFinalTranscription.toString()}
+										value={transcription.final.join(" ").toString() + transcription.nonFinal.toString()}
 									/>
 								</Grid.Column>
 							</Grid.Row>
