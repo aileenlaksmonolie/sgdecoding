@@ -39,7 +39,7 @@ export interface MyRecorder {
 */
 const LiveDecodePage: React.FC = () => {
 	/* Declarations */
-	const IS_DEBUGGING: boolean = true;
+	const IS_DEBUGGING: boolean = false;
 
 	const { token } = useSelector((state: RootState) => state.authReducer);
 	const [recorder, setRecorder] = useState<MyRecorder>({
@@ -50,6 +50,8 @@ const LiveDecodePage: React.FC = () => {
 		audioWorklet: null,
 		errorMsg: '',
 	});
+	const recorderRef = useRef<MyRecorder>();
+	recorderRef.current = recorder;
 
 	const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
 	const webSocketConnRef = useRef<WebSocket>();
@@ -110,30 +112,30 @@ const LiveDecodePage: React.FC = () => {
 			// console.log(event.data)
 			const { frame16Int, frame32FloatDownsampled } = event.data
 
-			let temp = allRecordedChunksRef.current
-			temp?.push(frame32FloatDownsampled)
-			setAllRecordedChunks(temp!)
-
-			// console.log(IS_DEBUGGING)
-			// console.log(webSocketConnRef.current)
-			if (!IS_DEBUGGING && webSocketConnRef.current) {
-				if (adaptationStateRef.current) {
-					console.log("[DEBUG] Sent adaptation state")
-					webSocketConnRef.current.send(JSON.stringify(adaptationStateRef.current))
+			// console.log(recorderRef.current?.isRecording);
+			if (recorderRef.current?.isRecording === true) {
+				if (!IS_DEBUGGING && webSocketConnRef.current) {
+					if (adaptationStateRef.current) {
+						console.log("[DEBUG] Sent adaptation state")
+						webSocketConnRef.current.send(JSON.stringify(adaptationStateRef.current))
+					}
+					var blob = new Blob([frame16Int], { type: 'audio/x-raw' });
+					webSocketConnRef.current.send(blob);
+					// console.log("[DEBUG] Sent WAV blob to backend");
 				}
-				var blob = new Blob([frame16Int], { type: 'audio/x-raw' });
-				webSocketConnRef.current.send(blob);
-				// console.log("[DEBUG] Sent WAV blob to backend");
+			} else {
+				setAllRecordedChunks(frame32FloatDownsampled);
 			}
+
 			// console.log(" ");
 		} // END onmessage
 
 		audioWorklet.port.start();
 		return audioWorklet;
-	}, [webSocketConn, IS_DEBUGGING]);
+	}, [IS_DEBUGGING]);
 
 	const onStartClick = () => {
-		console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING) 
+		console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING)
 		if (!IS_DEBUGGING) {
 			webSocketConn?.close()
 			const conn = liveDecodeSocket(token);
@@ -257,10 +259,9 @@ const LiveDecodePage: React.FC = () => {
 						'Something went terribly wrong, pleae contact an administrator!'
 					setRecorder(r => ({ ...r, isMicAccessGiven: false, errorMsg: msg }))
 				});
-		
+
 		return () => {
-			if(recorder.audioContext)
-				recorder.audioContext.close()
+			recorder.audioContext?.close()
 		}
 
 	}, [loadWorkletNode])
@@ -289,7 +290,7 @@ const LiveDecodePage: React.FC = () => {
 									{/* <VizSineWave stream={recorder.stream} /> */}
 									{
 										recorder.isMicAccessGiven && recorder.audioContext && recorder.stream ?
-											<VizFreqBars recorder={recorder}  /> :
+											<VizFreqBars recorder={recorder} /> :
 											<p>Loading Stream....</p>
 									}
 								</Grid.Column>

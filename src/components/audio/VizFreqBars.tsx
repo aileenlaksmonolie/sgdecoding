@@ -49,13 +49,9 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 			x += barWidth + 1;
 		}
-	}, [analyser]);
+	}, [isRecording]); // Do not add analyser
 
 	useEffect(() => {
-		if (canvasRef.current) {
-			width.current = canvasRef.current.width;
-			height.current = canvasRef.current.height;
-		}
 
 		console.log("isRecxording in FreqBars: " + isRecording)
 
@@ -63,6 +59,11 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 
 	useEffect(() => {
+		if (canvasRef.current) {
+			width.current = canvasRef.current.width;
+			height.current = canvasRef.current.height;
+		}
+
 		// We create a separate audio context here as we want to keep visualisation alive
 		// const audioContext = new (window.AudioContext || window.webkitAudioContext)()
 		var source: MediaStreamAudioSourceNode;
@@ -97,7 +98,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 			draw()
 		}
 
-	}, [stream, analyser, audioContext, draw])
+	}, [stream, audioContext, draw]) // Do not add analyser
 
 	return (
 		<canvas

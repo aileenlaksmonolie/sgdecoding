@@ -24,11 +24,18 @@ registerProcessor('buffer-detector', class extends AudioWorkletProcessor {
 
 		let bufferSize = quantumSize * this.quantaPerFrame;
 		this.frame_32Float = new Float32Array(bufferSize);
+		this.frame32FloatDownsampled = [];
 		this.frame_16Int = new Int16Array(Math.ceil(bufferSize / (micDefaultSampleRate / idealSampleRate)));
 
 		this.port.onmessage = ({ data }) => {
+			const { isRecording } = data;
 			console.log("[DEBUG] Audioworklet onmessage, isRecording: " + data.isRecording);
-			this.isRecording = data.isRecording;
+			this.isRecording = isRecording;
+
+			if(isRecording === false){
+				this.port.postMessage({ frame32FloatDownsampled: this.frame32FloatDownsampled });
+			}
+
 		}
 
 	}
@@ -85,8 +92,8 @@ registerProcessor('buffer-detector', class extends AudioWorkletProcessor {
 				// console.time("downsampling operation")
 				let downsampled = this.downsampleBuffer(this.frame_32Float, sampleRate, idealSampleRate)
 				downsampled.forEach((sample, index) => this.frame_16Int[index] = Math.floor(sample * 0x7FFF))
-
-				this.port.postMessage({ frame16Int: this.frame_16Int, frame32FloatDownsampled: downsampled });
+				this.frame32FloatDownsampled.push(downsampled);
+				this.port.postMessage({ frame16Int: this.frame_16Int });
 				this.quantaCount = 0
 			}
 		}
