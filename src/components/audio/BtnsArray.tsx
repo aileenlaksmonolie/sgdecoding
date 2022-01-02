@@ -169,10 +169,11 @@ const BtnsArray: React.FC<Props> = (
 							?
 							<Button 
 								icon="stop" fluid secondary onClick={onStopClick} 
-								content={`Stop (
-																${("0" + Math.floor((time/60) % 60)).slice(-2)}:
-																${("0" + Math.floor(time%60)).slice(-2)}
-																)`} />
+								content={`Stop (${("0" + Math.floor((time/3600) % 3600)).slice(-1)}:${
+																	("0" + Math.floor((time/60) % 60)).slice(-2)}:${
+																	("0" + Math.floor(time%60)).slice(-2)})`
+												} 
+							/>
 							:
 							<Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Redo" />
 				}
