@@ -1,7 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button, Container, Grid } from "semantic-ui-react";
 import { liveDecodeSocket } from "../../api/api";
+import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
 import { MyRecorder, RecordingStates, Transcription } from "../../pages/user/LiveDecodePage";
 import { RootState } from "../../state/reducers";
@@ -18,20 +19,17 @@ interface Props {
 	recorder: MyRecorder,
 	setRecorder: React.Dispatch<React.SetStateAction<MyRecorder>>,
 	webSocketRef: React.MutableRefObject<WebSocket | undefined>,
+	allRecordedChunks: Float32Array[]
 }
 
 
-/*
-	Input: setRecorder, audioWorklet.postMessage()
-	Output: websocketconn, transcriptObj, 
-*/
-
-// const BtnsArray: React.FC<Props> = ({worker, onStartCb, onStopCb}) => {
 const BtnsArray: React.FC<Props> = (
-	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder }
+	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks }
 ) => {
 	/* */
 	const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
+
+	const [time, setTime] = useState(0);
 
 	const [adaptationState, setAdaptationState] = useState<AdaptationState>();
 	const adaptationStateRef = useRef<AdaptationState>();
@@ -70,7 +68,7 @@ const BtnsArray: React.FC<Props> = (
 					}
 				} else if (response.status === 200) {
 					console.log("[DEBUG] Successfully connected to the server")
-					recorder.audioWorklet!.port.postMessage({ isRecording: true })
+					recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS })
 					setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS })
 				}
 			}
@@ -92,13 +90,13 @@ const BtnsArray: React.FC<Props> = (
 			setWebSocketConn(conn);
 			webSocketRef.current = conn;
 		} else {
-			recorder.audioWorklet!.port.postMessage({ isRecording: true });
+			recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS });
 			setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
 		}
 	}
 
 	const onStopClick = () => {
-		recorder.audioWorklet!.port.postMessage({ isRecording: false });
+		recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.STOPPED });
 		setRecorder({ ...recorder, isRecording: RecordingStates.STOPPED });
 
 		if (!IS_DEBUGGING) {
@@ -112,11 +110,52 @@ const BtnsArray: React.FC<Props> = (
 	}
 
 	const onDownloadClick = () => {
+		console.log("[DEBUG] createDownloadLink")
+		if (allRecordedChunks.length > 0) {
+			const config: ConvToWavConfig = {
+				sampleRate: 16000,
+				// desiredSampRate: 16000,
+				internalInterleavedLength: allRecordedChunks.length * allRecordedChunks[0].length,
+				monoChnlBuffer: allRecordedChunks,
+			}
 
+			convertToWAVFile(config, function (buffer: any, view: any) {
+				var blob = new Blob([buffer], { type: 'audio/x-wav' });
+				console.log(blob)
+
+				var url = URL.createObjectURL(blob);
+				var anchor = document.createElement('a')
+				anchor.style.display = 'none'
+				document.body.appendChild(anchor)
+				anchor.href = url
+				anchor.download = 'audio.wav'
+				anchor.onclick = () => {
+					requestAnimationFrame(() => {
+						URL.revokeObjectURL(anchor.href)
+					});
+					document.body.removeChild(anchor)
+				}
+				anchor.click()
+			})
+		} else {
+			console.error("[ERROR DEBUG] No recording found!")
+		}
 	}
 
 	/* */
+	useEffect(() => {
+		let interval: NodeJS.Timeout | null = null;
+		if(recorder.isRecording === RecordingStates.IN_PROGRESS){
+			interval = setInterval(() => {
+				setTime(prevTime => prevTime + 1)
+			}, 1000)
+		}
 
+		return () => {
+			if(interval)
+				clearInterval(interval);
+		}
+	})
 
 	return (
 		<Container id={styles.btnsArrayContainer}>
@@ -128,12 +167,17 @@ const BtnsArray: React.FC<Props> = (
 						:
 						recorder.isRecording === RecordingStates.IN_PROGRESS
 							?
-							<Button icon="stop" fluid secondary onClick={onStopClick} content="Stop" />
+							<Button 
+								icon="stop" fluid secondary onClick={onStopClick} 
+								content={`Stop (
+																${("0" + Math.floor((time/60) % 60)).slice(-2)}:
+																${("0" + Math.floor(time%60)).slice(-2)}
+																)`} />
 							:
 							<Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Redo" />
 				}
 			</Grid.Row>
-			<Grid.Row style={{marginTop: '12px' }}>
+			<Grid.Row style={{ marginTop: '12px' }}>
 				<Button
 					disabled={recorder.isRecording !== RecordingStates.STOPPED}
 					fluid

@@ -32,7 +32,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 		canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
 		canvasCtx!.fillRect(0, 0, width, height);
-		//TODO fix this!
+		//TODO important! Do not Remove. To be fixed!
 		var barWidth = ((width / bufferLength) * (width % 20));
 		// console.log(barWidth)
 		// console.log(bufferLength)

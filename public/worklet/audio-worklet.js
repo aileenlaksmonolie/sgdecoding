@@ -32,7 +32,7 @@ registerProcessor('buffer-detector', class extends AudioWorkletProcessor {
 			console.log("[DEBUG] Audioworklet onmessage, isRecording: " + data.isRecording);
 			this.isRecording = isRecording;
 
-			if(isRecording === false){
+			if(isRecording === "stopped"){
 				this.port.postMessage({ frame32FloatDownsampled: this.frame32FloatDownsampled });
 			}
 

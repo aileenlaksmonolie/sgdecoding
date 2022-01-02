@@ -3,7 +3,6 @@ import { Card, Container, Grid, Header, Icon, Label, TextArea } from "semantic-u
 import BtnsArray from "../../components/audio/BtnsArray";
 import NoMicAccess from "../../components/audio/NoMicAccess";
 import VizFreqBars from "../../components/audio/VizFreqBars";
-import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import styles from './LiveDecodePage.module.scss';
 
 export enum RecordingStates {
@@ -49,7 +48,6 @@ const LiveDecodePage: React.FC = () => {
 	// const adaptationStateRef = useRef<AdaptationState>();
 	// adaptationStateRef.current = adaptationState;
 
-	// TODO combine these 2 into 1
 	const [transcription, setTranscription] =
 		useState<Transcription>({
 			final: [],
@@ -57,8 +55,6 @@ const LiveDecodePage: React.FC = () => {
 		});
 
 	const [allRecordedChunks, setAllRecordedChunks] = useState<Float32Array[]>([]);
-	const allRecordedChunksRef = useRef<Array<Float32Array>>();
-	allRecordedChunksRef.current = allRecordedChunks;
 
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -114,7 +110,8 @@ const LiveDecodePage: React.FC = () => {
 					webSocketConnRef.current.send(blob);
 					// console.log("[DEBUG] Sent WAV blob to backend");
 				}
-			} else {
+			} else if (recorderRef.current?.isRecording === RecordingStates.STOPPED) {
+				// TODO save into store
 				setAllRecordedChunks(frame32FloatDownsampled);
 			}
 
@@ -125,41 +122,12 @@ const LiveDecodePage: React.FC = () => {
 		return audioWorklet;
 	}, [IS_DEBUGGING]);
 
-
-	const createDownloadLink = () => {
-		console.log("[DEBUG] createDownloadLink")
-		if (allRecordedChunks.length > 0) {
-			const config: ConvToWavConfig = {
-				sampleRate: 16000,
-				// desiredSampRate: 16000,
-				internalInterleavedLength: allRecordedChunks.length * allRecordedChunks[0].length,
-				monoChnlBuffer: allRecordedChunks,
-			}
-
-			convertToWAVFile(config, function (buffer: any, view: any) {
-				var blob = new Blob([buffer], { type: 'audio/x-wav' });
-				console.log(blob)
-
-				var url = URL.createObjectURL(blob);
-				var anchor = document.createElement('a')
-				anchor.style.display = 'none'
-				document.body.appendChild(anchor)
-				anchor.href = url
-				anchor.download = 'audio.wav'
-				anchor.onclick = () => {
-					requestAnimationFrame(() => {
-						URL.revokeObjectURL(anchor.href)
-					});
-					document.body.removeChild(anchor)
-				}
-				anchor.click()
-			})
-		} else {
-			console.error("[ERROR DEBUG] No recording found!")
-		}
-
+	const confirmNavAway = (e: BeforeUnloadEvent) => {
+		e.preventDefault();
+		// console.log(recorderRef.current?.isRecording)
+		if(recorderRef.current?.isRecording !== RecordingStates.NOT_STARTED)
+			e.returnValue = "";
 	}
-
 
 	useEffect(() => {
 		/*	
@@ -186,11 +154,18 @@ const LiveDecodePage: React.FC = () => {
 					setRecorder(r => ({ ...r, isMicAccessGiven: false, errorMsg: msg }))
 				});
 
+	/* 
+		Workaround as usePrompt/useBlocker is not yet available in React Router v6 
+		as of writing, Jan 2021. Ref: https://github.com/remix-run/react-router/issues/8139
+	*/
+		window.addEventListener('beforeunload', confirmNavAway);
+
 		return () => {
 			recorder.audioContext?.close()
+			window.removeEventListener('beforeunload', confirmNavAway)
 		}
-
 	}, [loadWorkletNode])
+
 
 	if (isLoading)
 		return <Container></Container>
@@ -244,6 +219,7 @@ const LiveDecodePage: React.FC = () => {
 										transcription={transcription}
 										setTranscription={setTranscription}
 										webSocketRef={webSocketConnRef}
+										allRecordedChunks={allRecordedChunks}
 									/>
 								</Grid.Column>
 								<Grid.Column width={13}>
@@ -268,10 +244,10 @@ const LiveDecodePage: React.FC = () => {
 								</Grid.Column>
 							</Grid.Row>
 							{/* Debug */}
-							<Grid.Row>
+							{/* <Grid.Row> */}
 								{/* {showDownload.show && <a href={showDownload.url} download="audio.wav">Download Test</a>} */}
-								<a onClick={createDownloadLink}>Download Test</a>
-							</Grid.Row>
+								{/* <a onClick={createDownloadLink}>Download Test</a>
+							</Grid.Row> */}
 						</Grid>
 					</Card.Content>
 				</Card>
