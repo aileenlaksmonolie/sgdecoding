@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { MyRecorder, RecordingStates } from "../../pages/user/LiveDecodePage";
 
 interface Props {
@@ -19,6 +19,8 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 	const [width, setWidth] = useState(0);
 	const [height, setHeight] = useState(0);
 
+	const [canvasCtx, setCanvasCtx] = useState<CanvasRenderingContext2D | null>();
+
 	var dataArray = useRef(new Uint8Array());
 
 
@@ -28,13 +30,10 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		var bufferLength: number = analyser.frequencyBinCount;
 		analyser.getByteFrequencyData(dataArray.current);
 
-
-		let canvasCtx = canvasRef.current.getContext("2d")
 		canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
 		canvasCtx!.fillRect(0, 0, width, height);
-
 		//TODO fix this!
-		var barWidth = ((width / bufferLength) * (width%20));
+		var barWidth = ((width / bufferLength) * (width % 20));
 		// console.log(barWidth)
 		// console.log(bufferLength)
 		var barHeight;
@@ -43,7 +42,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		for (var i = 0; i < bufferLength; i++) {
 			barHeight = dataArray.current[i];
 
-			if (isRecording === RecordingStates.NOT_STARTED) {
+			if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
 				canvasCtx!.fillStyle = 'rgb(' + (barHeight + 50) + ',50,150)';
 				canvasCtx!.fillRect(x, height - barHeight / 2, barWidth, barHeight / 2);
 			} else {
@@ -53,7 +52,8 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 			x += barWidth + 1;
 		}
-	}, [isRecording, height, width]); // Do not add analyser
+
+	}, [isRecording, height, width, canvasCtx]); // Do not add analyser
 
 	// useEffect(() => {
 
@@ -68,7 +68,6 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		// }
 		setWidth(containerRef.current!.clientWidth);
 		setHeight(containerRef.current!.clientHeight);
-		console.log(width + 'sadfj' + height)
 	}, [])
 
 
@@ -76,7 +75,8 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 		// We create a separate audio context here as we want to keep visualisation alive
 		// const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-		console.log(width + ' ' + height)
+		// console.log(width + ' ' + height)
+
 		if (width !== 0 && height !== 0) {
 			var source: MediaStreamAudioSourceNode;
 			var distortion: WaveShaperNode;
@@ -104,14 +104,15 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 			gainNode.connect(audioContext.destination);
 
 			// console.log(canvasRef.current)
-			let canvasCtx = canvasRef.current.getContext("2d")
+			setCanvasCtx(canvasRef.current.getContext("2d"));
 			if (canvasCtx) {
 				canvasCtx.clearRect(0, 0, width, height);
-				draw()
+				draw();
 			}
+
 		}
 
-	}, [stream, audioContext, draw, width, height]) // Do not add analyser
+	}, [stream, audioContext, draw, width, height, canvasCtx]) // Do not add analyser
 
 	return (
 		<div
