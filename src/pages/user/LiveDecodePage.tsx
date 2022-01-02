@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Card, Container, Grid, TextArea } from "semantic-ui-react";
+import { Card, Container, Grid, Header, Icon, Label, TextArea } from "semantic-ui-react";
 import BtnsArray from "../../components/audio/BtnsArray";
 import NoMicAccess from "../../components/audio/NoMicAccess";
 import VizFreqBars from "../../components/audio/VizFreqBars";
 import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import styles from './LiveDecodePage.module.scss';
 
-export enum RecordingStates{
-	NOT_STARTED="notstarted",
-	INPROGRESS="inprogress",
-	STOPPED="stopped"
+export enum RecordingStates {
+	NOT_STARTED = "notstarted",
+	IN_PROGRESS = "inprogress",
+	STOPPED = "stopped"
 }
 
 export interface MyRecorder {
@@ -21,7 +21,7 @@ export interface MyRecorder {
 	errorMsg: string
 }
 
-export interface Transcription { 
+export interface Transcription {
 	final: String[],
 	nonFinal: String
 }
@@ -104,7 +104,7 @@ const LiveDecodePage: React.FC = () => {
 			const { frame16Int, frame32FloatDownsampled } = event.data
 
 			// console.log(recorderRef.current?.isRecording);
-			if (recorderRef.current?.isRecording === RecordingStates.INPROGRESS) {
+			if (recorderRef.current?.isRecording === RecordingStates.IN_PROGRESS) {
 				if (!IS_DEBUGGING && webSocketConnRef.current) {
 					// if (adaptationStateRef.current) {
 					// 	console.log("[DEBUG] Sent adaptation state")
@@ -203,22 +203,48 @@ const LiveDecodePage: React.FC = () => {
 	else
 		return (
 			<Container id={styles.livePgContainer} textAlign="center">
-				<h1>Live Transcribe</h1>
-				<p>Live decoding transcribes your speech into text as you speak into the microphone. Click the start button to begin decoding!</p>
+				<Container id={styles.headerContainer}>
+					<Header as="h1">Live Transcribe</Header>
+					<p>Live decoding transcribes your speech into text as you speak into the microphone. Click the start button to begin decoding!</p>
+				</Container>
 				<Card fluid>
 					<Card.Content>
+						{
+							recorder.isRecording === RecordingStates.NOT_STARTED
+								?
+								<Label id={styles.readyToRecordState} className={styles.recordingStateLbl}>
+									<Icon name="info circle" />
+									Ready to Record
+								</Label>
+								:
+								recorder.isRecording === RecordingStates.IN_PROGRESS
+								?
+								<Label id={styles.inProgressState} className={`${styles.recordingStateLbl} green`}>
+									<Icon loading name="stop circle" />
+									<span>Recording</span> 
+									<span></span>
+								</Label>
+								:
+								<Label id={styles.finishedState} className={`${styles.recordingStateLbl} red`}>
+									<Icon name="stop circle outline" />
+									<span>Finished</span> 
+									<span></span>
+								</Label>
+
+
+						}
 						<Grid padded>
 							<Grid.Row>
 								<Grid.Column width={3}>
-									<BtnsArray 
+									<BtnsArray
 										key={transcription.final.length}
 										IS_DEBUGGING={IS_DEBUGGING}
 										recorder={recorder}
 										setRecorder={setRecorder}
-										transcription={transcription }
+										transcription={transcription}
 										setTranscription={setTranscription}
 										webSocketRef={webSocketConnRef}
-										/>
+									/>
 								</Grid.Column>
 								<Grid.Column width={13}>
 									{/* <VizSineWave stream={recorder.stream} /> */}

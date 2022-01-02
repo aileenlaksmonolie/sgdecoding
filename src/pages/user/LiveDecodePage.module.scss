@@ -1,4 +1,62 @@
+#livePgContainer {
+	#headerContainer {
+		margin-bottom: 64px;
+	}
 
-#livePgContainer{
+	.recordingStateLbl {
+		height: 40px;
+		width: 200px;
+		line-height: 20px;
+		box-shadow: 0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5;
+		position: relative;
+		top: -32px;
+		text-align: center;
+		
+		& > i {
+			font-size: 1.15rem;
+		}
+		&:nth-child(1){
+			font-size: 1.05rem;
+		}
 
+		&#readyToRecordState {
+			background: linear-gradient(130.06deg, #ff176b 11.6%, #3093cb 92.36%);
+			color: white;
+		}
+
+		&#inProgressState {
+			text-align: left;
+			padding-left: 44px;
+			
+			span:nth-child(2)::after {
+				content: "";
+				overflow: hidden;
+				animation: ellipsis-repeat 1.9s infinite 0.3s;
+				animation-fill-mode: forwards;
+			}
+		}
+
+
+
+		@keyframes ellipsis-repeat {
+			17% {
+				content: ".";
+			}
+			33% {
+				content: "..";
+			}
+			50% {
+				content: "...";
+			}
+			67% {
+				content: "... .";
+			}
+			83% {
+				content: "... ..";
+			}
+			100% {
+				content: "... ...";
+			}
+		}
+	}
 }

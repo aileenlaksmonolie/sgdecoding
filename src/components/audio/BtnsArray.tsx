@@ -71,7 +71,7 @@ const BtnsArray: React.FC<Props> = (
 				} else if (response.status === 200) {
 					console.log("[DEBUG] Successfully connected to the server")
 					recorder.audioWorklet!.port.postMessage({ isRecording: true })
-					setRecorder({ ...recorder, isRecording: RecordingStates.INPROGRESS })
+					setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS })
 				}
 			}
 
@@ -93,7 +93,7 @@ const BtnsArray: React.FC<Props> = (
 			webSocketRef.current = conn;
 		} else {
 			recorder.audioWorklet!.port.postMessage({ isRecording: true });
-			setRecorder({ ...recorder, isRecording: RecordingStates.INPROGRESS });
+			setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
 		}
 	}
 
@@ -124,25 +124,29 @@ const BtnsArray: React.FC<Props> = (
 				{
 					recorder.isRecording === RecordingStates.NOT_STARTED
 						?
-						<Button fluid primary onClick={onStartClick}>Start</Button>
+						<Button icon="circle" fluid primary onClick={onStartClick} content="Start" />
 						:
-						recorder.isRecording === RecordingStates.INPROGRESS
+						recorder.isRecording === RecordingStates.IN_PROGRESS
 							?
-							<Button fluid secondary onClick={onStopClick}>Stop</Button>
+							<Button icon="stop" fluid secondary onClick={onStopClick} content="Stop" />
 							:
-							<Button fluid basic color="orange" onClick={onRedoClick}>Redo</Button>
+							<Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Redo" />
 				}
 			</Grid.Row>
-			<Grid.Row>
+			<Grid.Row style={{marginTop: '12px' }}>
 				<Button
 					disabled={recorder.isRecording !== RecordingStates.STOPPED}
 					fluid
 					color="green"
 					onClick={onDownloadClick}
-				>
-					Download
-				</Button>
+					icon="cloud download"
+					content="Download"
+				/>
 			</Grid.Row>
+
+			{/* <Grid.Row>
+				<Button className="blue">Test Button</Button>
+			</Grid.Row> */}
 		</Container>
 	)
 }
