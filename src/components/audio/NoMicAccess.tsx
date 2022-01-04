@@ -48,4 +48,4 @@ const NoMicAccess: React.FC<Props> = ({ errorMsg }) => {
 	);
 }
 
-export default React.memo(NoMicAccess)
+export default NoMicAccess

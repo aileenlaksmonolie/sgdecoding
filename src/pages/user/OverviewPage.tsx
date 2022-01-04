@@ -16,4 +16,4 @@ const OverviewPage: React.FC = () => {
 	</Container>)
 }
 
-export default React.memo(OverviewPage);
+export default OverviewPage;

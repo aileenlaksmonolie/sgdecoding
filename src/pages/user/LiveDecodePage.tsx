@@ -212,7 +212,7 @@ const LiveDecodePage: React.FC = () => {
 							<Grid.Row>
 								<Grid.Column width={3}>
 									<BtnsArray
-										key={transcription.final.length}
+										// key={transcription.final.length}
 										IS_DEBUGGING={IS_DEBUGGING}
 										recorder={recorder}
 										setRecorder={setRecorder}
@@ -255,4 +255,4 @@ const LiveDecodePage: React.FC = () => {
 		);
 }
 
-export default React.memo(LiveDecodePage)
+export default LiveDecodePage

@@ -51,4 +51,4 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 	);
 }
 
-export default React.memo(LeftNavBar)
+export default LeftNavBar;

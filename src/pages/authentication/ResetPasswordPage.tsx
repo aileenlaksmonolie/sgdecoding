@@ -158,4 +158,4 @@ const ResetPasswordPage: React.FC = () => {
 	);
 }
 
-export default React.memo(ResetPasswordPage)
+export default ResetPasswordPage

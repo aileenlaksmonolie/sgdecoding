@@ -150,4 +150,4 @@ const LoginPage: React.FC = () => {
 		</Card.Content>);
 }
 
-export default React.memo(LoginPage)
+export default LoginPage;

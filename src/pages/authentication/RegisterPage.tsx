@@ -187,4 +187,4 @@ const RegisterPage: React.FC = () => {
 	);
 }
 
-export default React.memo(RegisterPage)
+export default RegisterPage

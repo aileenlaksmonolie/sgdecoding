@@ -100,4 +100,4 @@ const ForgotPwdPage: React.FC = () => {
 	);
 }
 
-export default React.memo(ForgotPwdPage)
+export default ForgotPwdPage

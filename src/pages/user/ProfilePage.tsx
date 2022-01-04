@@ -1,7 +1,6 @@
-import React, { FormEvent, useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button, Card, Checkbox, CheckboxProps, Container, Form, InputOnChangeData, Message, Header } from 'semantic-ui-react';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Card } from 'semantic-ui-react';
 import { RootState } from '../../state/reducers';
 
 const ProfilePage: React.FC = () => {
@@ -44,4 +43,4 @@ const ProfilePage: React.FC = () => {
   );
 }
 
-export default React.memo(ProfilePage);
+export default ProfilePage;

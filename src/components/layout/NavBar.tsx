@@ -51,4 +51,4 @@ const NavBar: React.FC = () => {
 	);
 }
 
-export default React.memo(NavBar);
+export default NavBar;

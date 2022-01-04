@@ -163,4 +163,4 @@ const ChangePasswordPage: React.FC = () => {
 	)
 }
 
-export default React.memo(ChangePasswordPage)
+export default ChangePasswordPage
