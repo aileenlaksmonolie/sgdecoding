@@ -11,3 +11,7 @@ export enum AuthTypes {
 	LOGOUT = 'logout',
 	ISADMIN = 'isAdmin'
 }
+
+export enum UserTranscriptionTypes{
+	SET_THIS_USER_HISTORY = 'set_user_transcription_history'
+}

@@ -36,7 +36,7 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 
 				<Menu.Item as={Link} to="/offlinetranscribe">
 					<Icon name='file audio' />
-					Offlive Transcribe
+					Offline Transcribe
 				</Menu.Item>
 
 			</Sidebar>

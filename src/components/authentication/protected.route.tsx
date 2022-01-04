@@ -13,10 +13,12 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
 	const isLoggedIn = useSelector((state: RootState) => state.authReducer.token) !== ''
 
   if(isLoggedIn) {
-		console.info("[DEBUG] ProtectedRoute: User is logged in, navigating to protected route") 
+		console.info("[DEBUG] ProtectedRoute: User is logged in, navigating to protected route");
+		
+
 		return children;
   }
 
-	console.info("[DEBUG] ProtectedRoute: User is NOT logged in, going to /login") 
+	console.info("[DEBUG] ProtectedRoute: User is NOT logged in, going to /login");
   return <Navigate to='/auth/login' />;
 };

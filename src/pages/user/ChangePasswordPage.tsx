@@ -2,9 +2,9 @@ import { AxiosError, AxiosResponse } from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Card, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
-import { sendChangePasswordRequest } from '../../api/auth';
+import { sendChangePasswordRequest } from '../../api/auth-api';
 import { UserChangePassword, UserChangePasswordResponse } from '../../models/UserChangePassword.model';
 import { RootState } from '../../state/reducers';
 

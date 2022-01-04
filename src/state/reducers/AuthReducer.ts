@@ -10,6 +10,7 @@ export const INITIAL_STATE = {
 	name: '',
 	role: '',
 	sub: '',
+	email:''
 }
 
 const reducer = (state = INITIAL_STATE, action: AuthAction) => {
@@ -20,8 +21,8 @@ const reducer = (state = INITIAL_STATE, action: AuthAction) => {
 
 		case AuthTypes.LOGIN_SUCCESS:
 			const { token } = action
-			const { exp, name, role, sub } = jwtDecode<JwtPayload>(token) as Token
-			return { ...state, token, exp: new Date(exp * 1000), name, role, sub }
+			const { exp, name, role, sub, email } = jwtDecode<JwtPayload>(token) as Token
+			return { ...state, token, exp: new Date(exp * 1000), name, role, sub, email }
 
 		case AuthTypes.LOGOUT:
 		case AuthTypes.LOGIN_FAIL:

@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { loginOneUser } from "../../api/auth";
+import { loginOneUser } from "../../api/auth-api";
 import { UserLoginModel } from '../../models/UserLogin.model';
 import { AuthAction } from '../actions-types/AuthAction';
 import { AuthTypes } from '../types/index';

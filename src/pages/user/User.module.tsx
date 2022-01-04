@@ -3,9 +3,9 @@ import Layout from "../../components/layout/Layout";
 import NotFoundPage from "../authentication/NotFoundPage";
 import ChangePasswordPage from "./ChangePasswordPage";
 import LiveDecodePage from "./LiveDecodePage";
+import OfflineTranscribePage from "./offline-transcribe-page";
 import OverviewPage from "./OverviewPage";
 import ProfilePage from "./ProfilePage";
-import ViewAllOfflineJobsPage from "./ViewAllOfflineJobsPage";
 
 
 const UserModule: React.FC = () => {
@@ -16,7 +16,7 @@ const UserModule: React.FC = () => {
 				<Route path='/' element={<OverviewPage />}></Route>	
 				<Route path='overview' element={<OverviewPage />}></Route>	
 				<Route path='livetranscribe' element={<LiveDecodePage />}></Route>	
-				<Route path='viewalljobs' element={<ViewAllOfflineJobsPage />}></Route>	
+				<Route path='offlinetranscribe' element={<OfflineTranscribePage />}></Route>	
 				<Route path='profile' element={<ProfilePage />}></Route>	
 				<Route path='changepassword' element={<ChangePasswordPage />}></Route>	
 				<Route path='*' element={<NotFoundPage />}></Route>	

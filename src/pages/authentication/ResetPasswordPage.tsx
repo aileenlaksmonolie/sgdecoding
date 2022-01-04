@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Card, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
-import { sendResetPasswordRequest } from '../../api/auth';
+import { sendResetPasswordRequest } from '../../api/auth-api';
 import { UserResetPassword, UserResetPasswordResponse } from '../../models/UserResetPassword.model';
 import { RootState } from '../../state/reducers';
 import classes from './Authentication.module.scss';

@@ -6,6 +6,7 @@ import AuthenticationModule from './pages/authentication/Authentication.module';
 import NotFoundPage from './pages/authentication/NotFoundPage';
 import UserModule from './pages/user/User.module';
 
+
 function App() {
 
 	return (
