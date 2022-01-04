@@ -19,7 +19,7 @@
 
 	#pusherContainer	{
 		width: calc(100% - 256px);
-		height: calc(100% + 224px);
+		min-height: calc(100% + 224px);
 		// left: 256px;
 		float: right;
 		padding-top: 64px;
