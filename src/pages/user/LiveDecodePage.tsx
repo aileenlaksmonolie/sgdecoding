@@ -157,6 +157,7 @@ const LiveDecodePage: React.FC = () => {
 	/* 
 		Workaround as usePrompt/useBlocker is not yet available in React Router v6 
 		as of writing, Jan 2021. Ref: https://github.com/remix-run/react-router/issues/8139
+		TODO https://gist.github.com/rmorse/426ffcc579922a82749934826fa9f743
 	*/
 		window.addEventListener('beforeunload', confirmNavAway);
 

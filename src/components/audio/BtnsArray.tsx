@@ -70,6 +70,8 @@ const BtnsArray: React.FC<Props> = (
 					console.log("[DEBUG] Successfully connected to the server")
 					recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS })
 					setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS })
+
+
 				}
 			}
 
@@ -92,6 +94,7 @@ const BtnsArray: React.FC<Props> = (
 		} else {
 			recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS });
 			setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
+
 		}
 	}
 
@@ -145,15 +148,20 @@ const BtnsArray: React.FC<Props> = (
 	/* */
 	useEffect(() => {
 		let interval: NodeJS.Timeout | null = null;
-		if(recorder.isRecording === RecordingStates.IN_PROGRESS){
+
+		if (recorder.isRecording === RecordingStates.IN_PROGRESS) {
 			interval = setInterval(() => {
+				console.log(time)
 				setTime(prevTime => prevTime + 1)
-			}, 1000)
+			}, 1000);
 		}
 
 		return () => {
-			if(interval)
+			console.log("[DEBUG] BtnsArray Unmounted")
+			if (interval !== null) {
+				console.log("[DEBUG] Cleared Interval")
 				clearInterval(interval);
+			}
 		}
 	})
 
@@ -167,12 +175,10 @@ const BtnsArray: React.FC<Props> = (
 						:
 						recorder.isRecording === RecordingStates.IN_PROGRESS
 							?
-							<Button 
-								icon="stop" fluid secondary onClick={onStopClick} 
-								content={`Stop (${("0" + Math.floor((time/3600) % 3600)).slice(-1)}:${
-																	("0" + Math.floor((time/60) % 60)).slice(-2)}:${
-																	("0" + Math.floor(time%60)).slice(-2)})`
-												} 
+							<Button
+								icon="stop" fluid secondary onClick={onStopClick}
+								content={`Stop (${("0" + Math.floor((time / 3600) % 3600)).slice(-1)}:${("0" + Math.floor((time / 60) % 60)).slice(-2)}:${("0" + Math.floor(time % 60)).slice(-2)})`
+								}
 							/>
 							:
 							<Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Redo" />
@@ -196,4 +202,6 @@ const BtnsArray: React.FC<Props> = (
 	)
 }
 
-export default BtnsArray
+// TODO IMPORTANT
+//https://codepen.io/anon/pen/ywJxzV?editors=1111
+export default React.memo(BtnsArray)
