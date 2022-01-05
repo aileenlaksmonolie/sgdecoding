@@ -8,12 +8,12 @@ const quantumSize = 128
 
 // (1/48khz)*128*93 = 248ms (0.25s)
 // (1/48khz)*128*37 = 98.6666ms (0.98s)
-const quantaPerFrame = 93
+const quantaPerFrame = 40
 
 const micDefaultSampleRate = 48000
 const idealSampleRate = 16000
 
-registerProcessor('buffer-detector', class extends AudioWorkletProcessor {
+registerProcessor('audio-processor', class extends AudioWorkletProcessor {
 	constructor(options) {
 		super()
 		// this._webSocket = null;
@@ -102,7 +102,7 @@ registerProcessor('buffer-detector', class extends AudioWorkletProcessor {
 
 	static get parameterDescriptors() {
 		return [{
-			name: 'buffer-detector',
+			name: 'audio-processor',
 		}]
 	}
 

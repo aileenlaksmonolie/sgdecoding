@@ -21,7 +21,7 @@ export interface LiveTranscriptionHistory {
 		forgetPasswordCode: string,
 		forgetPasswordCodeSentAt: string
 	},
-	input: [
+	input: Array<
 		{
 			isSubmitted: boolean,
 			errorCode: number,
@@ -41,7 +41,7 @@ export interface LiveTranscriptionHistory {
 				createdAt: string
 			}
 		}
-	],
+	>,
 	type: string,
 	sourceFile: {
 		children: [],
@@ -131,6 +131,6 @@ export type TranscriptionHistory = LiveTranscriptionHistory | BatchTranscription
 
 
 export interface OneUserTranscriptionHistory {
-	history: TranscriptionHistory[],
+	history: Array<LiveTranscriptionHistory | BatchTranscriptionHistory>,
 	totalHistory: number
 }

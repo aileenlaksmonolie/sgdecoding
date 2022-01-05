@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router";
 import { Card, Container, Grid, Header, Icon, Label, TextArea } from "semantic-ui-react";
 import BtnsArray from "../../components/audio/BtnsArray";
 import NoMicAccess from "../../components/audio/NoMicAccess";
@@ -27,7 +28,7 @@ export interface Transcription {
 
 const LiveDecodePage: React.FC = () => {
 	/* Declarations */
-	const IS_DEBUGGING: boolean = false;
+	const IS_DEBUGGING: boolean = true;
 
 	const [recorder, setRecorder] = useState<MyRecorder>({
 		isMicAccessGiven: false,
@@ -39,6 +40,8 @@ const LiveDecodePage: React.FC = () => {
 	});
 	const recorderRef = useRef<MyRecorder>();
 	recorderRef.current = recorder;
+
+	const location = useLocation();
 
 	// const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
 	const webSocketConnRef = useRef<WebSocket>();
@@ -90,7 +93,7 @@ const LiveDecodePage: React.FC = () => {
 	const loadWorkletNode = useCallback(async (audioCtx: AudioContext, stream: MediaStream) => {
 		await audioCtx.audioWorklet.addModule('worklet/audio-worklet.js');
 		const source: MediaStreamAudioSourceNode = audioCtx.createMediaStreamSource(stream)
-		const audioWorklet = new AudioWorkletNode(audioCtx, 'buffer-detector', { outputChannelCount: [1] })
+		const audioWorklet = new AudioWorkletNode(audioCtx, 'audio-processor', { outputChannelCount: [1] })
 		source.connect(audioWorklet)
 
 		audioWorklet.port.onmessage = async (event) => {
@@ -128,6 +131,12 @@ const LiveDecodePage: React.FC = () => {
 		if(recorderRef.current?.isRecording !== RecordingStates.NOT_STARTED)
 			e.returnValue = "";
 	}
+
+	useEffect(()=>{
+		// if(recorder.isRecording === RecordingStates.IN_PROGRESS)
+		console.log(location)
+		// 	window.confirm("are you sure?")
+	}, [location])
 
 	useEffect(() => {
 		/*	

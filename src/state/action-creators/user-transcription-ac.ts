@@ -10,7 +10,6 @@ import { OneUserTranscriptionHistory } from './../../models/transcribe-history-r
 
 export const getLoggedInUserTranscriptionHistory = () => {
 	return async (dispatch: Dispatch) => {
-		console.log("Dispatched!!")
 		const { email } = store.getState().authReducer;
 
 		await getOneUserSpeechHistory(email).then(
