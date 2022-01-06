@@ -22,13 +22,14 @@ const OfflineTranscribePage: React.FC = () => {
 	const [itemsToDisplay, setItemsToDisplay] = useState<Array<LiveTranscriptionHistory | BatchTranscriptionHistory>>([]);
 	const [filteredHistory, setFilteredHistory] = useState<Array<LiveTranscriptionHistory | BatchTranscriptionHistory>>([]);
 
-	const [filters, setFilters] = useState({
+	const [filters, setFilters] = useState<{type: string, lang: string[], duration: string}>({
 		type: '',
-		lang: [''],
+		lang: [],
 		duration: ''
 	});
 
 	const typeFilterOptions = [
+		{ key: 'none', text: 'Both', value: ''},
 		{ key: 'live', text: "Live", value: 'live' },
 		{ key: 'batch', text: "Offline", value: 'batch' }
 	]
@@ -42,20 +43,26 @@ const OfflineTranscribePage: React.FC = () => {
 	]
 
 	const lengthFilterOptions = [
+		{ key:'all', text: 'All', value: ''},
 		{ key: 'short', text: '< 3 mins', value: 'short' },
 		{ key: 'medium', text: '3 - 10mins', value: 'medium' },
 		{ key: 'long', text: '> 10mins', value: 'long' }
 	]
 
 	const handleTypeFilterChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+		console.log(data)
 		setFilters({ ...filters, type: data.value as string });
 	}
 
 	const handleLangFilterChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+		console.log(data)
+		// if(data.value !== '')
 		setFilters({ ...filters, lang: data.value as [] })
+		console.log(filters)
 	}
 
 	const handleLengthFilterChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+		console.log(data)
 		setFilters({ ...filters, duration: data.value as string })
 	}
 
@@ -70,14 +77,14 @@ const OfflineTranscribePage: React.FC = () => {
 	}
 
 	useEffect(() => {
-		// getLoggedInUserTranscriptionHistory()
+		getLoggedInUserTranscriptionHistory()
 	}, []);
 
 	useEffect(() => {
 		console.log("[DEBUG] Num of transcription history: " + totalHistory);
 		console.log(filters)
 
-		if (filters.duration === '' && filters.lang[0] === '' && filters.type === '') {
+		if (filters.duration === '' && filters.lang.length === 0 && filters.type === '') {
 			console.log("[DEBUG] Not Filtering");
 			console.log(history);
 			setNoOfPages(Math.ceil(totalHistory / ITEMS_PER_PAGE));
@@ -100,7 +107,7 @@ const OfflineTranscribePage: React.FC = () => {
 				if (filters.type !== '' && i.type !== filters.type)
 					return false;
 
-				if (filters.lang[0] !== '' && !filters.lang.includes(i.lang))
+				if (filters.lang.length !== 0 && !filters.lang.includes(i.lang))
 					return false;
 
 				return true;
