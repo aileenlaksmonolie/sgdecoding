@@ -11,6 +11,10 @@
 		background: #ffe2b7;
 	}
 
+	#listPaginator{
+		float: right;
+	}
+
 	.historyList {
 		min-height: 420px;
 	}
@@ -53,4 +57,5 @@
 		display: inline-block;
 		margin-left: 16px;
 	}
+
 }

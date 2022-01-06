@@ -3,8 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useForm } from 'react-hook-form';
 import Moment from 'react-moment';
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import { Button, Card, Container, Dropdown, DropdownProps, Form, Grid, Header, Icon, InputOnChangeData, List, Pagination, PaginationProps, Popup } from "semantic-ui-react";
+import DownloadTranscriptButton from '../../components/audio/download-transcript-btn';
 import { BatchTranscriptionHistory, LiveTranscriptionHistory } from '../../models/transcribe-history-response.model';
 import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
@@ -281,7 +283,15 @@ const OfflineTranscribePage: React.FC = () => {
 				<Grid.Column width={3}>
 					<Popup
 						id={styles.dateFilterPopup}
-						trigger={<Button basic fluid>Filter Dates</Button>}
+						trigger={
+							<Button basic fluid>{ 
+								filters.startDate !== '' 
+								?
+								moment(filters.startDate).format("DD MMM YY") + " - " + moment(filters.endDate).format("DD MMM YY") 
+								: 
+								"Filter Dates"}
+								</Button>
+						}
 						flowing
 						hideOnScroll
 						on="click"
@@ -298,8 +308,6 @@ const OfflineTranscribePage: React.FC = () => {
 									type='date'
 									defaultValue={defDateVals?.startDate}
 									onChange={onDateInputChange}
-									// onBlur={onInputBlur}
-									// disabled={isDisabled}
 									error={errors.startDate ? { content: errors.startDate.message } : false}
 								/>
 							</Form.Field>
@@ -311,28 +319,10 @@ const OfflineTranscribePage: React.FC = () => {
 									type='date'
 									defaultValue={defDateVals?.endDate}
 									onChange={onDateInputChange}
-									// onBlur={onInputBlur}
-									// disabled={isDisabled}
 									error={errors.endDate ? { content: errors.endDate.message } : false}
 								/>
 							</Form.Field>
 						</Form>
-						{/* <Grid centered divided columns={2}>
-							<Grid.Column textAlign='center'>
-								<Header as='h4'>Basic Plan</Header>
-								<p>
-									<b>2</b> projects, $10 a month
-								</p>
-								<Button>Choose</Button>
-							</Grid.Column>
-							<Grid.Column textAlign='center'>
-								<Header as='h4'>Business Plan</Header>
-								<p>
-									<b>5</b> projects, $20 a month
-								</p>
-								<Button>Choose</Button>
-							</Grid.Column>
-						</Grid> */}
 					</Popup>
 				</Grid.Column>
 				<Grid.Column></Grid.Column>
@@ -348,8 +338,8 @@ const OfflineTranscribePage: React.FC = () => {
 							className={styles.historyItem}
 						>
 							<List.Content floated='right' className={styles.historyItemBtns}>
-								<Button color="blue">View</Button>
-								<Button color="green">Download</Button>
+								<Button color="blue" as={Link} to={`/viewonetranscript?id=${h._id}`}>View</Button>
+								<DownloadTranscriptButton />
 								<Button color="red" disabled>Delete</Button>
 							</List.Content>
 							{
@@ -391,6 +381,7 @@ const OfflineTranscribePage: React.FC = () => {
 
 			{/* Paginator */}
 			<Pagination
+				id={styles.listPaginator}
 				defaultActivePage={1}
 				onPageChange={handlePageChange}
 				ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
