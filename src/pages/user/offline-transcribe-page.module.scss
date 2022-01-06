@@ -1,53 +1,55 @@
+// Have to be placed outside as it is rendered separetely
+#dateFilterPopup {
+	width: 200px;
+}
 
-#offlineTranscribePg{
-	
-	#introSection{
+#offlineTranscribePg {
+	#introSection {
 		padding-top: 36px;
 		padding-bottom: 36px;
 		border-radius: 24px;
-		background: #FFE2B7;
+		background: #ffe2b7;
 	}
 
-	.historyList{
+	.historyList {
 		min-height: 420px;
 	}
 
-	.historyItemBtns{
+	.historyItemBtns {
 		line-height: 52px;
 	}
 
-	.historyItem{
-		&:hover{
+	.historyItem {
+		&:hover {
 			background: #f0f0f0;
 			transition: background 0.3s linear;
 		}
 	}
 
-	.historyItemIcon{
-		
-		i:nth-child(1){
-			background: linear-gradient(134.72deg, #166BEA 0%, #6F3BDD 99.54%);	
+	.historyItemIcon {
+		i:nth-child(1) {
+			background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
 			-webkit-background-clip: text;
 			-moz-background-clip: text;
 			background-clip: text;
-		 	-webkit-text-fill-color:transparent;
-			&.historyItemIconError{
+			-webkit-text-fill-color: transparent;
+			&.historyItemIconError {
 				background: orangered;
 				-webkit-background-clip: text;
 				-moz-background-clip: text;
 				background-clip: text;
-				-webkit-text-fill-color:transparent;
+				-webkit-text-fill-color: transparent;
 			}
 		}
 
-		i:nth-child(2){
+		i:nth-child(2) {
 			color: white;
 			font-size: 0.7em;
 			left: 48%;
 		}
 	}
 
-	.historyItemContent{
+	.historyItemContent {
 		display: inline-block;
 		margin-left: 16px;
 	}

@@ -1,9 +1,10 @@
 import moment from 'moment';
 import React, { useEffect, useState } from "react";
+import { useForm } from 'react-hook-form';
 import Moment from 'react-moment';
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
-import { Button, Card, Container, Dropdown, DropdownProps, Grid, Header, Icon, List, Pagination, PaginationProps, Portal, Segment } from "semantic-ui-react";
+import { Button, Card, Container, Dropdown, DropdownProps, Form, Grid, Header, Icon, InputOnChangeData, List, Pagination, PaginationProps, Popup } from "semantic-ui-react";
 import { BatchTranscriptionHistory, LiveTranscriptionHistory } from '../../models/transcribe-history-response.model';
 import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
@@ -11,10 +12,17 @@ import styles from './offline-transcribe-page.module.scss';
 
 const ITEMS_PER_PAGE = 7;
 
+interface TranscriptionHistoryFilter {
+	type: string,
+	lang: string[],
+	duration: string,
+	startDate: string,
+	endDate: string
+}
+
 const OfflineTranscribePage: React.FC = () => {
 
 	const { history, totalHistory } = useSelector((state: RootState) => state.transcriptionHistoryReducer)
-
 	const dispatch = useDispatch();
 	const { getLoggedInUserTranscriptionHistory } = bindActionCreators(actionCreators, dispatch)
 
@@ -22,17 +30,21 @@ const OfflineTranscribePage: React.FC = () => {
 	const [itemsToDisplay, setItemsToDisplay] = useState<Array<LiveTranscriptionHistory | BatchTranscriptionHistory>>([]);
 	const [filteredHistory, setFilteredHistory] = useState<Array<LiveTranscriptionHistory | BatchTranscriptionHistory>>([]);
 
-	const [filters, setFilters] = useState<{type: string, lang: string[], duration: string}>({
+	const [defDateVals, setDefDateVals] = useState<{ startDate: string, endDate: string }>(); // workaround, can't get setValue to work
+
+	const [filters, setFilters] = useState<TranscriptionHistoryFilter>({
 		type: '',
 		lang: [],
-		duration: ''
+		duration: '',
+		startDate: '',
+		endDate: ''
 	});
 
 	const typeFilterOptions = [
-		{ key: 'none', text: 'Both', value: ''},
+		{ key: 'none', text: 'Both', value: '' },
 		{ key: 'live', text: "Live", value: 'live' },
 		{ key: 'batch', text: "Offline", value: 'batch' }
-	]
+	];
 
 	const langFilterOptions = [
 		{ key: 'english', text: 'English', value: 'english' },
@@ -40,14 +52,23 @@ const OfflineTranscribePage: React.FC = () => {
 		{ key: 'mandarin', text: 'Mandarin', value: 'mandarin' },
 		{ key: 'english-malay', text: 'English-Malay', value: 'english-malay' },
 		{ key: 'english-mandarin', text: 'English-Mandarin', value: 'english-mandarin' }
-	]
+	];
+
+	const {
+		register,
+		setValue,
+		watch,
+		getValues,
+		trigger,
+		formState: { errors }
+	} = useForm({ mode: 'onChange' });
 
 	const lengthFilterOptions = [
-		{ key:'all', text: 'All', value: ''},
+		{ key: 'all', text: 'All', value: '' },
 		{ key: 'short', text: '< 3 mins', value: 'short' },
 		{ key: 'medium', text: '3 - 10mins', value: 'medium' },
 		{ key: 'long', text: '> 10mins', value: 'long' }
-	]
+	];
 
 	const handleTypeFilterChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
 		console.log(data)
@@ -72,53 +93,102 @@ const OfflineTranscribePage: React.FC = () => {
 		activePage = activePage as number;
 		let startIdx = (ITEMS_PER_PAGE * (activePage - 1))
 		let endIdx = ((activePage * ITEMS_PER_PAGE))
-		setItemsToDisplay(filteredHistory.slice(startIdx, endIdx))
+		setItemsToDisplay(filteredHistory.slice(startIdx, endIdx));
 		// }
 	}
 
-	useEffect(() => {
-		getLoggedInUserTranscriptionHistory()
-	}, []);
+	const handlePopupOpen = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+		console.log("[DEBUG] Form values when popup triggered");
+		console.log(getValues("startDate"));
+		console.log(getValues("endDate"));
+
+		if (filters.startDate === '' && filters.endDate === '') {
+			console.log("setting form default values")
+			let startDate = history[history.length - 1].createdAt.slice(0, 10);
+			let endDate = history[0].createdAt.slice(0, 10);
+			setFilters({ ...filters, startDate, endDate });
+
+			// Set the default start date and end date in filters
+			setDefDateVals({ startDate, endDate });
+			setValue("startDate", startDate);
+			setValue("endDate", endDate);
+		}
+	}
+
+	const onDateInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
+		setValue(name, value);
+		trigger(['startDate', 'endDate']);
+		setFilters({ ...filters, startDate: getValues("startDate"), endDate: getValues("endDate") });
+		// because form is re-created when popup is opened again
+		setDefDateVals({ startDate: getValues("startDate"), endDate: getValues("endDate") });
+	}
 
 	useEffect(() => {
-		console.log("[DEBUG] Num of transcription history: " + totalHistory);
-		console.log(filters)
+		getLoggedInUserTranscriptionHistory();
 
-		if (filters.duration === '' && filters.lang.length === 0 && filters.type === '') {
-			console.log("[DEBUG] Not Filtering");
-			console.log(history);
+		register("startDate", {
+			// valueAsDate: true,
+			validate: sD => sD <= getValues("endDate") || 'Start Date must be before or same as End Date'
+		});
+
+		register("endDate", {
+			// valueAsDate: true,
+			validate: eD => eD >= getValues("startDate") || 'End Date must be after or same as Start Date'
+		});
+
+	}, [register, getValues]);
+
+	/**
+	 * Set the paginator and display the first transcription history
+	 */
+	useEffect(() => {
+		console.log("[DEBUG] Total Transcription History count: " + totalHistory);
+		console.log(history);
+
+		if (history.length > 0) {
 			setNoOfPages(Math.ceil(totalHistory / ITEMS_PER_PAGE));
 			let firstItems = history.slice(0, ITEMS_PER_PAGE);
 			setFilteredHistory(history);
 			setItemsToDisplay(firstItems);
-		} else {
-			console.log("[DEBUG] Filtering history")
-			let filteredItems = history.filter((i) => {
-				let audioDuration = (i as LiveTranscriptionHistory).liveSessionDuration | i.input[0].file.duration;
-				if (filters.duration !== '') {
-					if (filters.duration === 'short' && (audioDuration > 180))
-						return false;
-					else if (filters.duration === 'medium' && audioDuration < 180 && audioDuration > 600)
-						return false;
-					else if (filters.duration === 'long' && audioDuration < 600)
-						return false;
-				}
-
-				if (filters.type !== '' && i.type !== filters.type)
-					return false;
-
-				if (filters.lang.length !== 0 && !filters.lang.includes(i.lang))
-					return false;
-
-				return true;
-			})
-			// console.log(filteredItems);
-			setFilteredHistory(filteredItems);
-			setItemsToDisplay(filteredItems.slice(0, ITEMS_PER_PAGE));
-			setNoOfPages(Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
 		}
+	}, [history, totalHistory]);
 
-	}, [history, totalHistory, filters])
+	/**
+	 * Change the displayed transcription history as user changed the filters
+	 */
+	useEffect(() => {
+		console.log("[DEBUG] Filtering ... ...");
+		console.log(history)
+		let filteredItems = history.filter((i) => {
+			let audioDuration = (i as LiveTranscriptionHistory).liveSessionDuration | i.input[0].file.duration;
+			if (filters.duration !== '') {
+				if (filters.duration === 'short' && (audioDuration > 180))
+					return false;
+				else if (filters.duration === 'medium' && audioDuration < 180 && audioDuration > 600)
+					return false;
+				else if (filters.duration === 'long' && audioDuration < 600)
+					return false;
+			}
+
+			if (filters.type !== '' && i.type !== filters.type)
+				return false;
+
+			if (filters.lang.length !== 0 && !filters.lang.includes(i.lang))
+				return false;
+
+			if (filters.startDate !== '' && filters.endDate !== '') {
+				if (i.createdAt.slice(0, 10) < filters.startDate
+					|| i.createdAt.slice(0, 10) > filters.endDate)
+					return false
+			}
+
+			return true;
+		});
+		// console.log(filteredItems);
+		setFilteredHistory(filteredItems);
+		setItemsToDisplay(filteredItems.slice(0, ITEMS_PER_PAGE));
+		setNoOfPages(Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
+	}, [filters]);
 
 
 	const renderIcon = (h: (LiveTranscriptionHistory | BatchTranscriptionHistory)) => {
@@ -209,38 +279,61 @@ const OfflineTranscribePage: React.FC = () => {
 					/>
 				</Grid.Column>
 				<Grid.Column width={3}>
-					<Button
-						content='Filter Dates'
-						disabled={false}
-						basic
-						fluid
-						// color="grey"
-					// onClick={handleOpen}
-					/>
-
-					<Portal
-					// onClose={handleClose} 
-					// open={open}
+					<Popup
+						id={styles.dateFilterPopup}
+						trigger={<Button basic fluid>Filter Dates</Button>}
+						flowing
+						hideOnScroll
+						on="click"
+						onOpen={handlePopupOpen}
 					>
-						<Segment
-							style={{
-								left: '40%',
-								position: 'fixed',
-								top: '50%',
-								zIndex: 1000,
-							}}
+						<Form
+							noValidate
 						>
-							<Header>This is a controlled portal</Header>
-							<p>Portals have tons of great callback functions to hook into.</p>
-							<p>To close, simply click the close button or click away</p>
-
-							<Button
-								content='Close Portal'
-								negative
-							// onClick={handleClose}
-							/>
-						</Segment>
-					</Portal>
+							<Form.Field >
+								<Form.Input
+									fluid
+									label="Start Date"
+									name="startDate"
+									type='date'
+									defaultValue={defDateVals?.startDate}
+									onChange={onDateInputChange}
+									// onBlur={onInputBlur}
+									// disabled={isDisabled}
+									error={errors.startDate ? { content: errors.startDate.message } : false}
+								/>
+							</Form.Field>
+							<Form.Field>
+								<Form.Input
+									fluid
+									label="End Date"
+									name="endDate"
+									type='date'
+									defaultValue={defDateVals?.endDate}
+									onChange={onDateInputChange}
+									// onBlur={onInputBlur}
+									// disabled={isDisabled}
+									error={errors.endDate ? { content: errors.endDate.message } : false}
+								/>
+							</Form.Field>
+						</Form>
+						{/* <Grid centered divided columns={2}>
+							<Grid.Column textAlign='center'>
+								<Header as='h4'>Basic Plan</Header>
+								<p>
+									<b>2</b> projects, $10 a month
+								</p>
+								<Button>Choose</Button>
+							</Grid.Column>
+							<Grid.Column textAlign='center'>
+								<Header as='h4'>Business Plan</Header>
+								<p>
+									<b>5</b> projects, $20 a month
+								</p>
+								<Button>Choose</Button>
+							</Grid.Column>
+						</Grid> */}
+					</Popup>
 				</Grid.Column>
 				<Grid.Column></Grid.Column>
 			</Grid>
