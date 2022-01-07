@@ -2,11 +2,13 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Card } from 'semantic-ui-react';
 import { RootState } from '../../state/reducers';
+import ModalUploadFile from "../../modals/ModalUploadFile"
 
 const ProfilePage: React.FC = () => {
-		const { name, role, rmbMeEmail } = useSelector((state: RootState) => state.authReducer)
+	const { name, role, rmbMeEmail } = useSelector((state: RootState) => state.authReducer)
 	return (
 		<Card.Group>
+			<ModalUploadFile></ModalUploadFile>
 		<Card>
 			<Card.Content>
 			<Card.Header>Username</Card.Header>
@@ -40,6 +42,7 @@ const ProfilePage: React.FC = () => {
 			</Card.Content>
 		</Card>
 		</Card.Group>
+		
   );
 }
 
