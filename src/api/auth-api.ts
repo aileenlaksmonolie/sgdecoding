@@ -18,23 +18,6 @@ export const registerOneUser = (newUser: NewUserRegistration) => {
 		{ name: newUser.name, email: newUser.email, password: newUser.password },
 		{ responseType: 'json' }
 	)
-	// const response = await fetch ('http://localhost:2000/api/register', {
-	// 		method: 'POST',
-	// 		headers: {
-	// 			'Content-Type': 'application/json',
-	// 		},
-	// 		body: JSON.stringify({
-	// 			email: newUser.email,
-	// 			name: newUser.name,
-	// 			password: newUser.password
-
-	// 		}),
-	// 	})
-
-	// const res = await response.json()
-	// console.log(res)
-	// return res
-
 }
 
 export const sendForgotPasswordRequest = (email: string) => {

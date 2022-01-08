@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const axios = require("axios").default;
+const FormData = require('form-data');
+const fs = require('fs/promises');
 //https://gateway.speechlab.sg/
 app.use(cors());
 app.use(express.json());
@@ -182,25 +184,48 @@ app.post("/users/change-name", async (req, res) => {
         .then( (response) => {
             console.log('change name success')
             console.log(response)
-            res.status(response.status).json(response.data)
+            //res.status(response.status).json(response.data)
         })
         .catch((error) => {
             console.log('change name failed')
-            res.status(error.response.status).json(error.response.data)
+            //res.status(error.response.status).json(error.response.data)
         })
+})
+
+app.post("/speech/", async (req, res) => {
+    let newJob = req.body
+    console.log(req.body)
+    await axios.post(
+        "https://gateway.speechlab.sg/speech",
+        {file: newJob.file, lang: newJob.lang, audioType: newJob.audioType, audioTrack: newJob.audioTrack},
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${newJob.token}`,
+                
+            }
+        },
+        {responseType: 'json'})
+        .then( (response) => {
+            console.log('submit job success')
+            console.log(response)
+            //res.status(response.status).json(response.data)
+        })
+        .catch((error) => {
+            console.log('submit job failed')
+            console.log(error.response.data)
+            //res.status(error.response.status).json(error.response.data)
+        }
+    )
 })
 
 //wip
 app.post("/speech/history", async (req, res) => {
     //speech history
+    let email = req.body
     await axios.get(
         "https://gateway.speechlab.sg/speech/history",
-        {
-            headers: {
-                'Authorization': `Bearer ${newNameRequest.token}`
-            }
-            
-        },
+        email,
         {responseType: 'json'})
         .then( (response) => {
             console.log(response)
@@ -211,7 +236,7 @@ app.post("/speech/history", async (req, res) => {
             //res.status(error.response.status).json(error.response.data)
         })
 })
-
+//wip
 app.post("/speech/result", async (req, res) => {
     //get transcription
     await axios.get(

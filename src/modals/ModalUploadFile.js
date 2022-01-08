@@ -9,6 +9,11 @@ import {
   Modal,
   Icon,
 } from "semantic-ui-react";
+import { submitOneJob } from '../api/batch-transcribe-api';
+import { OfflineTranscribeJob, OfflineTranscribeJobResponse } from '../models/OfflineTranscribeJob.model';
+
+
+
 
 function exampleReducer(state, action) {
   switch (action.type) {
@@ -67,31 +72,51 @@ const audioOptions = [
   },
 ];
 
-const ModalUploadFile = () => {
+const ModalUploadFile = (data) => {
+  const token = data.accessToken
+  //console.log("token: " + token)
   const [state, dispatch] = React.useReducer(exampleReducer, {
     open: false,
     size: undefined,
+    
   });
   const { open, size } = state;
 
-  function FileData(file) {
-    this.file = file; //file.fileName, file.Size
+  /* function FileData(object) {
+    this.file = object;
+    this.name = name;
+    this.size = size;
     this.lang = "english";
     this.audio = "closetalk";
     this.channel = "multi";
-  }
+  } */
 
   const [uploadArray, setUploadArray] = useState([]);
   
-  uploadArray.forEach(element => {
+  /* uploadArray.forEach(element => {
     
     console.log("File " + uploadArray.indexOf(element))
-    console.log(element)
+    console.log(element.file)
     
-  });
-  console.log("----------")
+  }); */
+
+  /* const fileChange = (e) => {
+    let selectedFile = e.target.files[0]
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    let newUpload = new FileData(formData, selectedFile.name, bytesToSize(selectedFile.size));
+    setUploadArray((prev) => [...prev, newUpload]);
+  }; */
+
   const fileChange = (e) => {
-    let newUpload = new FileData(e.target.files[0]);
+    let selectedFile = e.target.files[0]
+    const formData = new FormData()
+    formData.append('file', selectedFile, selectedFile.name)
+    formData.append('lang', 'english')
+    formData.append('audioType', 'closetalk')
+    formData.append('audioTrack', 'multi')
+    //let newUpload = new FileData(formData);
+    let newUpload = formData
     setUploadArray((prev) => [...prev, newUpload]);
   };
 
@@ -104,10 +129,36 @@ const ModalUploadFile = () => {
     return `${(bytes / 1024 ** i).toFixed(1)} ${sizes[i]}`;
   }
 
-  const handleLangChange = (i, value) => {
+  /* const handleLangChange = (i, value) => {
     var array = [...uploadArray]
     let file = {...array[i]}
     file.lang = value
+    array[i] = file
+    setUploadArray(array)
+  }
+  const handleAudioChange = (i, value) => {
+    var array = [...uploadArray]
+    let file = {...array[i]}
+    file.audio = value
+    array[i] = file
+    setUploadArray(array)
+  }
+  const handleChannelChange = (i) => {
+    var array = [...uploadArray]
+    let file = {...array[i]}
+    if (file.channel === 'multi') {
+      file.channel = 'single'
+    } else {
+      file.channel = 'multi'
+    }
+    array[i] = file
+    setUploadArray(array)
+  } */
+
+  const handleLangChange = (i, value) => {
+    var array = [...uploadArray]
+    let file = {...array[i]}
+    file.set('lang', value)
     array[i] = file
     setUploadArray(array)
   }
@@ -140,8 +191,24 @@ const ModalUploadFile = () => {
     }
   };
 
+  const uploadFile = async () => {
+
+    uploadArray.forEach(item => {
+      submitOneJob({
+        token: token,
+        file: item.file,
+        lang: item.lang,
+        audioType: item.audio,
+        audioTrack: item.channel,
+      });
+      console.log("job submission attempt")
+    })
+  }
+
+
+
   return (
-    <>
+    <div>
       <Button onClick={() => dispatch({ type: "open", size: "large" })}>
         Upload Files
       </Button>
@@ -152,6 +219,7 @@ const ModalUploadFile = () => {
         onClose={() => dispatch({ type: "close" })}
       >
         <Modal.Header>Upload Audio Files</Modal.Header>
+        {/* <Modal.Content scrolling> */}
         <Grid padded textAlign="center" container>
           <Grid.Row columns={6}>
             <Grid.Column>
@@ -173,20 +241,20 @@ const ModalUploadFile = () => {
           </Grid.Row>
           {uploadArray.map((item, i) => (
             <Grid.Row key={i} columns="6">
-              <Grid.Column>{item.file.name}</Grid.Column>
-            <Grid.Column>{bytesToSize(item.file.size)}</Grid.Column>
+              <Grid.Column>{item.name}</Grid.Column>
+            <Grid.Column>{item.size}</Grid.Column>
             <Grid.Column>
               <Dropdown compact selection options={languageOptions} value={item.lang} onChange={(e, {value}) => handleLangChange(i, value)}/>
             </Grid.Column>
             <Grid.Column>
-              <Dropdown compact selection options={audioOptions} value={item.audio} onChange={(e, {value}) => handleAudioChange(i, value)}/>
+              <Dropdown compact selection options={audioOptions} value={item.audioType} onChange={(e, {value}) => handleAudioChange(i, value)}/>
             </Grid.Column>
             <Grid.Column>
               <Grid>
                 <Grid.Row columns={3}>
                   <GridColumn>Stereo</GridColumn>
                   <GridColumn>
-                    <Checkbox slider checked={(item.channel === 'single') ? 'checked' : ''} onChange={(e) => handleChannelChange(i)}/>
+                    <Checkbox slider checked={(item.audioTrack === 'single') ? true : false} onChange={(e) => handleChannelChange(i)}/>
                   </GridColumn>
                   <GridColumn>Mono</GridColumn>
                 </Grid.Row>
@@ -216,16 +284,21 @@ const ModalUploadFile = () => {
         </Button>
         <input type="file" id="file" hidden onChange={fileChange} />
         <input type="file" id="file" hidden />
+        {/* </Modal.Content> */}
         <Modal.Actions>
           <Button negative onClick={() => dispatch({ type: "close" })}>
             Cancel
           </Button>
-          <Button positive onClick={() => dispatch({ type: "close" })}>
+          {/* <Button positive onClick={() =>
+            dispatch({ type: "close" })}>
+            Upload
+          </Button> */}
+          <Button positive onClick={uploadFile}>
             Upload
           </Button>
         </Modal.Actions>
       </Modal>
-    </>
+    </div>
   );
 };
 
