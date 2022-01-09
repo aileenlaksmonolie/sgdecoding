@@ -21,4 +21,5 @@ export const subToStoreTest = (num: number) => {
 }
 
 export * from './AuthAC'
-export * from './user-transcription-ac'
+export * from './transcript-history-ac'
+

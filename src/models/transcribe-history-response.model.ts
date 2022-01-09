@@ -70,6 +70,7 @@ export interface BatchTranscriptionHistory {
 	lang: string,
 	name: string,
 	_id: string,
+	webhook: string,
 	userCreated: {
 		role: string,
 		type: string,
@@ -130,7 +131,7 @@ export interface BatchTranscriptionHistory {
 export type TranscriptionHistory = LiveTranscriptionHistory | BatchTranscriptionHistory;
 
 
-export interface OneUserTranscriptionHistory {
+export interface OneUserTranscriptionHistoryResponse {
 	history: Array<LiveTranscriptionHistory | BatchTranscriptionHistory>,
 	totalHistory: number
 }

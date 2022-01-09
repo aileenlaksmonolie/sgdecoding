@@ -10,3 +10,10 @@ export const getOneUserSpeechHistory = (email: string) => {
 			}
 		})
 }
+
+
+export const getOneAudioRecordingFileSrcUrl = (inputZeroFileId: string) => {  // refer to recording.input[0].file._id
+	return speechGatewayApi.get(
+		`/files/${inputZeroFileId}/download`
+	);
+}

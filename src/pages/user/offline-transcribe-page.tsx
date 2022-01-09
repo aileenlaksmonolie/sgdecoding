@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from 'react-hook-form';
 import Moment from 'react-moment';
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { bindActionCreators } from "redux";
 import { Button, Card, Container, Dropdown, DropdownProps, Form, Grid, Header, Icon, InputOnChangeData, List, Pagination, PaginationProps, Popup } from "semantic-ui-react";
 import DownloadTranscriptButton from '../../components/audio/download-transcript-btn';
@@ -24,9 +24,10 @@ interface TranscriptionHistoryFilter {
 
 const OfflineTranscribePage: React.FC = () => {
 
+	const navigate = useNavigate();
 	const { history, totalHistory } = useSelector((state: RootState) => state.transcriptionHistoryReducer)
 	const dispatch = useDispatch();
-	const { getLoggedInUserTranscriptionHistory } = bindActionCreators(actionCreators, dispatch)
+	const { getLoggedInUserTranscriptionHistory, setSelectedTranscriptionHistory } = bindActionCreators(actionCreators, dispatch)
 
 	const [noOfPages, setNoOfPages] = useState(0)
 	const [itemsToDisplay, setItemsToDisplay] = useState<Array<LiveTranscriptionHistory | BatchTranscriptionHistory>>([]);
@@ -41,6 +42,7 @@ const OfflineTranscribePage: React.FC = () => {
 		startDate: '',
 		endDate: ''
 	});
+
 
 	const typeFilterOptions = [
 		{ key: 'none', text: 'Both', value: '' },
@@ -115,6 +117,20 @@ const OfflineTranscribePage: React.FC = () => {
 			setValue("startDate", startDate);
 			setValue("endDate", endDate);
 		}
+	}
+
+	const handleViewBtnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
+		console.log(e);
+		console.log(id);
+		let clickedTranscriptHistory = history.find(h => h._id === id);
+
+		if(clickedTranscriptHistory){
+			setSelectedTranscriptionHistory(clickedTranscriptHistory);
+			navigate(`/viewonetranscript?id=${id}`);
+		}
+
+		//TODO show a toast error
+		
 	}
 
 	const onDateInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
@@ -284,13 +300,13 @@ const OfflineTranscribePage: React.FC = () => {
 					<Popup
 						id={styles.dateFilterPopup}
 						trigger={
-							<Button basic fluid>{ 
-								filters.startDate !== '' 
-								?
-								moment(filters.startDate).format("DD MMM YY") + " - " + moment(filters.endDate).format("DD MMM YY") 
-								: 
-								"Filter Dates"}
-								</Button>
+							<Button basic fluid>{
+								filters.startDate !== ''
+									?
+									moment(filters.startDate).format("DD MMM YY") + " - " + moment(filters.endDate).format("DD MMM YY")
+									:
+									"Filter Dates"}
+							</Button>
 						}
 						flowing
 						hideOnScroll
@@ -338,7 +354,12 @@ const OfflineTranscribePage: React.FC = () => {
 							className={styles.historyItem}
 						>
 							<List.Content floated='right' className={styles.historyItemBtns}>
-								<Button color="blue" as={Link} to={`/viewonetranscript?id=${h._id}`}>View</Button>
+								<Button
+									color="blue" 
+									onClick={(e) => handleViewBtnClick(e, h._id)}
+								>
+									View
+								</Button>
 								<DownloadTranscriptButton />
 								<Button color="red" disabled>Delete</Button>
 							</List.Content>

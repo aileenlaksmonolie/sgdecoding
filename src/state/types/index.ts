@@ -13,5 +13,6 @@ export enum AuthTypes {
 }
 
 export enum UserTranscriptionTypes{
-	SET_THIS_USER_HISTORY = 'set_user_transcription_history'
+	SET_THIS_USER_HISTORY = 'set_user_th',
+	SET_SELECTED_TRANSCRIPTION_HISTORY = "set_selected_th" 
 }
