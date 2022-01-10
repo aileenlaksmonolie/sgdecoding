@@ -1,7 +1,6 @@
 import moment from 'moment';
 import React, { useEffect, useState } from "react";
 import { useForm } from 'react-hook-form';
-import Moment from 'react-moment';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router';
 import { bindActionCreators } from "redux";
@@ -360,7 +359,11 @@ const OfflineTranscribePage: React.FC = () => {
 								>
 									View
 								</Button>
-								<DownloadTranscriptButton />
+								<DownloadTranscriptButton  
+									transcriptTitle={h.title}
+									isDisabled={h.type === 'live'}
+									transcriptId={h._id}
+									/>
 								<Button color="red" disabled>Delete</Button>
 							</List.Content>
 							{
@@ -368,13 +371,10 @@ const OfflineTranscribePage: React.FC = () => {
 							}
 							<List.Content className={styles.historyItemContent}>
 								<List.Header as='p'>
-									{h.type === 'live' ? "Live Transcribe on " : "File Upload on "}
+									{/* {h.type === 'live' ? "Live Transcribe on " : "File Upload on "}
 									<Moment format="ddd D MMM YYYY, h:mma">{h.createdAt}</Moment>
-									{h.input[0].errorCode !== null ? ` (${h.input[0].errorCode})` : ''}
-
-									{/* DEBUG */}
-									{/* {" | " + h.input[0].status} */}
-
+									{h.input[0].errorCode !== null ? ` (${h.input[0].errorCode})` : ''} */}
+									{h.title}
 								</List.Header>
 								<List.Description as='p'>
 									{h.lang.charAt(0).toUpperCase() + h.lang.slice(1)}

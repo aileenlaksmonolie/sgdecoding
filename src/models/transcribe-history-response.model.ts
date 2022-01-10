@@ -1,4 +1,5 @@
 export interface LiveTranscriptionHistory {
+	title: string,
 	queue: string,
 	status: string,
 	formats: Array<String>,
@@ -63,6 +64,7 @@ export interface LiveTranscriptionHistory {
 
 
 export interface BatchTranscriptionHistory {
+	title: '',
 	queue: string,
 	status: string,
 	formats: Array<String>,

@@ -17,3 +17,10 @@ export const getOneAudioRecordingFileSrcUrl = (inputZeroFileId: string) => {  //
 		`/files/${inputZeroFileId}/download`
 	);
 }
+
+
+export const getOneTranscriptResult = (batchTranscribeId: string) => {
+	return speechGatewayApi.get(
+		`/speech/${batchTranscribeId}/result`
+	)
+}

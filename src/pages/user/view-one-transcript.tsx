@@ -1,13 +1,13 @@
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
-import Moment from 'react-moment';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { Button, Card, Container, Dropdown, DropdownProps, Grid, Icon, Popup } from 'semantic-ui-react';
 import { getOneAudioRecordingFileSrcUrl } from '../../api/batch-transcribe-api';
-import { BatchTranscriptionHistory, LiveTranscriptionHistory, TranscriptionHistory } from '../../models/transcribe-history-response.model';
+import DownloadTranscriptButton from '../../components/audio/download-transcript-btn';
+import { BatchTranscriptionHistory, LiveTranscriptionHistory } from '../../models/transcribe-history-response.model';
 import { actionCreators } from '../../state';
 import styles from './view-one-transcript.module.scss';
 
@@ -45,8 +45,9 @@ const ViewOneTranscript: React.FC = () => {
 
 	// const { selectedTranscriptHistory } = useSelector((state: RootState) => state.transcriptionHistoryReducer)
 	//DEBUG
-	const selectedTranscriptHistory: TranscriptionHistory =
+	const selectedTranscriptHistory: any =
 	{
+		"title": "This is a debugging object",
 		"queue": "normal",
 		"status": "done",
 		"formats": [
@@ -121,6 +122,7 @@ const ViewOneTranscript: React.FC = () => {
 			"createdAt": "2021-09-27T10:01:46.352Z"
 		}
 	}
+
 	const dispatch = useDispatch();
 	const { } = bindActionCreators(actionCreators, dispatch)
 
@@ -139,9 +141,9 @@ const ViewOneTranscript: React.FC = () => {
 				setTrackProgress(Math.ceil(audioRef.current.currentTime));
 			} else {
 				setIsPlaying(false);
-				if(trackProgress < audioRef.current.currentTime)
+				if (trackProgress < audioRef.current.currentTime)
 					setTrackProgress(audioRef.current.currentTime)
-				if(intervalRef.current !== undefined)
+				if (intervalRef.current !== undefined)
 					clearInterval(intervalRef.current!);
 			}
 		}, 1000);
@@ -194,17 +196,17 @@ const ViewOneTranscript: React.FC = () => {
 
 	const onVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		console.log(e);
-		if(audioRef.current.src !== ''){
+		if (audioRef.current.src !== '') {
 			audioRef.current.volume = Number(e.target.value);
 		}
 		setVolume(Number(e.target.value));
 
 	}
 
-	const onPlaybackSpeedChange = (e: React.SyntheticEvent<HTMLElement, Event>, {value}: DropdownProps) => {
+	const onPlaybackSpeedChange = (e: React.SyntheticEvent<HTMLElement, Event>, { value }: DropdownProps) => {
 		// console.log(e);
 		// console.log(value);
-		if(audioRef.current.src !== ''){
+		if (audioRef.current.src !== '') {
 			audioRef.current.playbackRate = Number(value);
 		}
 	}
@@ -279,34 +281,34 @@ const ViewOneTranscript: React.FC = () => {
 					{
 						renderIcon(selectedTranscriptHistory)
 					}
-						<Card.Header id={styles.cardHeader}>
-							{
-								selectedTranscriptHistory.type === 'live' ? 'Live Recording at ' : 'File Upload at '
+					<Card.Header id={styles.cardHeader}>
+						{selectedTranscriptHistory.title}
+					</Card.Header>
+					<Card.Meta id={styles.cardMeta}>
+						{selectedTranscriptHistory.lang.charAt(0).toUpperCase() + selectedTranscriptHistory.lang.slice(1)}
+						{
+							selectedTranscriptHistory.type === 'live'
+								?
+								// Change any back to LiveTranscription
+								" | " + moment.utc((selectedTranscriptHistory as any).liveSessionDuration * 1000).format("H:mm:ss")
+								:
+								" | " + moment.utc(selectedTranscriptHistory.input[0].file.duration * 1000).format("H:mm:ss")
+						}
+						{" | " + selectedTranscriptHistory.sampling}
+						{" | " + selectedTranscriptHistory.input[0].file.mimeType + " | "}
+						<span title={selectedTranscriptHistory.input[0].file.originalName}>
+							{selectedTranscriptHistory.input[0].file.originalName.length > 15
+								? selectedTranscriptHistory.input[0].file.originalName.slice(0, 5) + '...' + selectedTranscriptHistory.input[0].file.originalName.slice(-10)
+								: selectedTranscriptHistory.input[0].file.originalName
 							}
-							<Moment format="ddd D MMM YYYY, h:mma">{selectedTranscriptHistory.createdAt}</Moment>
-							{
-								selectedTranscriptHistory.input[0].errorCode !== null ? ` (${selectedTranscriptHistory.input[0].errorCode})` : ''
-							}
-						</Card.Header>
-						<Card.Meta id={styles.cardMeta}>
-							{selectedTranscriptHistory.lang.charAt(0).toUpperCase() + selectedTranscriptHistory.lang.slice(1)}
-							{
-								selectedTranscriptHistory.type === 'live'
-									?
-									// Change any back to LiveTranscription
-									" | " + moment.utc((selectedTranscriptHistory as any).liveSessionDuration * 1000).format("H:mm:ss")
-									:
-									" | " + moment.utc(selectedTranscriptHistory.input[0].file.duration * 1000).format("H:mm:ss")
-							}
-							{" | " + selectedTranscriptHistory.sampling}
-							{" | " + selectedTranscriptHistory.input[0].file.mimeType + " | "}
-							<span title={selectedTranscriptHistory.input[0].file.originalName}>
-								{selectedTranscriptHistory.input[0].file.originalName.length > 15
-									? selectedTranscriptHistory.input[0].file.originalName.slice(0, 5) + '...' + selectedTranscriptHistory.input[0].file.originalName.slice(-10)
-									: selectedTranscriptHistory.input[0].file.originalName
-								}
-							</span>
-						</Card.Meta>
+						</span>
+					</Card.Meta>
+					<DownloadTranscriptButton
+						transcriptTitle={selectedTranscriptHistory.title}
+						isDisabled={selectedTranscriptHistory.type === 'live'}
+						transcriptId={selectedTranscriptHistory._id}
+						id={styles.downloadBtn}
+					/>
 				</Card.Content>
 
 				<Card.Content>
@@ -356,7 +358,7 @@ const ViewOneTranscript: React.FC = () => {
 							{/* TODO look at feel */}
 							<Dropdown
 								upward
-								icon="none"
+								icon=""
 								compact
 								selection
 								options={speedOptions}
@@ -407,9 +409,9 @@ const ViewOneTranscript: React.FC = () => {
 						<Grid.Column width={2} className={styles.vAlignMiddle}>
 							{/* playback time */}
 							{
-								moment.utc(Math.ceil(trackProgress)*1000).format("HH:mm:ss")
+								moment.utc(Math.ceil(trackProgress) * 1000).format("HH:mm:ss")
 								+ "/"
-								+ moment.utc(Math.ceil(selectedTranscriptHistory.input[0].file.duration)*1000).format("HH:mm:ss")
+								+ moment.utc(Math.ceil(selectedTranscriptHistory.input[0].file.duration) * 1000).format("HH:mm:ss")
 							}
 						</Grid.Column>
 					</Grid>
