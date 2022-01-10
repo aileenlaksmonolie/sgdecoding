@@ -4,7 +4,7 @@ import NotFoundPage from "../authentication/NotFoundPage";
 import ChangePasswordPage from "./ChangePasswordPage";
 import LiveDecodePage from "./LiveDecodePage";
 import OfflineTranscribePage from "./offline-transcribe-page";
-import OverviewPage from "./OverviewPage";
+import OverviewPage from "./overview.page";
 import ProfilePage from "./ProfilePage";
 import ViewOneTranscript from "./view-one-transcript";
 
