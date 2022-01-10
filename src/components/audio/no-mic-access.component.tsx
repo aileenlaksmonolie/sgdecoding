@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Divider, Grid, Header, Icon, Image, Segment } from "semantic-ui-react";
+import styles from './no-mic-access.module.scss';
 
 interface Props {
 	errorMsg: string
@@ -16,19 +17,21 @@ const NoMicAccess: React.FC<Props> = ({ errorMsg }) => {
 	return (
 		// <Container textAlign="center">
 			<div>
-				<Segment color="red">
-					<Header as='h1'>Mic Access Needed for Live Transcribe</Header>
+				<Segment color="red" id={styles.warningTextSegment}>
+					<Header as='h1' color="red">Mic Access Needed for Live Transcribe</Header>
 					<Icon name="microphone slash" size="massive"></Icon>
-					<p>{errorMsg ? errorMsg : ''}</p>
-					<p>
-						To continue, we need your permission to access your microphone to record audio. &nbsp;
-						<strong>Please click the "Allow" button</strong> when prompted by browser.&nbsp;
-						If it does not appear, you have to manually enable by following the instructions below.
-					</p>
-					<p>Then, <strong>refresh the page</strong> and you will be able to access Live Transcribe.</p>
-					<Button color="olive" onClick={onRefreshPageBtnClick}>Refresh Page</Button>
+					{/* <Container text > */}
+						{/* <p>{errorMsg ? errorMsg : ''}</p> */}
+						<p>
+							To continue, we need your permission to access your microphone to record audio. &nbsp;
+							<strong>Please click the "Allow" button</strong> when prompted by browser.&nbsp;
+							If it does not appear, you have to manually enable by following the instructions below.
+						</p>
+						<p>Then, <strong>refresh the page</strong> and you will be able to access Live Transcribe.</p>
+					{/* </Container> */}
+					<Button id={styles.refreshBtn} size="large" color="teal" onClick={onRefreshPageBtnClick}>Refresh Page</Button>
 				</Segment>
-				<Segment placeholder>
+				<Segment id={styles.instructionsSegment} placeholder>
 					<Grid columns={2} stackable textAlign='center'>
 						<Divider vertical>Or</Divider>
 						<Grid.Row verticalAlign='middle'>

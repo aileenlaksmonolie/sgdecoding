@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
 import { Card, Container, Grid, Header, Icon, Label, TextArea } from "semantic-ui-react";
 import BtnsArray from "../../components/audio/BtnsArray";
-import NoMicAccess from "../../components/audio/NoMicAccess";
+import NoMicAccess from "../../components/audio/no-mic-access.component";
 import VizFreqBars from "../../components/audio/VizFreqBars";
 import styles from './LiveDecodePage.module.scss';
 
