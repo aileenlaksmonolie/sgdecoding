@@ -1,5 +1,5 @@
 .historyItemIcon {
-	float: left;
+	// float: left;
 
 	i:nth-child(1) {
 		background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
@@ -8,7 +8,6 @@
 		background-clip: text;
 		-webkit-text-fill-color: transparent;
 		font-size: 2em;
-
 
 		&.historyItemIconError {
 			background: orangered;
@@ -26,45 +25,55 @@
 	}
 }
 
-#cardHeader{
-	margin-top: 8px;
-	margin-left: 80px;
+#cardTopSection {
+	display: flex;
+	justify-content: flex-start;
+	gap: 8px;
+
+	#cardHeaderMetaContainer{
+		margin: auto 0;
+	}
+
+	#cardHeader {
+		font-size: 1.2em;
+		font-weight: bold;
+		line-height: 1.2em;
+	}
+
+	#downloadBtn {
+		height: 36px;
+	}
 }
 
-#cardMeta{
-	margin-left: 80px;
+#transcriptPlayback {
+	min-height: 200px;
 }
 
-#transcriptPlayback{
-	min-height: 200px
-}
-
-
-#audioControls{
-	#playbackSpeedDropdown{
+#audioControls {
+	#playbackSpeedDropdown {
 		width: 10% !important;
 
-		& :nth-child(1){
+		& :nth-child(1) {
 			padding-right: 0px;
 			min-width: 36px;
 			text-align: center;
 		}
 	}
 
-	#playbackProgress{
+	#playbackProgress {
 		height: 5px;
 		// background: linear-gradient(to right, #3991da 0%, #3991da 50%, #3b3b3b 50%, #5e5e5e 100%);
 		-webkit-appearance: none;
-    width: 100%;
-    border-radius: 40px;
-    cursor: pointer;
+		width: 100%;
+		border-radius: 40px;
+		cursor: pointer;
 	}
 
-	#volumeControl{
+	#volumeControl {
 		-webkit-appearance: slider-vertical;
 	}
 
-	.vAlignMiddle{
+	.vAlignMiddle {
 		margin: auto 0;
 	}
 }

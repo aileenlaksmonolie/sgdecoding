@@ -1,7 +1,6 @@
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { Button, Card, Container, Dropdown, DropdownProps, Grid, Icon, Popup } from 'semantic-ui-react';
@@ -9,20 +8,19 @@ import { getOneAudioRecordingFileSrcUrl } from '../../api/batch-transcribe-api';
 import DownloadTranscriptButton from '../../components/audio/download-transcript-btn';
 import { BatchTranscriptionHistory, LiveTranscriptionHistory } from '../../models/transcribe-history-response.model';
 import { actionCreators } from '../../state';
+import { RootState } from '../../state/reducers';
 import styles from './view-one-transcript.module.scss';
 
 const ViewOneTranscript: React.FC = () => {
 	// history = history.type === 'live' ? (history as LiveTranscriptionHistory) : (history as BatchTranscriptionHistory);
 
-	const navigate = useNavigate();
 	const [trackProgress, setTrackProgress] = useState(0);
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoadingAudio, setIsLoadingAudio] = useState(false);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [volume, setVolume] = useState(50);
 
 	const audioRef = useRef(new Audio());
 	const intervalRef = useRef<NodeJS.Timeout>();
-	const isReady = useRef(false);
 	const duration = Math.ceil(audioRef.current.duration);
 
 	const currentPercentage = duration
@@ -43,85 +41,85 @@ const ViewOneTranscript: React.FC = () => {
 		{ key: 2, text: '2x', value: 2 }
 	]
 
-	// const { selectedTranscriptHistory } = useSelector((state: RootState) => state.transcriptionHistoryReducer)
+	const { selectedTranscriptHistory } = useSelector((state: RootState) => state.transcriptionHistoryReducer)
 	//DEBUG
-	const selectedTranscriptHistory: any =
-	{
-		"title": "This is a debugging object",
-		"queue": "normal",
-		"status": "done",
-		"formats": [
-			"stm",
-			"srt",
-			"TextGrid"
-		],
-		"sampling": "16khz",
-		"lang": "english",
-		"name": "Note",
-		"_id": "6151968a7b428800306dea9b",
-		"webhook": "https://2c55-42-61-133-176.ngrok.io",
-		"userCreated": {
-			"role": "user",
-			"type": "normal",
-			"name": "Noname",
-			"_id": "5f7539cb8fb89d0029597fe4",
-			"isBlocked": false,
-			"isDeleted": false,
-			"isVerified": true,
-			"email": "user@ntu.edu.sg",
-			"createdAt": "2020-10-01T02:07:07.992Z",
-			"updatedAt": "2021-12-19T05:18:09.171Z",
-			"__v": 0,
-			"forgetPasswordCode": "603e1f",
-			"forgetPasswordCodeSentAt": "2021-12-15T08:56:35.096Z"
-		},
-		"input": [
-			{
-				"isSubmitted": true,
-				"errorCode": 0,
-				"status": "done",
-				"progress": [
-					{
-						"content": "DECODING",
-						"createdAt": "2021-09-27T10:01:56.368Z"
-					},
-					{
-						"content": "DONE",
-						"createdAt": "2021-09-27T10:03:52.455Z"
-					}
-				],
-				"_id": "6151968a7b428800306dea9d",
-				"file": {
-					"children": [],
-					"parent": "",
-					"_id": "6151968a7b428800306dea9c",
-					"originalName": "file.wav",
-					"mimeType": "audio/wave",
-					"filename": "ebd77d5f-0856-4a0f-8f1b-213dfc9df544-1632736906012.wav",
-					"size": 2474028,
-					"duration": 12.885333,
-					"userCreated": "5f7539cb8fb89d0029597fe4",
-					"createdAt": "2021-09-27T10:01:46.352Z"
-				}
-			}
-		],
-		"type": "batch",
-		"createdAt": "2021-09-27T10:01:46.308Z",
-		"updatedAt": "2021-09-27T10:03:52.540Z",
-		"__v": 0,
-		"sourceFile": {
-			"children": [],
-			"parent": "",
-			"_id": "6151968a7b428800306dea9c",
-			"originalName": "file.wav",
-			"mimeType": "audio/wave",
-			"filename": "ebd77d5f-0856-4a0f-8f1b-213dfc9df544-1632736906012.wav",
-			"size": 2474028,
-			"duration": 12.885333,
-			"userCreated": "5f7539cb8fb89d0029597fe4",
-			"createdAt": "2021-09-27T10:01:46.352Z"
-		}
-	}
+	// const selectedTranscriptHistory: any =
+	// {
+	// 	"title": "This is a debugging object",
+	// 	"queue": "normal",
+	// 	"status": "done",
+	// 	"formats": [
+	// 		"stm",
+	// 		"srt",
+	// 		"TextGrid"
+	// 	],
+	// 	"sampling": "16khz",
+	// 	"lang": "english",
+	// 	"name": "Note",
+	// 	"_id": "6151968a7b428800306dea9b",
+	// 	"webhook": "https://2c55-42-61-133-176.ngrok.io",
+	// 	"userCreated": {
+	// 		"role": "user",
+	// 		"type": "normal",
+	// 		"name": "Noname",
+	// 		"_id": "5f7539cb8fb89d0029597fe4",
+	// 		"isBlocked": false,
+	// 		"isDeleted": false,
+	// 		"isVerified": true,
+	// 		"email": "user@ntu.edu.sg",
+	// 		"createdAt": "2020-10-01T02:07:07.992Z",
+	// 		"updatedAt": "2021-12-19T05:18:09.171Z",
+	// 		"__v": 0,
+	// 		"forgetPasswordCode": "603e1f",
+	// 		"forgetPasswordCodeSentAt": "2021-12-15T08:56:35.096Z"
+	// 	},
+	// 	"input": [
+	// 		{
+	// 			"isSubmitted": true,
+	// 			"errorCode": 0,
+	// 			"status": "done",
+	// 			"progress": [
+	// 				{
+	// 					"content": "DECODING",
+	// 					"createdAt": "2021-09-27T10:01:56.368Z"
+	// 				},
+	// 				{
+	// 					"content": "DONE",
+	// 					"createdAt": "2021-09-27T10:03:52.455Z"
+	// 				}
+	// 			],
+	// 			"_id": "6151968a7b428800306dea9d",
+	// 			"file": {
+	// 				"children": [],
+	// 				"parent": "",
+	// 				"_id": "6151968a7b428800306dea9c",
+	// 				"originalName": "file.wav",
+	// 				"mimeType": "audio/wave",
+	// 				"filename": "ebd77d5f-0856-4a0f-8f1b-213dfc9df544-1632736906012.wav",
+	// 				"size": 2474028,
+	// 				"duration": 12.885333,
+	// 				"userCreated": "5f7539cb8fb89d0029597fe4",
+	// 				"createdAt": "2021-09-27T10:01:46.352Z"
+	// 			}
+	// 		}
+	// 	],
+	// 	"type": "batch",
+	// 	"createdAt": "2021-09-27T10:01:46.308Z",
+	// 	"updatedAt": "2021-09-27T10:03:52.540Z",
+	// 	"__v": 0,
+	// 	"sourceFile": {
+	// 		"children": [],
+	// 		"parent": "",
+	// 		"_id": "6151968a7b428800306dea9c",
+	// 		"originalName": "file.wav",
+	// 		"mimeType": "audio/wave",
+	// 		"filename": "ebd77d5f-0856-4a0f-8f1b-213dfc9df544-1632736906012.wav",
+	// 		"size": 2474028,
+	// 		"duration": 12.885333,
+	// 		"userCreated": "5f7539cb8fb89d0029597fe4",
+	// 		"createdAt": "2021-09-27T10:01:46.352Z"
+	// 	}
+	// }
 
 	const dispatch = useDispatch();
 	const { } = bindActionCreators(actionCreators, dispatch)
@@ -150,9 +148,9 @@ const ViewOneTranscript: React.FC = () => {
 	};
 
 	const onPlayPauseClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-		// setIsLoading(true);
 		if (selectedTranscriptHistory !== undefined && audioRef.current.src === '') {
 			try {
+				setIsLoadingAudio(true);
 				const res = await getOneAudioRecordingFileSrcUrl(selectedTranscriptHistory.input[0].file._id)
 				audioRef.current = new Audio(res.data.url);
 				audioRef.current.volume = 0.8;
@@ -166,6 +164,7 @@ const ViewOneTranscript: React.FC = () => {
 			}
 		}
 		if (!isPlaying) {
+			setIsLoadingAudio(false);
 			setIsPlaying(true);
 		} else {
 			setIsPlaying(false);
@@ -263,8 +262,8 @@ const ViewOneTranscript: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		console.log(`isPlaying: ${isPlaying} | isLoading: ${isLoading} | ${audioRef.current.src}`)
-		if (isPlaying && !isLoading && audioRef.current.src !== '') {
+		console.log(`isPlaying: ${isPlaying} | isLoading: ${isLoadingAudio} | ${audioRef.current.src}`)
+		if (isPlaying && !isLoadingAudio && audioRef.current.src !== '') {
 			audioRef.current.play();
 			startTimer();
 		} else {
@@ -277,32 +276,35 @@ const ViewOneTranscript: React.FC = () => {
 	if (typeof (selectedTranscriptHistory) !== undefined && selectedTranscriptHistory?._id != undefined) {
 		return (
 			<Card fluid>
-				<Card.Content>
+				{/* Card Header section */}
+				<Card.Content id={styles.cardTopSection}>
 					{
 						renderIcon(selectedTranscriptHistory)
 					}
-					<Card.Header id={styles.cardHeader}>
-						{selectedTranscriptHistory.title}
-					</Card.Header>
-					<Card.Meta id={styles.cardMeta}>
-						{selectedTranscriptHistory.lang.charAt(0).toUpperCase() + selectedTranscriptHistory.lang.slice(1)}
-						{
-							selectedTranscriptHistory.type === 'live'
-								?
-								// Change any back to LiveTranscription
-								" | " + moment.utc((selectedTranscriptHistory as any).liveSessionDuration * 1000).format("H:mm:ss")
-								:
-								" | " + moment.utc(selectedTranscriptHistory.input[0].file.duration * 1000).format("H:mm:ss")
-						}
-						{" | " + selectedTranscriptHistory.sampling}
-						{" | " + selectedTranscriptHistory.input[0].file.mimeType + " | "}
-						<span title={selectedTranscriptHistory.input[0].file.originalName}>
-							{selectedTranscriptHistory.input[0].file.originalName.length > 15
-								? selectedTranscriptHistory.input[0].file.originalName.slice(0, 5) + '...' + selectedTranscriptHistory.input[0].file.originalName.slice(-10)
-								: selectedTranscriptHistory.input[0].file.originalName
+
+					<Container id={styles.cardHeaderMetaContainer}>
+						<Card.Header id={styles.cardHeader}>
+							{selectedTranscriptHistory.title}
+						</Card.Header>
+						<Card.Meta>
+							{selectedTranscriptHistory.lang.charAt(0).toUpperCase() + selectedTranscriptHistory.lang.slice(1)}
+							{
+								selectedTranscriptHistory.type === 'live'
+									?  // Change any back to LiveTranscription
+									" | " + moment.utc((selectedTranscriptHistory as any).liveSessionDuration * 1000).format("H:mm:ss")
+									:
+									" | " + moment.utc(selectedTranscriptHistory.input[0].file.duration * 1000).format("H:mm:ss")
 							}
-						</span>
-					</Card.Meta>
+							{" | " + selectedTranscriptHistory.sampling}
+							{" | " + selectedTranscriptHistory.input[0].file.mimeType + " | "}
+							<span title={selectedTranscriptHistory.input[0].file.originalName}>
+								{selectedTranscriptHistory.input[0].file.originalName.length > 15
+									? selectedTranscriptHistory.input[0].file.originalName.slice(0, 5) + '...' + selectedTranscriptHistory.input[0].file.originalName.slice(-10)
+									: selectedTranscriptHistory.input[0].file.originalName
+								}
+							</span>
+						</Card.Meta>
+					</Container>
 					<DownloadTranscriptButton
 						transcriptTitle={selectedTranscriptHistory.title}
 						isDisabled={selectedTranscriptHistory.type === 'live'}
@@ -310,6 +312,7 @@ const ViewOneTranscript: React.FC = () => {
 						id={styles.downloadBtn}
 					/>
 				</Card.Content>
+				{/* END Card Header Section */}
 
 				<Card.Content>
 					<Card.Description>
@@ -328,28 +331,21 @@ const ViewOneTranscript: React.FC = () => {
 					<Grid>
 						<Grid.Column width={2} className={styles.vAlignMiddle}>
 							{
-								isPlaying === false
+								isLoadingAudio
 									?
-									<Button
-										icon
-										color="green"
-										labelPosition='left'
-										onClick={onPlayPauseClick}
-									>
-										<Icon name='play' />
-										Play
+									<Button icon disabled color="orange" labelPosition='left'>
+										<Icon loading name='spinner' />Loading
 									</Button>
 									:
-									<Button
-										icon
-										color="orange"
-										labelPosition='left'
-										onClick={onPlayPauseClick}
-									>
-										<Icon name='pause' />
-										Pause
-									</Button>
-
+									isPlaying === false
+										?
+										<Button icon color="green" labelPosition='left' onClick={onPlayPauseClick}>
+											<Icon name='play' />Play
+										</Button>
+										:
+										<Button icon color="red" labelPosition='left' onClick={onPlayPauseClick}>
+											<Icon name='pause' />Pause
+										</Button>
 							}
 
 						</Grid.Column>
