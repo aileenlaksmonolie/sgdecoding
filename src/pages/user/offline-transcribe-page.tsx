@@ -123,13 +123,13 @@ const OfflineTranscribePage: React.FC = () => {
 		console.log(id);
 		let clickedTranscriptHistory = history.find(h => h._id === id);
 
-		if(clickedTranscriptHistory){
+		if (clickedTranscriptHistory) {
 			setSelectedTranscriptionHistory(clickedTranscriptHistory);
 			navigate(`/viewonetranscript?id=${id}`);
 		}
 
 		//TODO show a toast error
-		
+
 	}
 
 	const onDateInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
@@ -227,21 +227,23 @@ const OfflineTranscribePage: React.FC = () => {
 					</Icon.Group>
 				)
 
-			let lastProgIdx = h.input[0].progress.length - 1;
-			let progressStatus = h.input[0].progress[lastProgIdx].content.toLowerCase();
-			if (progressStatus === 'done')
+			if (h.status === 'processing')
+			return (
+				<Icon.Group size='big' className={styles.historyItemIcon}>
+					<Icon size='large' loading name='circle notched' />
+					<Icon name='file audio' className={styles.historyItemLoading} />
+				</Icon.Group>
+			);
+			// let lastProgIdx = h.input[0].progress.length - 1;
+			// let progressStatus = h.input[0].progress[lastProgIdx].content.toLowerCase();
+			// if (progressStatus === 'done')
+			if(h.input[0].status === 'done')
 				return (
 					<Icon.Group size='big' className={styles.historyItemIcon}>
 						<Icon size='large' name='circle' />
 						<Icon name='file audio' />
 					</Icon.Group>
-				)
-			else if (progressStatus.includes("decoding")) {
-				<Icon.Group size='big' className={styles.historyItemIcon}>
-					<Icon size='large' loading name='circle notched' />
-					<Icon name='file audio' />
-				</Icon.Group>
-			}
+				);
 		}
 
 		return (<p>{h.name}</p>)
@@ -356,16 +358,16 @@ const OfflineTranscribePage: React.FC = () => {
 						>
 							<List.Content floated='right' className={styles.historyItemBtns}>
 								<Button
-									color="blue" 
+									color="blue"
 									onClick={(e) => handleViewBtnClick(e, h._id)}
 								>
 									View
 								</Button>
-								<DownloadTranscriptButton  
+								<DownloadTranscriptButton
 									transcriptTitle={h.title}
 									isDisabled={h.type === 'live'}
 									transcriptId={h._id}
-									/>
+								/>
 								<Button color="red" disabled>Delete</Button>
 							</List.Content>
 							{

@@ -11,7 +11,7 @@
 		background: #ffe2b7;
 	}
 
-	#listPaginator{
+	#listPaginator {
 		float: right;
 	}
 
@@ -53,9 +53,16 @@
 		}
 	}
 
+	.historyItemLoading {
+		background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
+		-webkit-background-clip: text;
+		-moz-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+
 	.historyItemContent {
 		display: inline-block;
 		margin-left: 16px;
 	}
-
 }
