@@ -1,23 +1,29 @@
 #sidebarContainer {
 	height: calc(100% - 55px);
 
-	.sidebar {
+	#sidebar {
 		width: 256px;
 		position: sticky;
 
 		a {
 			text-align: left;
+			line-height: 24px;
+
+			&.active {
+				background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
+				color: #fdfdfd;
+			}
 
 			> i {
 				display: inline-block;
 				width: 48px;
 				padding-right: 16px;
+				margin: 0px auto 0px !important;
 			}
 		}
 	}
 
-
-	#pusherContainer	{
+	#pusherContainer {
 		width: calc(100% - 256px);
 		min-height: calc(100% + 224px);
 		// left: 256px;
