@@ -1,4 +1,4 @@
-import { MgtTranscriptHistoriesAction } from '../actions-types/transcript-history-actions';
+import { MgtTranscriptHistoriesAction } from '../actions-types/transcript-history-actions.types';
 import { UserTranscriptionTypes } from '../types/index';
 import { TranscriptionHistory } from './../../models/transcribe-history-response.model';
 

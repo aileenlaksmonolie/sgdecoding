@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Container, Form, InputOnChangeData, Message } from "semantic-ui-react";
 import { registerOneUser } from "../../api/auth-api";
-import { NewUserRegistration, NewUserRegistrationResponse } from "../../models/UserRegister.model";
+import { NewUserRegistration, NewUserRegistrationResponse } from "../../models/user-authentication.model";
 import { RootState } from "../../state/reducers";
 import classes from './authentication.module.scss';
 

@@ -1,7 +1,6 @@
 import { Dispatch } from "redux"
 import { TestType } from "../types/index"
 
-
 export const addToStoreTest = (num: number) => {
 	return (dispatch: Dispatch) => {
 		dispatch({
@@ -20,6 +19,6 @@ export const subToStoreTest = (num: number) => {
 	}
 }
 
-export * from './AuthAC'
+export * from './auth-ac'
 export * from './transcript-history-ac'
 

@@ -1,6 +1,6 @@
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { Token } from '../../models/access-token.model';
-import { AuthAction } from '../actions-types/AuthAction';
+import { AuthAction } from '../actions-types/auth-actions.types';
 import { AuthTypes } from '../types/index';
 
 export const INITIAL_STATE = {

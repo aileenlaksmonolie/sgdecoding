@@ -4,7 +4,7 @@ import { Button, Container, Grid } from "semantic-ui-react";
 import { liveDecodeSocket } from "../../api/api";
 import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
-import { MyRecorder, RecordingStates, Transcription } from "../../pages/user/LiveDecodePage";
+import { MyRecorder, RecordingStates, Transcription } from "../../pages/user/live-decode.page";
 import { RootState } from "../../state/reducers";
 import styles from './live-decode-btns.module.scss';
 

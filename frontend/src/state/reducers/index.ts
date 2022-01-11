@@ -1,11 +1,9 @@
 import { combineReducers } from "redux";
-import authReducer from './AuthReducer';
-import testReducer from './TestReducer';
+import authReducer from "./auth-reducer";
 import transcriptionHistoryReducer from './transcription-history-reducer';
 
 // Combine all reducers into single object
 const reducers = combineReducers({
-	test: testReducer,
 	authReducer,
 	transcriptionHistoryReducer
 })

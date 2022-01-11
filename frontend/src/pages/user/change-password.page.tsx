@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
 import { sendChangePasswordRequest } from '../../api/auth-api';
-import { UserChangePassword, UserChangePasswordResponse } from '../../models/UserChangePassword.model';
+import { UserChangePassword, UserChangePasswordResponse } from '../../models/user-authentication.model';
 import { RootState } from '../../state/reducers';
 
 const ChangePasswordPage: React.FC = () => {

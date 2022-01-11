@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { MyRecorder, RecordingStates } from "../../pages/user/LiveDecodePage";
+import { MyRecorder, RecordingStates } from "../../pages/user/live-decode.page";
 
 interface Props {
 	recorder: MyRecorder

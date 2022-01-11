@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { Button, Card, Checkbox, CheckboxProps, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
-import { UserLoginModel } from '../../models/UserLogin.model';
+import { UserLoginModel } from '../../models/user-authentication.model';
 import { actionCreators } from '../../state';
 import { RootState } from '../../state/reducers';
 import authModStyles from './authentication.module.scss';

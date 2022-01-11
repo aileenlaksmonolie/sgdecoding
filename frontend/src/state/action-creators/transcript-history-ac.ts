@@ -3,8 +3,8 @@ import moment from 'moment';
 import { Dispatch } from "redux";
 import { getOneUserSpeechHistory } from '../../api/batch-transcribe-api';
 import { OneUserTranscriptionHistoryResponse } from '../../models/transcribe-history-response.model';
-import { MgtTranscriptHistoriesAction } from '../actions-types/transcript-history-actions';
-import { store } from "../Store";
+import { MgtTranscriptHistoriesAction } from '../actions-types/transcript-history-actions.types';
+import { store } from "../store";
 import { UserTranscriptionTypes } from '../types';
 import { TranscriptionHistory } from './../../models/transcribe-history-response.model';
 

@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import Layout from "../../components/layout/Layout";
+import Layout from "../../components/layout/layout.component";
 import NotFoundPage from "../authentication/not-found.page";
 import ChangeNamePage from './change-name.page';
 import ChangePasswordPage from "./change-password.page";
