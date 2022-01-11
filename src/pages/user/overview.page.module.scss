@@ -1,29 +1,97 @@
-#greetingsHeader {
-	margin-bottom: 40px;
+#welcomeSection {
+	h1 {
+		margin-bottom: 40px;
 
-	span {
-		background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-	}
-}
-
-#welcomeCard {
-	display: flex;
-	flex-direction: row;
-	background-color: #fef7ba;
-	box-shadow: 0px 6px 4px rgba(0, 0, 0, 0.25);
-	border-radius: 20px;
-
-	#welcomeTextWrapper {
-		p {
-			margin-bottom: 16px;
+		span {
+			background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
 		}
 	}
 
-	img {
-		position: absolute;
-		bottom: -20px;
-		right: 0px;
+	#welcomeCard {
+		display: flex;
+		flex-direction: row;
+		background-color: #fef7ba;
+		box-shadow: 0px 6px 4px rgba(0, 0, 0, 0.25);
+		border-radius: 20px;
+
+		#welcomeTextWrapper {
+			p {
+				margin-bottom: 16px;
+			}
+		}
+
+		img {
+			position: absolute;
+			bottom: -20px;
+			right: 0px;
+		}
+	}
+}
+
+#overviewSection {
+	margin-top: 56px;
+
+	h2{
+		margin-bottom: 24px;
+	}
+
+
+	#overviewCardGroup {
+		.overviewCardContent{
+			> i > i{
+				font-size: 1.5em;
+			}
+
+			> i > i:nth-child(2){
+				font-size: 0.6em;
+				// color: #fdfdfd;
+			}
+		
+			div{
+				margin-left: 12px;
+			}
+
+			div:nth-child(2){
+				font-weight: bolder;
+			}
+		}
+
+		.purpIcon{
+		  :nth-child(1){
+				color: #D2C0FF;
+			}
+			:nth-child(2){
+				color: #6f3bdd;
+			}
+		}
+
+		.blueIcon{
+			:nth-child(1){
+				color: #ADDCFF;
+			}
+			:nth-child(2){
+				color: #2987CD;
+			}
+		}
+
+		.redIcon{
+			:nth-child(1){
+				color: #FFC1D8; 
+			}
+			:nth-child(2){
+				color: #FF4438;
+			}
+		}
+
+	}
+}
+
+#monthlyUsageStats {
+	margin-top: 64px;
+
+	h2{
+		margin-bottom: 24px;
 	}
 }
