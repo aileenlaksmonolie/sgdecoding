@@ -70,7 +70,7 @@ const OfflineTranscribePage: React.FC = () => {
 	}
 
 	useEffect(() => {
-		// getLoggedInUserTranscriptionHistory()
+		getLoggedInUserTranscriptionHistory()
 	}, []);
 
 	useEffect(() => {

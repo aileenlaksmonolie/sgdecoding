@@ -23,6 +23,7 @@
     "http-proxy-middleware": "^2.0.1",
     "https-proxy-agent": "^5.0.0",
     "mongodb": "^4.2.2",
+    "multer": "^1.4.4",
     "ws": "^8.4.0"
   }
 }

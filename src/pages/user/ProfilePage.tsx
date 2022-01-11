@@ -8,7 +8,6 @@ const ProfilePage: React.FC = () => {
 	const { name, role, rmbMeEmail, token } = useSelector((state: RootState) => state.authReducer)
 	return (
 		<Card.Group>
-			<ModalUploadFile accessToken={token}></ModalUploadFile>
 		<Card>
 			<Card.Content>
 			<Card.Header>Username</Card.Header>
@@ -41,6 +40,7 @@ const ProfilePage: React.FC = () => {
 			</Card.Description>
 			</Card.Content>
 		</Card>
+		<ModalUploadFile></ModalUploadFile>
 		</Card.Group>
 		
   );

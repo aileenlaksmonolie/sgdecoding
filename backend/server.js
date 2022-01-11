@@ -3,76 +3,24 @@ const app = express();
 const cors = require("cors");
 const axios = require("axios").default;
 const FormData = require('form-data');
-const fs = require('fs/promises');
-//https://gateway.speechlab.sg/
+const fs = require('fs');
+const multer = require('multer')
+//const upload = multer({ dest: 'uploads/' })
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
+//const path = require('path')
+//const { Readable } = require('stream')
+
 app.use(cors());
 app.use(express.json());
 app.listen(2000, () => {
     console.log("server started on 2000");
   });
-async function testFunction() {
-    params = {
-      //email: "user@ntu.edu.sg",
-      email: "user00@ntu.edu.sg",
-      password: "12345678a@",
-    };
-  
-    let res = await axios.post('https://gateway.speechlab.sg/auth/login', params);
-    console.log(res.data);
-  
-    //return res
-  }
-  
-app.get("/api/test", async (req, res) => {
-    params = {
-      email: "terryee97@gmail.com",
-      password: "plmplmplm",
-    };
 
-    await axios.get(
-        "https://gateway.speechlab.sg/speech/history",
-        params,
-        // {
-        //     headers: {
-        //         'Authorization': `Bearer ${newNameRequest.token}`
-        //     }
-        // },
-        {responseType: 'json'})
-        .then( (response) => {
-            console.log('history test')
-            console.log(response)
-            res.status(response.status).json(response.data)
-        })
-        .catch((error) => {
-            console.log('history failed')
-            res.status(error.response.status).json(error.response.data)
-        })
-    res.json(response.data)
-});
-
-async function registerUser(newUser) {
-    await axios.post(
-        "https://gateway.speechlab.sg/auth/register",
-        { name: newUser.name, email: newUser.email, password: newUser.password }, 
-        {responseType: 'json'})
-        .then(function(response){
-            console.log('Success')
-            let msg = response.data.email + ' is registered successfully. Please login to continue!'
-            console.log(msg)
-        })
-        .catch(function(error) {
-            console.log('Error')
-            let errMsg = 'Unknown Error, please contact an administrator!'
-			if (error.response?.data.statusCode === 422)
-				errMsg = 'Account Already Registered!'
-            console.log(errMsg)
-        })
-    
-}
 app.post("/auth/register", async (req, res) => {
     
     let newUser = req.body
-    const apiResponse =  await axios.post(
+    await axios.post(
         "https://gateway.speechlab.sg/auth/register",
         { name: newUser.name, email: newUser.email, password: newUser.password }, 
         {responseType: 'json'})
@@ -171,7 +119,6 @@ app.post("/auth/reset-password", async (req, res) => {
 app.post("/users/change-name", async (req, res) => {
     //need to re-login for changed name to reflect
     let newNameRequest = req.body
-    //console.log('change name token: ' + newNameRequest.token)
     await axios.post(
         "https://gateway.speechlab.sg/users/change-name",
         {newName: newNameRequest.newName},
@@ -184,26 +131,35 @@ app.post("/users/change-name", async (req, res) => {
         .then( (response) => {
             console.log('change name success')
             console.log(response)
-            //res.status(response.status).json(response.data)
+            res.status(response.status).json(response.data)
         })
         .catch((error) => {
             console.log('change name failed')
-            //res.status(error.response.status).json(error.response.data)
+            res.status(error.response.status).json(error.response.data)
         })
 })
 
-app.post("/speech/", async (req, res) => {
-    let newJob = req.body
-    console.log(req.body)
+app.post("/speech/", upload.single('file'), async (req, res) => {
+    
+    const form = new FormData();
+    const fileDateStr = new Date().toISOString().slice(0,10) + '.wav';
+    form.append('file', req.file.buffer, fileDateStr);
+    form.append('lang', req.body.lang);
+    form.append('audioType', req.body.audioType)
+    form.append('audioTrack', req.body.audioTrack)
+    form.append('queue', 'normal') //normal, meadow9
+
     await axios.post(
         "https://gateway.speechlab.sg/speech",
-        {file: newJob.file, lang: newJob.lang, audioType: newJob.audioType, audioTrack: newJob.audioTrack},
+        form,
         {
             headers: {
+                ...form.getHeaders(),
+                'Authorization': `${req.headers.authorization}`,
+                //'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRsdnVAbnR1LmVkdS5zZyIsInJvbGUiOiJ1c2VyIiwibmFtZSI6Ikx5IFZUIiwidHlwZSI6Im5vcm1hbCIsImlhdCI6MTY0MTg2NTc0MiwibmJmIjoxNjQxODY1NzQyLCJleHAiOjE2NDQ0NTc3NDIsImlzcyI6Imh0dHBzOi8vZ2F0ZXdheS5zcGVlY2hsYWIuc2ciLCJzdWIiOiI1ZjM0Y2ExOGJkZDg4ZDAwMjlmMWQ3N2UifQ.qJnlfP779Kwl0k9y9oLZqJjL-PMxfqO6diGkPLyCHkgj-JrEKRDaUdo-gbfSrtPe25XyZqf9vqk4KLtkyMmDX7_MgmKZ5rFPyXGlufkmpw3UdsogUr6JPm_i6t0zcbNNRhd_zRGNH-_Hq1mkgfD4TLGAyun8NvD3utVRqPQfl5vLPGtAK3669QQDCGDxl9mzmPfyHWPAJIjpQEA5luZ7IC0pM7yrUVb7tUiwhuz1VTiYKj1PqmM2q958qvTO9HUd2AnPt5XzRrwYqkIwsezaSfGRthxPcZ52Q3VgJ2jmqUc_4qZInyqrEBBLs0t6Eq5gqtQQGi7XJXRw32u2yJymbg',
                 'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${newJob.token}`,
-                
-            }
+            },
+            //onUploadProgress: progressEvent => console.log(progressEvent.loaded)
         },
         {responseType: 'json'})
         .then( (response) => {
@@ -219,24 +175,30 @@ app.post("/speech/", async (req, res) => {
     )
 })
 
-//wip
-app.post("/speech/history", async (req, res) => {
+app.get("/speech/history", async (req, res) => {
     //speech history
     let email = req.body
     await axios.get(
         "https://gateway.speechlab.sg/speech/history",
-        email,
+        /* {
+            data: email
+        }, */
+        {
+            headers: {
+                'Authorization': `${req.headers.authorization}`,
+            }
+        },
         {responseType: 'json'})
         .then( (response) => {
             console.log(response)
-            //res.status(response.status).json(response.data)
+            res.status(response.status).json(response.data)
         })
         .catch((error) => {
-            console.log(error)
-            //res.status(error.response.status).json(error.response.data)
+            console.log(error.response)
+            res.status(error.response.status).json(error.response.data)
         })
 })
-//wip
+
 app.post("/speech/result", async (req, res) => {
     //get transcription
     await axios.get(

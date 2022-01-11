@@ -1,11 +1,5 @@
 export interface OfflineTranscribeJob{
-    token: string,
-	file: object,
-	name: string,
-	size: string,
-	lang: string,
-	audioType: string,
-    audioTrack: string
+    form: FormData,
 }
 
 export interface OfflineTranscribeJobResponse{
