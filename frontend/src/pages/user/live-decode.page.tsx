@@ -4,7 +4,7 @@ import { Card, Container, Grid, Header, Icon, Label, TextArea } from "semantic-u
 import VizFreqBars from "../../components/audio/freq-bars-visualisation.component";
 import LiveDecodeBtns from "../../components/audio/live-decode-btns.component";
 import NoMicAccess from "../../components/audio/no-mic-access.component";
-import styles from './LiveDecodePage.module.scss';
+import styles from './live-decode.module.scss';
 
 export enum RecordingStates {
 	NOT_STARTED = "notstarted",

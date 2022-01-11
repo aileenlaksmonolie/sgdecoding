@@ -1,13 +1,12 @@
 import { Route, Routes } from "react-router-dom";
 import Layout from "../../components/layout/Layout";
-import NotFoundPage from "../authentication/NotFoundPage";
-import ResetPasswordPage from "../authentication/ResetPasswordPage";
-import ChangeNamePage from "./ChangeNamePage";
-import ChangePasswordPage from "./ChangePasswordPage";
-import LiveDecodePage from "./LiveDecodePage";
+import NotFoundPage from "../authentication/not-found.page";
+import ChangeNamePage from './change-name.page';
+import ChangePasswordPage from "./change-password.page";
+import LiveDecodePage from "./live-decode.page";
 import OfflineTranscribePage from "./offline-transcribe-page";
 import OverviewPage from "./overview.page";
-import ProfilePage from "./ProfilePage";
+import ProfilePage from "./profile.page";
 import ViewOneTranscript from "./view-one-transcript";
 
 
