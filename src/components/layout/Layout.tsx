@@ -1,7 +1,7 @@
 import React from "react";
 import classes from './Layout.module.scss';
 import LeftNavBar from "./left-nav-bar.component";
-import NavBar from "./NavBar";
+import NavBar from "./navbar.component";
 
 interface Props {
 	children: any;

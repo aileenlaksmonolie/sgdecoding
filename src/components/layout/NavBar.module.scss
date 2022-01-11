@@ -1,4 +1,14 @@
-
 .noMarginBot {
 	margin-bottom: 0px !important;
+}
+
+#logo {
+
+	img {
+		width: 15.5em;
+	}
+}
+
+#logo::before{
+	background: none !important;
 }

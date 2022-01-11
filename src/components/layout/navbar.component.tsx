@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import { Dropdown, Icon, Menu } from "semantic-ui-react";
 import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
-import classes from './NavBar.module.scss';
+import styles from './navbar.module.scss';
 
 const NavBar: React.FC = () => {
 
@@ -16,10 +16,9 @@ const NavBar: React.FC = () => {
 
 
 	return (
-		<Menu stackable className={classes.noMarginBot}>
-			<Menu.Item>
-				{/* TODO */}
-				<img src='https://react.semantic-ui.com/logo.png' alt='TODO'/>
+		<Menu stackable className={styles.noMarginBot}>
+			<Menu.Item as={Link} to="/" id={styles.logo}>
+				<img src='./images/Main_logo.svg' alt='main logo' width="274"/>
 			</Menu.Item>
 
 			{/* <Menu.Item
