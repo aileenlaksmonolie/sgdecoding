@@ -1,7 +1,8 @@
-import { UserChangePassword } from '../models/UserChangePassword.model';
-import { UserLoginModel } from '../models/UserLogin.model';
-import { NewUserRegistration } from '../models/UserRegister.model';
-import { UserResetPassword } from '../models/UserResetPassword.model';
+import { UserLoginModel } from './../models/UserLogin.model';
+import { NewUserRegistration } from './../models/UserRegister.model';
+import { UserResetPassword } from './../models/UserResetPassword.model';
+import { UserChangePassword } from './../models/UserChangePassword.model';
+import { UserChangeName } from './../models/UserChangeName.model';
 import { speechGatewayApi } from "./api";
 
 export const loginOneUser = (userCreds: UserLoginModel) => {
@@ -18,7 +19,6 @@ export const registerOneUser = (newUser: NewUserRegistration) => {
 		{ responseType: 'json' }
 	)
 }
-
 
 export const sendForgotPasswordRequest = (email: string) => {
 	return speechGatewayApi.post(
@@ -40,6 +40,14 @@ export const sendChangePasswordRequest = (newPasswordRequest: UserChangePassword
 	return speechGatewayApi.post(
 		`/auth/change-password`,
 		newPasswordRequest,
+		{responseType: 'json'}	
+	)
+}
+
+export const sendChangeNameRequest = (newNameRequest: UserChangeName) => {
+	return speechGatewayApi.post(
+		`/users/change-name`,
+		newNameRequest,
 		{responseType: 'json'}	
 	)
 }

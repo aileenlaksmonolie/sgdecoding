@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
 
 	// console.log("[DEBUG] rmbMeEmail: " + rmbMeEmail)
 	if (rmbMeEmail !== '') {
-		setValue('email', rmbMeEmail)
+		//setValue('email', rmbMeEmail) //email does not change
 		setValue('rmbMe', true)
 	}
 
@@ -59,7 +59,7 @@ const LoginPage: React.FC = () => {
 
 	/* Event Handlers */
 	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
-		// setValue(name, value, { shouldValidate: true})
+		//setValue(name, value, { shouldValidate: true})
 		setValue(name, value)
 	}
 
@@ -74,6 +74,7 @@ const LoginPage: React.FC = () => {
 
 	const onSubmit = async (data: { email: string, password: string, rmbMe: undefined | boolean }) => {
 		// console.log("[DEBUG] LoginCard rmbMe: " + data.rmbMe)
+		console.log('email ' + data.email)
 		const userCreds: UserLoginModel = {
 			email: data.email,
 			password: data.password,
@@ -109,7 +110,7 @@ const LoginPage: React.FC = () => {
 						label='Email'
 						fluid
 						type='email'
-						defaultValue={rmbMeEmail}
+						//defaultValue={rmbMeEmail}
 						placeholder='example@ntu.edu.sg'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
@@ -144,6 +145,8 @@ const LoginPage: React.FC = () => {
 				</Button>
 			</Form>
 			<Link to='/auth/forgotpassword'><em>Forgot your password?</em></Link>
+			<br></br>
+			<Link to='/auth/resetpassword'><em>Reset Password</em></Link>
 			<h4>Don't have an account?
 				<em><Link to='/auth/register'> Register here</Link></em>
 			</h4>

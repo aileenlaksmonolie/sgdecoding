@@ -2,9 +2,10 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Card } from 'semantic-ui-react';
 import { RootState } from '../../state/reducers';
+import ModalUploadFile from '../../components/audio/ModalUploadFile'
 
 const ProfilePage: React.FC = () => {
-		const { name, role, rmbMeEmail } = useSelector((state: RootState) => state.authReducer)
+	const { name, role, rmbMeEmail, token } = useSelector((state: RootState) => state.authReducer)
 	return (
 		<Card.Group>
 		<Card>
@@ -39,7 +40,9 @@ const ProfilePage: React.FC = () => {
 			</Card.Description>
 			</Card.Content>
 		</Card>
+		<ModalUploadFile></ModalUploadFile>
 		</Card.Group>
+		
   );
 }
 

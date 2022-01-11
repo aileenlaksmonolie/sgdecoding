@@ -25,6 +25,7 @@ export const login = (userCreds: UserLoginModel) => {
 				dispatch(loginSuccess)
 				return Promise.resolve()
 			}).catch((error) => {
+				console.log('test')
 				console.error(error);
 
 				let loginFail: AuthAction = {

@@ -36,6 +36,18 @@ const ResetPasswordPage: React.FC = () => {
 	const isLoggedIn = token !== ''
 
 	useEffect(() => {
+		register("email", {
+			required: 'Email field is empty!',
+			pattern: {
+				value: /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/,
+				message: 'Invalid email address!'
+			}
+		});
+
+		register("code", {
+			required: 'Code field is empty!'
+		})
+
 		register("password", {
 			required: 'Password field is empty!',
 			minLength: {
@@ -50,10 +62,10 @@ const ResetPasswordPage: React.FC = () => {
 		if (isLoggedIn)
 			navigate('/')
 
-		if(email === null || code === null){
-			setFormMessage({isShown: true, isError: true, msg: 'Invalid Reset Password Link!'})
-			setIsDiabled(true)
-		}
+		// if(email === null || code === null){
+		// 	setFormMessage({isShown: true, isError: true, msg: 'Invalid Reset Password Link!'})
+		// 	setIsDiabled(true)
+		// }
 	}, [isLoggedIn, navigate, register, email, code])
 
 
@@ -68,15 +80,15 @@ const ResetPasswordPage: React.FC = () => {
 		setValue(name, value, { shouldValidate: true })
 	}
 
-	const onSubmit = async (data: { password: string, passwordCfm: string }) => {
+	const onSubmit = async (data: { email: string, code: string, password: string, passwordCfm: string }) => {
 		// console.log("[DEBUG] onSubmit: ")
 		// console.log(data)
 
 		const newPasswordRequest: UserResetPassword = {
-			email,
+			email: data.email,
+			code: data.code,
 			newPassword: data.password,
 			confirmNewPassword: data.passwordCfm,
-			code
 		}
 
 		sendResetPasswordRequest(newPasswordRequest)
@@ -111,8 +123,32 @@ const ResetPasswordPage: React.FC = () => {
 				/>
 				<Form.Field>
 					<Form.Input
+						name='email'
+						label='Existing Email'
 						fluid
-						label="Password"
+						type='email'
+						placeholder='example@ntu.edu.sg'
+						onChange={onInputChange}
+						onBlur={onInputBlur}
+						error={errors.email ? { content: errors.email.message } : false}
+					/>
+				</Form.Field>
+				<Form.Field>
+					<Form.Input
+						name='code'
+						label='Code'
+						fluid
+						type='text'
+						placeholder='Enter code from email'
+						onChange={onInputChange}
+						onBlur={onInputBlur}
+						error={errors.code ? { content: errors.code.message } : false}
+					/>
+				</Form.Field>
+				<Form.Field>
+					<Form.Input
+						fluid
+						label="New Password"
 						name="password"
 						type='password'
 						placeholder='Password'

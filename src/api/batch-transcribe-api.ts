@@ -1,4 +1,5 @@
 import { speechGatewayApi } from './api';
+//import { OfflineTranscribeJob } from '../models/OfflineTranscribeJob.model';
 
 
 export const getOneUserSpeechHistory = (email: string) => {
@@ -22,5 +23,19 @@ export const getOneAudioRecordingFileSrcUrl = (inputZeroFileId: string) => {  //
 export const getOneTranscriptResult = (batchTranscribeId: string) => {
 	return speechGatewayApi.get(
 		`/speech/${batchTranscribeId}/result`
+	)
+}
+
+export const submitOneJob = (file: FormData) => {
+	return speechGatewayApi.post(
+		`/speech`,
+		file,
+		{
+			headers:
+			{
+				'Content-Type': 'multipart/form-data',
+			},
+			onUploadProgress: progressEvent => console.log(progressEvent.loaded)
+		},
 	)
 }

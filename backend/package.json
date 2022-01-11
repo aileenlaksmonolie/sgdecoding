@@ -1,0 +1,29 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "db": "nodemon index.js",
+    "live": "nodemon live.js",
+    "ws": "nodemon webSocket.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "form-data": "^4.0.0",
+    "http-proxy": "^1.18.1",
+    "http-proxy-middleware": "^2.0.1",
+    "https-proxy-agent": "^5.0.0",
+    "mongodb": "^4.2.2",
+    "multer": "^1.4.4",
+    "ws": "^8.4.0"
+  }
+}

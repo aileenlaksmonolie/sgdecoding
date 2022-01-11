@@ -83,15 +83,32 @@ const RegisterPage: React.FC = () => {
 			password: data.password,
 		}
 
+		// const response = await fetch ('http://localhost:2000/api/register', {
+		// 	method: 'POST',
+		// 	headers: {
+		// 		'Content-Type': 'application/json',
+		// 	},
+		// 	body: JSON.stringify({
+		// 		email: data.email,
+		// 		name: data.name,
+		// 		password: data.password
+
+		// 	}),
+		// })
+
+		// const res = await response.json()
+
+		// console.log(res)
+
 		registerOneUser(newUser)
 			.then((res: AxiosResponse<NewUserRegistrationResponse, any>) => {
-				console.log('successful regis')
+				console.log('Successful Registration')
 				let msg = res.data.email + ' is registered successfully. Please login to continue!'
 				setRegMessage({ isShown: true, isError: false, msg: msg })
 			})
 			.catch((err: AxiosError) => {
 				// console.log("[DEBUG] Error Registering!")
-				// console.log(err.response)
+				//console.log(err.response)
 				let errMsg = 'Unknown Error, please contact an administrator!'
 				if (err.response?.data.statusCode === 422)
 					errMsg = 'Account Already Registered!'
