@@ -1,8 +1,4 @@
-import { UserLoginModel } from './../models/UserLogin.model';
-import { NewUserRegistration } from './../models/UserRegister.model';
-import { UserResetPassword } from './../models/UserResetPassword.model';
-import { UserChangePassword } from './../models/UserChangePassword.model';
-import { UserChangeName } from './../models/UserChangeName.model';
+import { NewUserRegistration, UserChangeName, UserChangePassword, UserLoginModel, UserResetPassword } from '../models/user-authentication.model';
 import { speechGatewayApi } from "./api";
 
 export const loginOneUser = (userCreds: UserLoginModel) => {

@@ -6,7 +6,7 @@ import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
 import { MyRecorder, RecordingStates, Transcription } from "../../pages/user/LiveDecodePage";
 import { RootState } from "../../state/reducers";
-import styles from './BtnsArray.module.scss';
+import styles from './live-decode-btns.module.scss';
 
 interface Props {
 	// worker: AudioWorkletNode,
@@ -23,7 +23,7 @@ interface Props {
 }
 
 
-const BtnsArray: React.FC<Props> = (
+const LiveDecodeBtns: React.FC<Props> = (
 	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks }
 ) => {
 	/* */
@@ -204,4 +204,4 @@ const BtnsArray: React.FC<Props> = (
 
 // TODO IMPORTANT
 //https://codepen.io/anon/pen/ywJxzV?editors=1111
-export default React.memo(BtnsArray)
+export default React.memo(LiveDecodeBtns)

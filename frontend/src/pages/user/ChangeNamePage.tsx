@@ -1,11 +1,11 @@
 import { AxiosError, AxiosResponse } from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, Card, Container, Form, InputOnChangeData, Label, Message } from 'semantic-ui-react';
+import { useNavigate } from 'react-router-dom';
+import { Button, Card, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
 import { sendChangeNameRequest } from '../../api/auth-api';
-import { UserChangeName, UserChangeNameResponse } from '../../models/UserChangeName.model';
+import { UserChangeName, UserChangeNameResponse } from '../../models/user-authentication.model';
 import { RootState } from '../../state/reducers';
 
 

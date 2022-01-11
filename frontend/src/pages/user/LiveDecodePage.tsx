@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
 import { Card, Container, Grid, Header, Icon, Label, TextArea } from "semantic-ui-react";
-import BtnsArray from "../../components/audio/BtnsArray";
+import VizFreqBars from "../../components/audio/freq-bars-visualisation.component";
+import LiveDecodeBtns from "../../components/audio/live-decode-btns.component";
 import NoMicAccess from "../../components/audio/no-mic-access.component";
-import VizFreqBars from "../../components/audio/VizFreqBars";
 import styles from './LiveDecodePage.module.scss';
 
 export enum RecordingStates {
@@ -223,7 +223,7 @@ const LiveDecodePage: React.FC = () => {
 						<Grid padded>
 							<Grid.Row>
 								<Grid.Column width={3}>
-									<BtnsArray
+									<LiveDecodeBtns
 										// key={transcription.final.length}
 										IS_DEBUGGING={IS_DEBUGGING}
 										recorder={recorder}

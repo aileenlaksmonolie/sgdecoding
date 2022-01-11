@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Card } from 'semantic-ui-react';
+import ModalUploadFile from '../../components/audio/upload-file-modal';
 import { RootState } from '../../state/reducers';
-import ModalUploadFile from '../../components/audio/ModalUploadFile'
 
 const ProfilePage: React.FC = () => {
 	const { name, role, rmbMeEmail, token } = useSelector((state: RootState) => state.authReducer)
