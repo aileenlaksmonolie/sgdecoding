@@ -3,7 +3,7 @@ import { Container } from "semantic-ui-react";
 
 const NotFoundPage = () => {
 	
-	const { pathname, hash, key, search, state  } = useLocation()
+	const { pathname, hash, key, search, state  } = useLocation();
 
 	return (
 		<Container textAlign='center'>
@@ -24,6 +24,6 @@ const NotFoundPage = () => {
 			<p>&lt; To be done &gt;</p>
 		</Container>
 	);
-}
+};
 
-export default NotFoundPage
+export default NotFoundPage;

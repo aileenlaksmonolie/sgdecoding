@@ -34,14 +34,14 @@ const DownloadTranscriptButton: React.FC<Props> = ({ transcriptTitle, isDisabled
 					URL.revokeObjectURL(anchor.href);
 				});
 				document.body.removeChild(anchor);
-			} // END anchor.onclick
+			}; // END anchor.onclick
 			setIsLoadingTranscript(false);
 			anchor.click();
 		} catch (error: any) {
-			console.error("[ERROR] Unable to download!")
-			console.error({ error })
+			console.error("[ERROR] Unable to download!");
+			console.error({ error });
 		}
-	}
+	};
 
 	return (
 		<Button
@@ -54,6 +54,6 @@ const DownloadTranscriptButton: React.FC<Props> = ({ transcriptTitle, isDisabled
 			onClick={onBtnClick}
 		>Download</Button>
 	);
-}
+};
 
 export default DownloadTranscriptButton;

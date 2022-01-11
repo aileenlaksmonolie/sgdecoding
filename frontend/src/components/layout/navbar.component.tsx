@@ -9,10 +9,10 @@ import styles from './navbar.module.scss';
 
 const NavBar: React.FC = () => {
 
-	const { name } = useSelector((state: RootState) => state.authReducer)
+	const { name } = useSelector((state: RootState) => state.authReducer);
 
-	const dispatch = useDispatch()
-	const { logout } = bindActionCreators(actionCreators, dispatch)
+	const dispatch = useDispatch();
+	const { logout } = bindActionCreators(actionCreators, dispatch);
 
 
 	return (
@@ -49,6 +49,6 @@ const NavBar: React.FC = () => {
 
 		</Menu>
 	);
-}
+};
 
 export default NavBar;

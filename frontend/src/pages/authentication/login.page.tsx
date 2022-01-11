@@ -12,27 +12,27 @@ import authModStyles from './authentication.module.scss';
 
 const LoginPage: React.FC = () => {
 	/* Declarations */
-	const [showError, setShowError] = useState(false)
-	const navigate = useNavigate()
+	const [showError, setShowError] = useState(false);
+	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
 		setValue,
 		formState: { errors }
-	} = useForm({ mode: 'onBlur' })
+	} = useForm({ mode: 'onBlur' });
 
-	const { rmbMeEmail, token } = useSelector((state: RootState) => state.authReducer)
-	const isLoggedIn = token !== ''
+	const { rmbMeEmail, token } = useSelector((state: RootState) => state.authReducer);
+	const isLoggedIn = token !== '';
 
 	// console.log("[DEBUG] isLoggedIn " + isLoggedIn)
 
 	const dispatch = useDispatch();
-	const { login } = bindActionCreators(actionCreators, dispatch)
+	const { login } = bindActionCreators(actionCreators, dispatch);
 
 	// console.log("[DEBUG] rmbMeEmail: " + rmbMeEmail)
 	if (rmbMeEmail !== '') {
 		//setValue('email', rmbMeEmail) //email does not change
-		setValue('rmbMe', true)
+		setValue('rmbMe', true);
 	}
 
 	useEffect(() => {
@@ -50,45 +50,45 @@ const LoginPage: React.FC = () => {
 				message: 'Password is too short!'
 			}
 		});
-		register('rmbMe')
+		register('rmbMe');
 
 		if (isLoggedIn)
-			navigate('/')
-	}, [isLoggedIn, navigate, register])
+			navigate('/');
+	}, [isLoggedIn, navigate, register]);
 
 
 	/* Event Handlers */
 	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
 		//setValue(name, value, { shouldValidate: true})
-		setValue(name, value)
-	}
+		setValue(name, value);
+	};
 
 	const onInputBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target
-		setValue(name, value, { shouldValidate: true })
-	}
+		const { name, value } = e.target;
+		setValue(name, value, { shouldValidate: true });
+	};
 
 	const onRmbMeChange = (e: FormEvent<HTMLInputElement>, data: CheckboxProps) => {
-		setValue('rmbMe', data.checked)
-	}
+		setValue('rmbMe', data.checked);
+	};
 
 	const onSubmit = async (data: { email: string, password: string, rmbMe: undefined | boolean }) => {
 		// console.log("[DEBUG] LoginCard rmbMe: " + data.rmbMe)
-		console.log('email ' + data.email)
+		console.log('email ' + data.email);
 		const userCreds: UserLoginModel = {
 			email: data.email,
 			password: data.password,
 			rmbMe: data.rmbMe === undefined ? false : true
-		}
+		};
 		try {
-			await login(userCreds)
+			await login(userCreds);
 		} catch (err) {
 			// console.log("[DEBUG] Error logging in!")
-			setShowError(true)
+			setShowError(true);
 		}
 
 		// console.log("[DEBUG] Submitted, is user logged in? " + isLoggedIn)
-	}
+	};
 	return (
 		<Card.Content>
 			<Container className={authModStyles.cardHeader}>
@@ -151,6 +151,6 @@ const LoginPage: React.FC = () => {
 				<em><Link to='/auth/register'> Register here</Link></em>
 			</h4>
 		</Card.Content>);
-}
+};
 
 export default LoginPage;

@@ -40,54 +40,54 @@ const LiveDecodeBtns: React.FC<Props> = (
 		
 	*/
 	const onStartClick = () => {
-		console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING)
+		console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING);
 		if (!IS_DEBUGGING) {
-			webSocketConn?.close()
+			webSocketConn?.close();
 			const conn = liveDecodeSocket(token);
 
 			conn.onmessage = (event) => {
-				console.log("[DEBUG] Received response from gateway")
-				console.log(event)
+				console.log("[DEBUG] Received response from gateway");
+				console.log(event);
 				const { data } = event;
 				const response: LiveDecodeResponse = JSON.parse(data);
 				if (response.status === 0) {
 					if (isHypothesisResponse(response)) {
-						console.log('[DEBUG] HYPOTHESIS RESPONSE RECEIVED')
-						const { final, hypotheses } = response.result
-						let newTranscription = hypotheses[0].transcript
+						console.log('[DEBUG] HYPOTHESIS RESPONSE RECEIVED');
+						const { final, hypotheses } = response.result;
+						let newTranscription = hypotheses[0].transcript;
 						if (final) { // 100% of what the word is
-							setTranscription(prev => ({ nonFinal: "", final: [...prev.final, newTranscription] }))
+							setTranscription(prev => ({ nonFinal: "", final: [...prev.final, newTranscription] }));
 						} else { // not 100% what the word is
-							setTranscription(prev => ({ ...prev, nonFinal: "... ..." + newTranscription }))
+							setTranscription(prev => ({ ...prev, nonFinal: "... ..." + newTranscription }));
 						}
 
 					} else {
-						console.log('[DEBUG] ADAPTATION RESPONSE RECEIVED')
-						setAdaptationState((response as AdaptationStateResponse).adaptation_state)
+						console.log('[DEBUG] ADAPTATION RESPONSE RECEIVED');
+						setAdaptationState((response as AdaptationStateResponse).adaptation_state);
 						// webSocketConn?.send(JSON.stringify(adaptationStateRef.current))
 					}
 				} else if (response.status === 200) {
-					console.log("[DEBUG] Successfully connected to the server")
-					recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS })
-					setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS })
+					console.log("[DEBUG] Successfully connected to the server");
+					recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS });
+					setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
 
 
 				}
-			}
+			};
 
 			conn.onopen = (event) => {
-				console.log("[DEBUG] Connection to backend opened")
-			}
+				console.log("[DEBUG] Connection to backend opened");
+			};
 
 			conn.onerror = (error) => {
-				console.error("[ERROR DEBUG] Error with websocket connection")
-				console.log(error)
-			}
+				console.error("[ERROR DEBUG] Error with websocket connection");
+				console.log(error);
+			};
 
 			conn.onclose = (event) => {
-				console.log("[DEBUG] onclose")
-				console.log(event)
-			}
+				console.log("[DEBUG] onclose");
+				console.log(event);
+			};
 
 			setWebSocketConn(conn);
 			webSocketRef.current = conn;
@@ -96,7 +96,7 @@ const LiveDecodeBtns: React.FC<Props> = (
 			setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
 
 		}
-	}
+	};
 
 	const onStopClick = () => {
 		recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.STOPPED });
@@ -106,44 +106,44 @@ const LiveDecodeBtns: React.FC<Props> = (
 			webSocketConn?.close();
 			setWebSocketConn(undefined);
 		}
-	}
+	};
 
 	const onRedoClick = () => {
-		window.location.reload()
-	}
+		window.location.reload();
+	};
 
 	const onDownloadClick = () => {
-		console.log("[DEBUG] createDownloadLink")
+		console.log("[DEBUG] createDownloadLink");
 		if (allRecordedChunks.length > 0) {
 			const config: ConvToWavConfig = {
 				sampleRate: 16000,
 				// desiredSampRate: 16000,
 				internalInterleavedLength: allRecordedChunks.length * allRecordedChunks[0].length,
 				monoChnlBuffer: allRecordedChunks,
-			}
+			};
 
 			convertToWAVFile(config, function (buffer: any, view: any) {
 				var blob = new Blob([buffer], { type: 'audio/x-wav' });
-				console.log(blob)
+				console.log(blob);
 
 				var url = URL.createObjectURL(blob);
-				var anchor = document.createElement('a')
-				anchor.style.display = 'none'
-				document.body.appendChild(anchor)
-				anchor.href = url
-				anchor.download = 'audio.wav'
+				var anchor = document.createElement('a');
+				anchor.style.display = 'none';
+				document.body.appendChild(anchor);
+				anchor.href = url;
+				anchor.download = 'audio.wav';
 				anchor.onclick = () => {
 					requestAnimationFrame(() => {
-						URL.revokeObjectURL(anchor.href)
+						URL.revokeObjectURL(anchor.href);
 					});
-					document.body.removeChild(anchor)
-				}
-				anchor.click()
-			})
+					document.body.removeChild(anchor);
+				};
+				anchor.click();
+			});
 		} else {
-			console.error("[ERROR DEBUG] No recording found!")
+			console.error("[ERROR DEBUG] No recording found!");
 		}
-	}
+	};
 
 	/* */
 	useEffect(() => {
@@ -151,19 +151,19 @@ const LiveDecodeBtns: React.FC<Props> = (
 
 		if (recorder.isRecording === RecordingStates.IN_PROGRESS) {
 			interval = setInterval(() => {
-				console.log(time)
-				setTime(prevTime => prevTime + 1)
+				console.log(time);
+				setTime(prevTime => prevTime + 1);
 			}, 1000);
 		}
 
 		return () => {
-			console.log("[DEBUG] BtnsArray Unmounted")
+			console.log("[DEBUG] BtnsArray Unmounted");
 			if (interval !== null) {
-				console.log("[DEBUG] Cleared Interval")
+				console.log("[DEBUG] Cleared Interval");
 				clearInterval(interval);
 			}
-		}
-	})
+		};
+	});
 
 	return (
 		<Container id={styles.btnsArrayContainer}>
@@ -199,9 +199,9 @@ const LiveDecodeBtns: React.FC<Props> = (
 				<Button className="blue">Test Button</Button>
 			</Grid.Row> */}
 		</Container>
-	)
-}
+	);
+};
 
 // TODO IMPORTANT
 //https://codepen.io/anon/pen/ywJxzV?editors=1111
-export default React.memo(LiveDecodeBtns)
+export default React.memo(LiveDecodeBtns);

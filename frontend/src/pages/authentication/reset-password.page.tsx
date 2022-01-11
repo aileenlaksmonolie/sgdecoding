@@ -11,29 +11,29 @@ import classes from './authentication.module.scss';
 
 const ResetPasswordPage: React.FC = () => {
 	/* Declarations */
-	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' })
-	const [isDisabled, setIsDiabled] = useState(false)
+	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' });
+	const [isDisabled, setIsDiabled] = useState(false);
 
-	const {search} = useLocation()
-	const code = new URLSearchParams(search).get('code')!
-	const email = new URLSearchParams(search).get('email')!
+	const {search} = useLocation();
+	const code = new URLSearchParams(search).get('code')!;
+	const email = new URLSearchParams(search).get('email')!;
 	// console.log("[DEBUG] " + code) 
 	// console.log("[DEBUG] " + email)
 
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
 		setValue,
 		watch,
 		formState: { errors }
-	} = useForm({ mode: 'onBlur' })
+	} = useForm({ mode: 'onBlur' });
 
-	const password = useRef({})
-	password.current = watch('password', '')
+	const password = useRef({});
+	password.current = watch('password', '');
 
-	const { token } = useSelector((state: RootState) => state.authReducer)
-	const isLoggedIn = token !== ''
+	const { token } = useSelector((state: RootState) => state.authReducer);
+	const isLoggedIn = token !== '';
 
 	useEffect(() => {
 		register("email", {
@@ -46,7 +46,7 @@ const ResetPasswordPage: React.FC = () => {
 
 		register("code", {
 			required: 'Code field is empty!'
-		})
+		});
 
 		register("password", {
 			required: 'Password field is empty!',
@@ -54,31 +54,31 @@ const ResetPasswordPage: React.FC = () => {
 				value: 6,
 				message: 'Password is too short!'
 			}
-		})
+		});
 		register("passwordCfm", {
 			validate: v => v === password.current || 'The passwords do not match'
 		});
 
 		if (isLoggedIn)
-			navigate('/')
+			navigate('/');
 
 		// if(email === null || code === null){
 		// 	setFormMessage({isShown: true, isError: true, msg: 'Invalid Reset Password Link!'})
 		// 	setIsDiabled(true)
 		// }
-	}, [isLoggedIn, navigate, register, email, code])
+	}, [isLoggedIn, navigate, register, email, code]);
 
 
 	/* Event Handlers */
 	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
 		// setValue(name, value, { shouldValidate: true})
-		setValue(name, value)
-	}
+		setValue(name, value);
+	};
 
 	const onInputBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target
-		setValue(name, value, { shouldValidate: true })
-	}
+		const { name, value } = e.target;
+		setValue(name, value, { shouldValidate: true });
+	};
 
 	const onSubmit = async (data: { email: string, code: string, password: string, passwordCfm: string }) => {
 		// console.log("[DEBUG] onSubmit: ")
@@ -89,19 +89,19 @@ const ResetPasswordPage: React.FC = () => {
 			code: data.code,
 			newPassword: data.password,
 			confirmNewPassword: data.passwordCfm,
-		}
+		};
 
 		sendResetPasswordRequest(newPasswordRequest)
 			.then((res: AxiosResponse<UserResetPasswordResponse, any>) => {
 				// console.log("[DEBUG] Successful Reset") 
-				setFormMessage({ isShown: true, isError: false, msg: res.data.message })
+				setFormMessage({ isShown: true, isError: false, msg: res.data.message });
 			})
 			.catch((err: AxiosError) => {
 				// console.log("[DEBUG] Error Resetting!")
 				// console.log(err.response)
-				setFormMessage({ isShown: true, isError: true, msg: err.message })
-			})
-	}
+				setFormMessage({ isShown: true, isError: true, msg: err.message });
+			});
+	};
 	return (
 		<Card.Content>
 			<Container className={classes.cardHeader}>
@@ -192,6 +192,6 @@ const ResetPasswordPage: React.FC = () => {
 
 		</Card.Content>
 	);
-}
+};
 
-export default ResetPasswordPage
+export default ResetPasswordPage;

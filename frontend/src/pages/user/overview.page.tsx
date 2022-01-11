@@ -22,12 +22,12 @@ const OverviewPage: React.FC = () => {
 	];
 	const COLORS_LIVE = [
 		"#2DB84B", "#643CC6"
-	]
+	];
 	const COLORS_OFFLINE = [
 		"#0CB5AC", "#F0171C"
-	]
+	];
 	/* END: For Development */
-	const { name } = useSelector((state: RootState) => state.authReducer)
+	const { name } = useSelector((state: RootState) => state.authReducer);
 
 	const currentTime: number = Number(moment(new Date().getTime()).format("HH"));
 
@@ -161,7 +161,7 @@ const OverviewPage: React.FC = () => {
 
 		{/* <span>Logged In Successfully</span>
 		<button onClick={logout}>Logout</button> */}
-	</Container>)
-}
+	</Container>);
+};
 
 export default OverviewPage;

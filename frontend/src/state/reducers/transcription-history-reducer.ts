@@ -12,7 +12,7 @@ export const INITIAL_STATE: TranscriptHistoryState = {
 	history: [] as TranscriptionHistory[],
 	totalHistory: 0,
 	selectedTranscriptHistory: undefined
-}
+};
 
 const reducer = (state = INITIAL_STATE, action: MgtTranscriptHistoriesAction) => {
 	switch (action.type) {
@@ -27,6 +27,6 @@ const reducer = (state = INITIAL_STATE, action: MgtTranscriptHistoriesAction) =>
 		default:
 			return state;
 	}
-}
+};
 
 export default reducer;

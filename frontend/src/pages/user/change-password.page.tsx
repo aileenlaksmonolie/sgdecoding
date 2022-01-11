@@ -10,54 +10,54 @@ import { RootState } from '../../state/reducers';
 
 const ChangePasswordPage: React.FC = () => {
 	/* Declarations */
-	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' })
+	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' });
 	// const [isDisabled, setIsDiabled] = useState(false)
 
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
 		setValue,
 		watch,
 		formState: { errors }
-	} = useForm({ mode: 'onBlur' })
+	} = useForm({ mode: 'onBlur' });
 
-	const newPassword = useRef({})
-	newPassword.current = watch('newPassword', '')
+	const newPassword = useRef({});
+	newPassword.current = watch('newPassword', '');
 
-	const { token, rmbMeEmail } = useSelector((state: RootState) => state.authReducer)
-	const isLoggedIn = token !== ''
+	const { token, rmbMeEmail } = useSelector((state: RootState) => state.authReducer);
+	const isLoggedIn = token !== '';
 
 	useEffect(() => {
 		register("currentPassword", {
 			required: 'Password field is empty!',
-		})
+		});
 		register("newPassword", {
 			required: 'Password field is empty!',
 			minLength: {
 				value: 6,
 				message: 'Password is too short!'
 			}
-		})
+		});
 		register("passwordCfm", {
 			validate: v => v === newPassword.current || 'The passwords do not match'
 		});
 
 		if (!isLoggedIn)
-			navigate('/')
+			navigate('/');
 
-	}, [isLoggedIn, navigate, register])
+	}, [isLoggedIn, navigate, register]);
 
 	/* Event Handlers */
 	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
 		// setValue(name, value, { shouldValidate: true})
-		setValue(name, value)
-	}
+		setValue(name, value);
+	};
 
 	const onInputBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target
-		setValue(name, value, { shouldValidate: true })
-	}
+		const { name, value } = e.target;
+		setValue(name, value, { shouldValidate: true });
+	};
 
 	const onSubmit = async (data: { currentPassword: string, newPassword: string, passwordCfm: string }) => {
 		// console.log("[DEBUG] onSubmit: ")
@@ -68,20 +68,19 @@ const ChangePasswordPage: React.FC = () => {
 			currentPassword: data.currentPassword,
 			newPassword: data.newPassword,
 			confirmNewPassword: data.passwordCfm,
-		}
+		};
 
 		sendChangePasswordRequest(newPasswordRequest)
 			.then((res: AxiosResponse<UserChangePasswordResponse, any>) => {
 				// console.log("[DEBUG] Successful Reset") 
-				setFormMessage({ isShown: true, isError: false, msg: res.data.message })
+				setFormMessage({ isShown: true, isError: false, msg: res.data.message });
 			})
 			.catch((err: AxiosError) => {
 				// console.log("[DEBUG] Error Resetting!")
 				// console.log(err.response)
-				setFormMessage({ isShown: true, isError: true, msg: err.message })
-			})
-		
-	}
+				setFormMessage({ isShown: true, isError: true, msg: err.message });
+			});
+	};
 
 	return (
 		<Card.Content>
@@ -160,7 +159,7 @@ const ChangePasswordPage: React.FC = () => {
 			</Form>
 
 		</Card.Content>
-	)
-}
+	);
+};
 
-export default ChangePasswordPage
+export default ChangePasswordPage;

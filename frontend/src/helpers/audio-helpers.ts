@@ -26,7 +26,7 @@ export const downsampleBuffer = (buffer: Float32Array, sampleRate: number, rate:
 		offsetBuffer = nextOffsetBuffer;
 	}
 	return result;
-}
+};
 
 export interface ConvToWavConfig {
 	// desiredSampRate?: number,
@@ -43,7 +43,7 @@ export function convertToWAVFile(config: ConvToWavConfig, callback: Function) {
 		var internalInterleavedLength = config.internalInterleavedLength;
 		// var desiredSampRate = config.desiredSampRate;
 
-		var leftBuffersMerged: any
+		var leftBuffersMerged: any;
 
 		leftBuffersMerged = mergeBuffers(leftBuffers, internalInterleavedLength);
 
@@ -122,7 +122,7 @@ export function convertToWAVFile(config: ConvToWavConfig, callback: Function) {
 		});
 	} // END 
 
-	var workerURL = createWorkerURL(mergeAudioBuffers)
+	var workerURL = createWorkerURL(mergeAudioBuffers);
 	var webWorker = processInWebWorker(workerURL);
 	webWorker.onmessage = function (event) {
 		callback(event.data.buffer, event.data.view);

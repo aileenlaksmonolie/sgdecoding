@@ -35,7 +35,7 @@ const ViewOneTranscript: React.FC = () => {
 		{ key: 1.5, text: '1.5x', value: 1.5 },
 		{ key: 1.75, text: '1.75x', value: 1.75 },
 		{ key: 2, text: '2x', value: 2 }
-	]
+	];
 
 	// const { selectedTranscriptHistory } = useSelector((state: RootState) => state.transcriptionHistoryReducer)
 	//DEBUG
@@ -115,7 +115,7 @@ const ViewOneTranscript: React.FC = () => {
 			"userCreated": "5f7539cb8fb89d0029597fe4",
 			"createdAt": "2021-09-27T10:01:46.352Z"
 		}
-	}
+	};
 
 	const startTimer = () => {
 		console.log("[DEBUG] Starting Timer...");
@@ -124,15 +124,15 @@ const ViewOneTranscript: React.FC = () => {
 			clearInterval(intervalRef.current);
 
 		intervalRef.current = setInterval(() => {
-			console.log("[DEBUG] audioRef currentTime: " + audioRef.current.currentTime)
-			console.log("[DEBUG] audioRef currentTime MathRound: " + Math.round(audioRef.current.currentTime))
-			console.log("[DEBUG] audioRef currentTime MathCeil: " + Math.ceil(audioRef.current.currentTime))
+			console.log("[DEBUG] audioRef currentTime: " + audioRef.current.currentTime);
+			console.log("[DEBUG] audioRef currentTime MathRound: " + Math.round(audioRef.current.currentTime));
+			console.log("[DEBUG] audioRef currentTime MathCeil: " + Math.ceil(audioRef.current.currentTime));
 			if (!audioRef.current.ended) {
 				setTrackProgress(Math.ceil(audioRef.current.currentTime));
 			} else {
 				setIsPlaying(false);
 				if (trackProgress < audioRef.current.currentTime)
-					setTrackProgress(audioRef.current.currentTime)
+					setTrackProgress(audioRef.current.currentTime);
 				if (intervalRef.current !== undefined)
 					clearInterval(intervalRef.current!);
 			}
@@ -143,16 +143,16 @@ const ViewOneTranscript: React.FC = () => {
 		if (selectedTranscriptHistory !== undefined && audioRef.current.src === '') {
 			try {
 				setIsLoadingAudio(true);
-				const res = await getOneAudioRecordingFileSrcUrl(selectedTranscriptHistory.input[0].file._id)
+				const res = await getOneAudioRecordingFileSrcUrl(selectedTranscriptHistory.input[0].file._id);
 				audioRef.current = new Audio(res.data.url);
 				audioRef.current.volume = 0.8;
 				console.log("[DEBUG] Retrieved Audio File URL: " + res.data.url);
 			} catch (error: any) {
 				// TODO a better response with toast or Message at top is necessary
 				if (error.status === 400)
-					console.log("Unable to locate the audio file you are looking for. It may have bee deleted!")
+					console.log("Unable to locate the audio file you are looking for. It may have bee deleted!");
 				else
-					console.log("Something terribly has occurred! Please contact an administrator!")
+					console.log("Something terribly has occurred! Please contact an administrator!");
 			}
 		}
 		if (!isPlaying) {
@@ -160,13 +160,13 @@ const ViewOneTranscript: React.FC = () => {
 			setIsPlaying(true);
 		} else {
 			setIsPlaying(false);
-			console.log("[DEBUG] Pausing...")
-			console.log(trackProgress)
+			console.log("[DEBUG] Pausing...");
+			console.log(trackProgress);
 			audioRef.current.currentTime = trackProgress;
 			if (intervalRef.current)
 				clearInterval(intervalRef.current);
 		}
-	}
+	};
 
 	const onScrub = (newTimeValue: string) => {
 		// Clear any timers already running
@@ -192,7 +192,7 @@ const ViewOneTranscript: React.FC = () => {
 		}
 		setVolume(Number(e.target.value));
 
-	}
+	};
 
 	const onPlaybackSpeedChange = (e: React.SyntheticEvent<HTMLElement, Event>, { value }: DropdownProps) => {
 		// console.log(e);
@@ -200,7 +200,7 @@ const ViewOneTranscript: React.FC = () => {
 		if (audioRef.current.src !== '') {
 			audioRef.current.playbackRate = Number(value);
 		}
-	}
+	};
 
 	const renderIcon = (h: (LiveTranscriptionHistory | BatchTranscriptionHistory)) => {
 		if (h.type === 'live') {
@@ -209,7 +209,7 @@ const ViewOneTranscript: React.FC = () => {
 					<Icon size='large' name='circle' />
 					<Icon name='microphone' />
 				</Icon.Group>
-			)
+			);
 		} else { // batch transcribe has 4 statuses: 1. created, 2. decoding, 3. done, 4. error 
 			if (h.input[0].status === 'error')
 				return (
@@ -217,7 +217,7 @@ const ViewOneTranscript: React.FC = () => {
 						<Icon size='large' name='circle' className={styles.historyItemIconError} />
 						<Icon name='file audio' />
 					</Icon.Group>
-				)
+				);
 
 			let lastProgIdx = h.input[0].progress.length - 1;
 			let progressStatus = h.input[0].progress[lastProgIdx].content.toLowerCase();
@@ -227,17 +227,19 @@ const ViewOneTranscript: React.FC = () => {
 						<Icon size='large' name='circle' />
 						<Icon name='file audio' />
 					</Icon.Group>
-				)
+				);
 			else if (progressStatus.includes("decoding")) {
-				<Icon.Group size='big' className={styles.historyItemIcon}>
-					<Icon size='large' loading name='circle notched' />
-					<Icon name='file audio' />
-				</Icon.Group>
+				return (
+					<Icon.Group size='big' className={styles.historyItemIcon}>
+						<Icon size='large' loading name='circle notched' />
+						<Icon name='file audio' />
+					</Icon.Group>
+				);
 			}
 		}
 
-		return (<p>{h.name}</p>)
-	}
+		return (<p>{h.name}</p>);
+	};
 
 	useEffect(() => {
 		document.getElementsByClassName('pushable')[0]?.scrollTo({
@@ -254,7 +256,7 @@ const ViewOneTranscript: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		console.log(`isPlaying: ${isPlaying} | isLoading: ${isLoadingAudio} | ${audioRef.current.src}`)
+		console.log(`isPlaying: ${isPlaying} | isLoading: ${isLoadingAudio} | ${audioRef.current.src}`);
 		if (isPlaying && !isLoadingAudio && audioRef.current.src !== '') {
 			audioRef.current.play();
 			startTimer();
@@ -408,15 +410,15 @@ const ViewOneTranscript: React.FC = () => {
 				</Card.Content>
 
 			</Card >
-		)
+		);
 	} else {
 		return (
 			<Container>
 				<p>Something went wrong! Unable to load the resource, please try again!</p>
 				<Button as={Link} to="/offlinetranscribe" negative>Go Back</Button>
 			</Container>
-		)
+		);
 	}
-}
+};
 
 export default ViewOneTranscript;

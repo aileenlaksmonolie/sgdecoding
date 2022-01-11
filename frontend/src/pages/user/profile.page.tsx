@@ -5,7 +5,7 @@ import ModalUploadFile from '../../components/audio/upload-file-modal';
 import { RootState } from '../../state/reducers';
 
 const ProfilePage: React.FC = () => {
-	const { name, role, rmbMeEmail, token } = useSelector((state: RootState) => state.authReducer)
+	const { name, role, rmbMeEmail, token } = useSelector((state: RootState) => state.authReducer);
 	return (
 		<Card.Group>
 		<Card>
@@ -44,6 +44,6 @@ const ProfilePage: React.FC = () => {
 		</Card.Group>
 		
   );
-}
+};
 
 export default ProfilePage;

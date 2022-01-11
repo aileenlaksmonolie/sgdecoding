@@ -36,7 +36,7 @@ export interface AdaptationStateResponse {
 
 export const isHypothesisResponse = (object: any): object is HypothesisResponse => {
 	return !('adaptation_state' in object);
-}
+};
 
 /* We receive either of these 2 types of responses */
 export type LiveDecodeResponse = HypothesisResponse | AdaptationStateResponse | OnReadyResponse

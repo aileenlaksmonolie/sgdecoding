@@ -72,19 +72,19 @@ const LiveDecodePage: React.FC = () => {
 				echoCancellation: true
 			},
 			video: false
-		})
+		});
 		// console.log("stream.getAudioTracks()[0].getCapabilities():")
 		// console.log(stream.getAudioTracks()[0].getCapabilities());
-		return stream
-	}
+		return stream;
+	};
 
 	const createAudioContext = (stream: MediaStream) => {
 		/* sampleRate property is not implemented in Firefox yet. Only Chrome. 
 					Have to downsample manually.*/
 		// var audioCtx = new (window.AudioContext || window.webkitAudioContext)({sampleRate: 16000})
 		const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-		return audioContext
-	}
+		return audioContext;
+	};
 
 	/* 
 		Worklet files must be placed in /public directory in React project 
@@ -92,15 +92,15 @@ const LiveDecodePage: React.FC = () => {
 	*/
 	const loadWorkletNode = useCallback(async (audioCtx: AudioContext, stream: MediaStream) => {
 		await audioCtx.audioWorklet.addModule('worklet/audio-worklet.js');
-		const source: MediaStreamAudioSourceNode = audioCtx.createMediaStreamSource(stream)
-		const audioWorklet = new AudioWorkletNode(audioCtx, 'audio-processor', { outputChannelCount: [1] })
-		source.connect(audioWorklet)
+		const source: MediaStreamAudioSourceNode = audioCtx.createMediaStreamSource(stream);
+		const audioWorklet = new AudioWorkletNode(audioCtx, 'audio-processor', { outputChannelCount: [1] });
+		source.connect(audioWorklet);
 
 		audioWorklet.port.onmessage = async (event) => {
 			// console.log(" ")
 			// console.log("[DEBUG] WORKER onmessage")
 			// console.log(event.data)
-			const { frame16Int, frame32FloatDownsampled } = event.data
+			const { frame16Int, frame32FloatDownsampled } = event.data;
 
 			// console.log(recorderRef.current?.isRecording);
 			if (recorderRef.current?.isRecording === RecordingStates.IN_PROGRESS) {
@@ -119,7 +119,7 @@ const LiveDecodePage: React.FC = () => {
 			}
 
 			// console.log(" ");
-		} // END onmessage
+		}; // END onmessage;
 
 		audioWorklet.port.start();
 		return audioWorklet;
@@ -130,13 +130,13 @@ const LiveDecodePage: React.FC = () => {
 		// console.log(recorderRef.current?.isRecording)
 		if(recorderRef.current?.isRecording !== RecordingStates.NOT_STARTED)
 			e.returnValue = "";
-	}
+	};
 
 	useEffect(()=>{
 		// if(recorder.isRecording === RecordingStates.IN_PROGRESS)
-		console.log(location)
+		console.log(location);
 		// 	window.confirm("are you sure?")
-	}, [location])
+	}, [location]);
 
 	useEffect(() => {
 		/*	
@@ -153,14 +153,14 @@ const LiveDecodePage: React.FC = () => {
 				const audioContext = createAudioContext(stream);
 				loadWorkletNode(audioContext, stream).then(
 					(audioWorklet) => {
-						setRecorder(r => ({ ...r, isMicAccessGiven: true, stream, audioContext, audioWorklet }))
+						setRecorder(r => ({ ...r, isMicAccessGiven: true, stream, audioContext, audioWorklet }));
 					});
 			}).catch(
 				(error) => {
 					console.error(`Error code: ${error.code}, Message: ${error.message}`);
 					let msg = error.name === "NotAllowedError" ? 'You have denied giving microphone permissions' :
-						'Something went terribly wrong, pleae contact an administrator!'
-					setRecorder(r => ({ ...r, isMicAccessGiven: false, errorMsg: msg }))
+						'Something went terribly wrong, pleae contact an administrator!';
+					setRecorder(r => ({ ...r, isMicAccessGiven: false, errorMsg: msg }));
 				});
 
 	/* 
@@ -172,15 +172,15 @@ const LiveDecodePage: React.FC = () => {
 
 		return () => {
 			if(recorder.audioContext !== null)
-				recorder.audioContext.close()
-			window.removeEventListener('beforeunload', confirmNavAway)
-		}
+				recorder.audioContext.close();
+			window.removeEventListener('beforeunload', confirmNavAway);
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loadWorkletNode])
+	}, [loadWorkletNode]);
 
 
 	if (isLoading)
-		return <Container></Container>
+		return <Container></Container>;
 	if (recorder.isMicAccessGiven === false)
 		return (
 			<Container textAlign="center">
@@ -265,6 +265,6 @@ const LiveDecodePage: React.FC = () => {
 				</Card>
 			</Container >
 		);
-}
+};
 
-export default LiveDecodePage
+export default LiveDecodePage;

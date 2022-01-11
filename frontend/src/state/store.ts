@@ -8,7 +8,7 @@ const persistConfig = {
 	key: 'root',
 	storage,
 	whitelist: ['authReducer']
-}
+};
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 
@@ -16,7 +16,8 @@ const store = createStore(
     persistedReducer,
     {},
     applyMiddleware(thunk)
-)
+);
+
 
 const persistor = persistStore(store);
 

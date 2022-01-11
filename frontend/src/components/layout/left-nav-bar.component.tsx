@@ -8,7 +8,7 @@ interface Props {
 }
 
 const LeftNavBar: React.FC<Props> = ({ children }) => {
-	const [visible, setVisible] = React.useState(true)
+	const [visible, setVisible] = React.useState(true);
 
 	const { pathname } = useLocation();
 
@@ -66,6 +66,6 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 		</Sidebar.Pushable>
 
 	);
-}
+};
 
 export default LeftNavBar;

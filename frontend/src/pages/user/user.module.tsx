@@ -27,6 +27,6 @@ const UserModule: React.FC = () => {
 			</Routes>
 		</Layout>
 	);
-}
+};
 
-export default UserModule
+export default UserModule;

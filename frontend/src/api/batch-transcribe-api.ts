@@ -9,22 +9,22 @@ export const getOneUserSpeechHistory = (email: string) => {
 			data: {
 				email
 			}
-		})
-}
+		});
+};
 
 
 export const getOneAudioRecordingFileSrcUrl = (inputZeroFileId: string) => {  // refer to recording.input[0].file._id
 	return speechGatewayApi.get(
 		`/files/${inputZeroFileId}/download`
 	);
-}
+};
 
 
 export const getOneTranscriptResult = (batchTranscribeId: string) => {
 	return speechGatewayApi.get(
 		`/speech/${batchTranscribeId}/result`
-	)
-}
+	);
+};
 
 export const submitOneJob = (file: FormData) => {
 	return speechGatewayApi.post(
@@ -37,5 +37,5 @@ export const submitOneJob = (file: FormData) => {
 			},
 			onUploadProgress: progressEvent => console.log(progressEvent.loaded)
 		},
-	)
-}
+	);
+};

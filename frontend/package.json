@@ -14,7 +14,8 @@
       "react-app/jest"
     ],
     "rules": {
-      "no-control-regex": 0
+      "no-control-regex": 0,
+			"semi": [2, "always"]
     }
   },
   "browserslist": {

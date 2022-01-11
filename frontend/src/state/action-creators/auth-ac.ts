@@ -12,8 +12,8 @@ export const login = (userCreds: UserLoginModel) => {
 			let rmbMe: AuthAction = {
 				type: AuthTypes.RMB_ME,
 				rmbMeEmail: userCreds.email
-			}
-			dispatch(rmbMe)
+			};
+			dispatch(rmbMe);
 		}
 
 		await loginOneUser(userCreds)
@@ -21,22 +21,23 @@ export const login = (userCreds: UserLoginModel) => {
 				let loginSuccess: AuthAction = {
 					type: AuthTypes.LOGIN_SUCCESS,
 					token: data.accessToken
-				}
-				dispatch(loginSuccess)
-				return Promise.resolve()
+				};
+				dispatch(loginSuccess);
+
+				return Promise.resolve();
 			}).catch((error) => {
-				console.log('test')
+				console.log('test');
 				console.error(error);
 
 				let loginFail: AuthAction = {
 					type: AuthTypes.LOGIN_FAIL
-				}
+				};
 
-				dispatch(loginFail)
-				return Promise.reject()
-			})
-	}
-}
+				dispatch(loginFail);
+				return Promise.reject();
+			});
+	};
+};
 
 // export const register = (newUser: UserRegisterModel) => {
 // 	return async (dispatch: Dispatch) => {
@@ -62,8 +63,8 @@ export const logout = () => {
 	return (dispatch: Dispatch) => {
 		let logoutAction: AuthAction = {
 			type: AuthTypes.LOGOUT
-		}
+		};
 
-		dispatch(logoutAction)
-	}
-}
+		dispatch(logoutAction);
+	};
+};

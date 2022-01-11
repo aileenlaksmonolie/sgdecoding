@@ -11,20 +11,20 @@ import classes from './authentication.module.scss';
 
 const RegisterPage: React.FC = () => {
 	/* Declarations */
-	const [regMessage, setRegMessage] = useState({ isShown: false, isError: false, msg: '' })
-	const navigate = useNavigate()
+	const [regMessage, setRegMessage] = useState({ isShown: false, isError: false, msg: '' });
+	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
 		setValue,
 		watch,
 		formState: { errors }
-	} = useForm({ mode: 'onBlur' })
-	const password = useRef({})
-	password.current = watch('password', '')
+	} = useForm({ mode: 'onBlur' });
+	const password = useRef({});
+	password.current = watch('password', '');
 
-	const { token } = useSelector((state: RootState) => state.authReducer)
-	const isLoggedIn = token !== ''
+	const { token } = useSelector((state: RootState) => state.authReducer);
+	const isLoggedIn = token !== '';
 
 	useEffect(() => {
 		register('name', {
@@ -37,41 +37,41 @@ const RegisterPage: React.FC = () => {
 				value: 100,
 				message: 'You have exceeded the maximum length 100'
 			},
-		})
+		});
 		register("email", {
 			required: 'Email field is empty!',
 			pattern: {
 				value: /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/,
 				message: 'Invalid email address!'
 			}
-		})
+		});
 		register("password", {
 			required: 'Password field is empty!',
 			minLength: {
 				value: 6,
 				message: 'Password is too short!'
 			}
-		})
+		});
 		register("passwordCfm", {
 			validate: v => v === password.current || 'The passwords do not match'
 		});
 
 		if (isLoggedIn)
-			navigate('/')
+			navigate('/');
 
-	}, [isLoggedIn, navigate, register])
+	}, [isLoggedIn, navigate, register]);
 
 
 	/* Event Handlers */
 	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
 		// setValue(name, value, { shouldValidate: true})
-		setValue(name, value)
-	}
+		setValue(name, value);
+	};
 
 	const onInputBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target
-		setValue(name, value, { shouldValidate: true })
-	}
+		const { name, value } = e.target;
+		setValue(name, value, { shouldValidate: true });
+	};
 
 	const onSubmit = async (data: { email: string, name: string, password: string, passwordCfm: string }) => {
 		// console.log("[DEBUG] onSubmit: ")
@@ -81,7 +81,7 @@ const RegisterPage: React.FC = () => {
 			email: data.email,
 			name: data.name,
 			password: data.password,
-		}
+		};
 
 		// const response = await fetch ('http://localhost:2000/api/register', {
 		// 	method: 'POST',
@@ -102,19 +102,19 @@ const RegisterPage: React.FC = () => {
 
 		registerOneUser(newUser)
 			.then((res: AxiosResponse<NewUserRegistrationResponse, any>) => {
-				console.log('Successful Registration')
-				let msg = res.data.email + ' is registered successfully. Please login to continue!'
-				setRegMessage({ isShown: true, isError: false, msg: msg })
+				console.log('Successful Registration');
+				let msg = res.data.email + ' is registered successfully. Please login to continue!';
+				setRegMessage({ isShown: true, isError: false, msg: msg });
 			})
 			.catch((err: AxiosError) => {
 				// console.log("[DEBUG] Error Registering!")
 				//console.log(err.response)
-				let errMsg = 'Unknown Error, please contact an administrator!'
+				let errMsg = 'Unknown Error, please contact an administrator!';
 				if (err.response?.data.statusCode === 422)
-					errMsg = 'Account Already Registered!'
-				setRegMessage({ isShown: true, isError: true, msg: errMsg })
-			})
-	}
+					errMsg = 'Account Already Registered!';
+				setRegMessage({ isShown: true, isError: true, msg: errMsg });
+			});
+	};
 	return (
 		<Card.Content>
 			<Container className={classes.cardHeader}>
@@ -202,6 +202,6 @@ const RegisterPage: React.FC = () => {
 
 		</Card.Content>
 	);
-}
+};
 
-export default RegisterPage
+export default RegisterPage;

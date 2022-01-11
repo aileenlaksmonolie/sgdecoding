@@ -9,17 +9,17 @@ import classes from './authentication.module.scss';
 
 const ForgotPwdPage: React.FC = () => {
 	/* Declarations */
-	const [showMsg, setShowMsg] = useState(false)
-	const navigate = useNavigate()
+	const [showMsg, setShowMsg] = useState(false);
+	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
 		setValue,
 		formState: { errors }
-	} = useForm({ mode: 'onBlur' })
+	} = useForm({ mode: 'onBlur' });
 
-	const { token } = useSelector((state: RootState) => state.authReducer)
-	const isLoggedIn = token !== ''
+	const { token } = useSelector((state: RootState) => state.authReducer);
+	const isLoggedIn = token !== '';
 
 	useEffect(() => {
 		register("email", {
@@ -31,25 +31,25 @@ const ForgotPwdPage: React.FC = () => {
 		});
 
 		if (isLoggedIn)
-			navigate('/')
+			navigate('/');
 
-	}, [isLoggedIn, navigate, register])
+	}, [isLoggedIn, navigate, register]);
 
 
 	/* Event Handlers */
 	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
-		setValue(name, value)
-	}
+		setValue(name, value);
+	};
 
 	const onInputBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target
-		setValue(name, value, { shouldValidate: true })
-	}
+		const { name, value } = e.target;
+		setValue(name, value, { shouldValidate: true });
+	};
 
 	const onSubmit = async (data: { email: string }) => {
-		sendForgotPasswordRequest(data.email)
-		setShowMsg(true)
-	}
+		sendForgotPasswordRequest(data.email);
+		setShowMsg(true);
+	};
 
 
 
@@ -98,6 +98,6 @@ const ForgotPwdPage: React.FC = () => {
 			</Form>
 		</Card.Content>
 	);
-}
+};
 
-export default ForgotPwdPage
+export default ForgotPwdPage;

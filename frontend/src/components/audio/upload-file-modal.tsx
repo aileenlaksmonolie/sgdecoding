@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 import {
-  Button,
-  Checkbox,
-  Dropdown,
-  Form,
-  Grid,
-  GridColumn,
-  Modal,
-  Icon,
-  DropdownProps,
+	Button,
+	Checkbox,
+	Dropdown, DropdownProps, Form,
+	Grid,
+	GridColumn, Icon, Modal
 } from "semantic-ui-react";
-import { submitOneJob } from '../../api/batch-transcribe-api'
+import { submitOneJob } from '../../api/batch-transcribe-api';
 
 
 function exampleReducer(state: any, action: any) {
@@ -111,7 +107,7 @@ const ModalUploadFile: React.FC = () => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-  }
+  };
 
   const handleLangChange = (i: number, data: DropdownProps) => {
     var array = [...uploadArray];
@@ -152,18 +148,18 @@ const ModalUploadFile: React.FC = () => {
   const uploadFile = async () => {
 
     uploadArray.forEach(async (item) => {
-      const formData = new FormData()
+      const formData = new FormData();
       //formData.append('token', accessToken)
-      formData.append('file', item.file)
-      formData.append('lang', item.lang)
-      formData.append('audioType', item.audioType)
-      formData.append('audioTrack', item.audioTrack)
+      formData.append('file', item.file);
+      formData.append('lang', item.lang);
+      formData.append('audioType', item.audioType);
+      formData.append('audioTrack', item.audioTrack);
       
-      console.log(formData)
-      submitOneJob(formData)
+      console.log(formData);
+      submitOneJob(formData);
 
-    })
-  }
+    });
+  };
 
   return (
     <div>

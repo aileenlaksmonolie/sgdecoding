@@ -21,6 +21,6 @@ const Layout: React.FC<Props> = ({ children }) => {
 			</LeftNavBar>
 		</div>
 	);
-}
+};
 
-export default Layout
+export default Layout;

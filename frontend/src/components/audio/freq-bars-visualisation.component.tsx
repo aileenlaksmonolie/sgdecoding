@@ -9,10 +9,10 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 	const { audioContext, stream, isRecording } = recorder;
 
 	if (audioContext === null || stream === null)
-		throw new Error("AudioContext or stream not found, unable to visualise.")
+		throw new Error("AudioContext or stream not found, unable to visualise.");
 
 	const containerRef = useRef<HTMLDivElement>(null);
-	const canvasRef = useRef<HTMLCanvasElement>(null!)
+	const canvasRef = useRef<HTMLCanvasElement>(null!);
 
 	var analyser = audioContext!.createAnalyser();
 
@@ -69,7 +69,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		// }
 		setWidth(containerRef.current!.clientWidth);
 		setHeight(containerRef.current!.clientHeight);
-	}, [])
+	}, []);
 
 
 	useEffect(() => {
@@ -83,19 +83,19 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 			var distortion: WaveShaperNode;
 			var gainNode: GainNode;
 
-			analyser.minDecibels = -90
-			analyser.maxDecibels = -10
-			analyser.smoothingTimeConstant = 0.9
+			analyser.minDecibels = -90;
+			analyser.maxDecibels = -10;
+			analyser.smoothingTimeConstant = 0.9;
 
-			distortion = audioContext.createWaveShaper()
-			gainNode = audioContext.createGain()
+			distortion = audioContext.createWaveShaper();
+			gainNode = audioContext.createGain();
 			// biquadFilter = audioContext.createBiquadFilter()
 			// convolver = audioContext.createConvolver()
-			distortion.oversample = '4x'
+			distortion.oversample = '4x';
 			// biquadFilter.gain.setTargetAtTime(0, audioContext.currentTime, 0)
 
-			analyser.fftSize = 256
-			dataArray.current = new Uint8Array(analyser.frequencyBinCount)
+			analyser.fftSize = 256;
+			dataArray.current = new Uint8Array(analyser.frequencyBinCount);
 
 			source = audioContext.createMediaStreamSource(stream);
 			source.connect(analyser);
@@ -113,7 +113,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [stream, audioContext, draw, width, height, canvasCtx]) // Do not add analyser
+	}, [stream, audioContext, draw, width, height, canvasCtx]); // Do not add analyser
 
 	return (
 		<div
@@ -137,7 +137,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 					<p>Loading...</p>
 			}
 		</div>
-	)
-}
+	);
+};
 
-export default VizFreqBars
+export default VizFreqBars;

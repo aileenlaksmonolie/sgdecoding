@@ -11,41 +11,41 @@ import { RootState } from '../../state/reducers';
 
 const ChangeNamePage: React.FC = () => {
 	/* Declarations */
-	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' })
-	const [isDisabled, setIsDiabled] = useState(false)
+	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' });
+	const [isDisabled, setIsDiabled] = useState(false);
 
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
 		setValue,
 		watch,
 		formState: { errors }
-	} = useForm({ mode: 'onBlur' })
+	} = useForm({ mode: 'onBlur' });
 
-	const { token, rmbMeEmail } = useSelector((state: RootState) => state.authReducer)
-	const isLoggedIn = token !== ''
+	const { token, rmbMeEmail } = useSelector((state: RootState) => state.authReducer);
+	const isLoggedIn = token !== '';
 
 	useEffect(() => {
 		register("newName", {
 			required: 'New Name field is empty!',
-		})
+		});
 
 		if (!isLoggedIn)
-			navigate('/')
+			navigate('/');
 
-	}, [isLoggedIn, navigate, register])
+	}, [isLoggedIn, navigate, register]);
 
 	/* Event Handlers */
 	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
 		// setValue(name, value, { shouldValidate: true})
-		setValue(name, value)
-	}
+		setValue(name, value);
+	};
 
 	const onInputBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target
-		setValue(name, value, { shouldValidate: true })
-	}
+		const { name, value } = e.target;
+		setValue(name, value, { shouldValidate: true });
+	};
 
 	const onSubmit = async (data: { newName: string }) => {
 		// console.log("[DEBUG] onSubmit: ")
@@ -53,20 +53,19 @@ const ChangeNamePage: React.FC = () => {
 		const newNameRequest: UserChangeName = {
             token: token,
 			newName: data.newName,
-		}
+		};
 
 		sendChangeNameRequest(newNameRequest)
 			.then((res: AxiosResponse<UserChangeNameResponse, any>) => {
 				// console.log("[DEBUG] Successful Reset") 
-				setFormMessage({ isShown: true, isError: false, msg: res.data.message })
+				setFormMessage({ isShown: true, isError: false, msg: res.data.message });
 			})
 			.catch((err: AxiosError) => {
 				// console.log("[DEBUG] Error Resetting!")
 				// console.log(err.response)
-				setFormMessage({ isShown: true, isError: true, msg: err.message })
-			})
-		
-	}
+				setFormMessage({ isShown: true, isError: true, msg: err.message });
+			});
+	};
 
 	return (
 		<Card.Content>
@@ -120,7 +119,7 @@ const ChangeNamePage: React.FC = () => {
 			
 		</Card.Content>
 		
-	)
-}
+	);
+};
 
-export default React.memo(ChangeNamePage)
+export default React.memo(ChangeNamePage);

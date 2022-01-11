@@ -24,11 +24,11 @@ interface TranscriptionHistoryFilter {
 const OfflineTranscribePage: React.FC = () => {
 
 	const navigate = useNavigate();
-	const { history, totalHistory } = useSelector((state: RootState) => state.transcriptionHistoryReducer)
+	const { history, totalHistory } = useSelector((state: RootState) => state.transcriptionHistoryReducer);
 	const dispatch = useDispatch();
-	const { getLoggedInUserTranscriptionHistory, setSelectedTranscriptionHistory } = bindActionCreators(actionCreators, dispatch)
+	const { getLoggedInUserTranscriptionHistory, setSelectedTranscriptionHistory } = bindActionCreators(actionCreators, dispatch);
 
-	const [noOfPages, setNoOfPages] = useState(0)
+	const [noOfPages, setNoOfPages] = useState(0);
 	const [itemsToDisplay, setItemsToDisplay] = useState<Array<LiveTranscriptionHistory | BatchTranscriptionHistory>>([]);
 	const [filteredHistory, setFilteredHistory] = useState<Array<LiveTranscriptionHistory | BatchTranscriptionHistory>>([]);
 
@@ -74,31 +74,31 @@ const OfflineTranscribePage: React.FC = () => {
 	];
 
 	const handleTypeFilterChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-		console.log(data)
+		console.log(data);
 		setFilters({ ...filters, type: data.value as string });
-	}
+	};
 
 	const handleLangFilterChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-		console.log(data)
+		console.log(data);
 		// if(data.value !== '')
-		setFilters({ ...filters, lang: data.value as [] })
-		console.log(filters)
-	}
+		setFilters({ ...filters, lang: data.value as [] });
+		console.log(filters);
+	};
 
 	const handleLengthFilterChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-		console.log(data)
-		setFilters({ ...filters, duration: data.value as string })
-	}
+		console.log(data);
+		setFilters({ ...filters, duration: data.value as string });
+	};
 
 	const handlePageChange = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, { activePage }: PaginationProps) => {
 		// console.log("Selected page: " + activePage);
 		// if (filters.duration === '' && filters.lang[0] === '' && filters.type === '') {
 		activePage = activePage as number;
-		let startIdx = (ITEMS_PER_PAGE * (activePage - 1))
-		let endIdx = ((activePage * ITEMS_PER_PAGE))
+		let startIdx = (ITEMS_PER_PAGE * (activePage - 1));
+		let endIdx = ((activePage * ITEMS_PER_PAGE));
 		setItemsToDisplay(filteredHistory.slice(startIdx, endIdx));
 		// }
-	}
+	};
 
 	const handlePopupOpen = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
 		console.log("[DEBUG] Form values when popup triggered");
@@ -106,7 +106,7 @@ const OfflineTranscribePage: React.FC = () => {
 		console.log(getValues("endDate"));
 
 		if (filters.startDate === '' && filters.endDate === '') {
-			console.log("setting form default values")
+			console.log("setting form default values");
 			let startDate = history[history.length - 1].createdAt.slice(0, 10);
 			let endDate = history[0].createdAt.slice(0, 10);
 			setFilters({ ...filters, startDate, endDate });
@@ -116,7 +116,7 @@ const OfflineTranscribePage: React.FC = () => {
 			setValue("startDate", startDate);
 			setValue("endDate", endDate);
 		}
-	}
+	};
 
 	const handleViewBtnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
 		console.log(e);
@@ -130,7 +130,7 @@ const OfflineTranscribePage: React.FC = () => {
 
 		//TODO show a toast error
 
-	}
+	};
 
 	const onDateInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
 		setValue(name, value);
@@ -138,7 +138,7 @@ const OfflineTranscribePage: React.FC = () => {
 		setFilters({ ...filters, startDate: getValues("startDate"), endDate: getValues("endDate") });
 		// because form is re-created when popup is opened again
 		setDefDateVals({ startDate: getValues("startDate"), endDate: getValues("endDate") });
-	}
+	};
 
 	useEffect(() => {
 		getLoggedInUserTranscriptionHistory();
@@ -176,7 +176,7 @@ const OfflineTranscribePage: React.FC = () => {
 	 */
 	useEffect(() => {
 		console.log("[DEBUG] Filtering ... ...");
-		console.log(history)
+		console.log(history);
 		let filteredItems = history.filter((i) => {
 			let audioDuration = (i as LiveTranscriptionHistory).liveSessionDuration | i.input[0].file.duration;
 			if (filters.duration !== '') {
@@ -197,7 +197,7 @@ const OfflineTranscribePage: React.FC = () => {
 			if (filters.startDate !== '' && filters.endDate !== '') {
 				if (i.createdAt.slice(0, 10) < filters.startDate
 					|| i.createdAt.slice(0, 10) > filters.endDate)
-					return false
+					return false;
 			}
 
 			return true;
@@ -217,7 +217,7 @@ const OfflineTranscribePage: React.FC = () => {
 					<Icon size='large' name='circle' />
 					<Icon name='microphone' />
 				</Icon.Group>
-			)
+			);
 		} else { // batch transcribe has 4 statuses: 1. created, 2. decoding, 3. done, 4. error 
 			if (h.input[0].status === 'error')
 				return (
@@ -251,8 +251,8 @@ const OfflineTranscribePage: React.FC = () => {
 				);
 		}
 
-		return (<p>{h.name}</p>)
-	}
+		return (<p>{h.name}</p>);
+	};
 
 	// template
 	return (
@@ -423,6 +423,6 @@ const OfflineTranscribePage: React.FC = () => {
 			/>
 		</Container>
 	);
-}
+};
 
 export default OfflineTranscribePage;

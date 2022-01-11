@@ -6,8 +6,8 @@ import transcriptionHistoryReducer from './transcription-history-reducer';
 const reducers = combineReducers({
 	authReducer,
 	transcriptionHistoryReducer
-})
+});
 
 export default reducers;
 
-export type RootState = ReturnType<typeof reducers>
+export type RootState = ReturnType<typeof reducers>;

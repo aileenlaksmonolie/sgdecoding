@@ -10,8 +10,8 @@ const NoMicAccess: React.FC<Props> = ({ errorMsg }) => {
 
 	/* */
 	const onRefreshPageBtnClick = () => {
-		window.location.reload()
-	}
+		window.location.reload();
+	};
 
 
 	return (
@@ -49,6 +49,6 @@ const NoMicAccess: React.FC<Props> = ({ errorMsg }) => {
 			</div>
 		// </Container>
 	);
-}
+};
 
-export default NoMicAccess
+export default NoMicAccess;

@@ -22,6 +22,6 @@ const AuthenticationModule: React.FC = () => {
 			</Grid.Row>
 		</Grid>
 	);
-}
+};
 
-export default AuthenticationModule
+export default AuthenticationModule;

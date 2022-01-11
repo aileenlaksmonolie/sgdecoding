@@ -28,7 +28,7 @@ export const getLoggedInUserTranscriptionHistory = () => {
 					type: UserTranscriptionTypes.SET_THIS_USER_HISTORY,
 					history: transcriptionHistory.history,
 					totalHistory: transcriptionHistory.totalHistory
-				}
+				};
 				dispatch(action);
 				return Promise.resolve();
 			}).catch((error) => {
@@ -36,16 +36,16 @@ export const getLoggedInUserTranscriptionHistory = () => {
 				console.error(error);
 				return Promise.reject();
 			});
-	}
-}
+	};
+};
 
 export const setSelectedTranscriptionHistory = (selectedTranscriptHistory: TranscriptionHistory) => {
 	return (dispatch: Dispatch) => {
 		let action: MgtTranscriptHistoriesAction = {
 			type: UserTranscriptionTypes.SET_SELECTED_TRANSCRIPTION_HISTORY,
 			selectedTranscriptHistory
-		}
+		};
 
 		dispatch(action);
-	}
-}
+	};
+};
