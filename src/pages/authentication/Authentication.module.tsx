@@ -1,11 +1,10 @@
 import React from 'react';
 import { Route, Routes } from "react-router-dom";
 import { Card, Grid } from 'semantic-ui-react';
-import ForgotPwdPage from './ForgotPwdPage';
-import LoginPage from "./LoginPage";
-import RegisterPage from './RegisterPage';
-import ResetPasswordPage from './ResetPasswordPage';
-
+import ForgotPwdPage from './forgot-pwd.page';
+import LoginPage from './login.page';
+import RegisterPage from './register.page';
+import ResetPasswordPage from './reset-password.page';
 
 const AuthenticationModule: React.FC = () => {
 

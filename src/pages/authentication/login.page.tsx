@@ -7,7 +7,7 @@ import { Button, Card, Checkbox, CheckboxProps, Container, Form, InputOnChangeDa
 import { UserLoginModel } from '../../models/UserLogin.model';
 import { actionCreators } from '../../state';
 import { RootState } from '../../state/reducers';
-import classes from './Authentication.module.scss';
+import authModStyles from './authentication.module.scss';
 
 
 const LoginPage: React.FC = () => {
@@ -90,7 +90,7 @@ const LoginPage: React.FC = () => {
 	}
 	return (
 		<Card.Content>
-			<Container className={classes.cardHeader}>
+			<Container className={authModStyles.cardHeader}>
 				<h1>Welcome Back</h1>
 				<small>Sign in to continue</small>
 			</Container>

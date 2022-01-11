@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Card, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
 import { sendForgotPasswordRequest } from '../../api/auth-api';
 import { RootState } from '../../state/reducers';
-import classes from './Authentication.module.scss';
+import classes from './authentication.module.scss';
 
 const ForgotPwdPage: React.FC = () => {
 	/* Declarations */

@@ -181,7 +181,7 @@ const BtnsArray: React.FC<Props> = (
 								}
 							/>
 							:
-							<Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Redo" />
+							<Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Reset" />
 				}
 			</Grid.Row>
 			<Grid.Row style={{ marginTop: '12px' }}>

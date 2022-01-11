@@ -221,23 +221,28 @@ const OfflineTranscribePage: React.FC = () => {
 		} else { // batch transcribe has 4 statuses: 1. created, 2. decoding, 3. done, 4. error 
 			if (h.input[0].status === 'error')
 				return (
-					<Icon.Group size='big' className={styles.historyItemIcon}>
-						<Icon size='large' name='circle' className={styles.historyItemIconError} />
-						<Icon name='file audio' />
-					</Icon.Group>
-				)
-
+					<Popup content='Error Processing!'
+						trigger={
+							<Icon.Group size='big' className={styles.historyItemIcon}>
+								<Icon size='large' name='circle' className={styles.historyItemIconError} />
+								<Icon name='file audio' />
+							</Icon.Group>
+						} />
+				);
 			if (h.status === 'processing')
-			return (
-				<Icon.Group size='big' className={styles.historyItemIcon}>
-					<Icon size='large' loading name='circle notched' />
-					<Icon name='file audio' className={styles.historyItemLoading} />
-				</Icon.Group>
-			);
+				return (
+					<Popup content='Processing...'
+						trigger={
+							<Icon.Group size='big' className={styles.historyItemIcon}>
+								<Icon size='large' loading name='circle notched' />
+								<Icon name='file audio' className={styles.historyItemLoading} />
+							</Icon.Group>
+						} />
+				);
 			// let lastProgIdx = h.input[0].progress.length - 1;
 			// let progressStatus = h.input[0].progress[lastProgIdx].content.toLowerCase();
 			// if (progressStatus === 'done')
-			if(h.input[0].status === 'done')
+			if (h.input[0].status === 'done')
 				return (
 					<Icon.Group size='big' className={styles.historyItemIcon}>
 						<Icon size='large' name='circle' />

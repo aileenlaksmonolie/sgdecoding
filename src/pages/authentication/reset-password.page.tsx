@@ -7,7 +7,7 @@ import { Button, Card, Container, Form, InputOnChangeData, Message } from 'seman
 import { sendResetPasswordRequest } from '../../api/auth-api';
 import { UserResetPassword, UserResetPasswordResponse } from '../../models/UserResetPassword.model';
 import { RootState } from '../../state/reducers';
-import classes from './Authentication.module.scss';
+import classes from './authentication.module.scss';
 
 const ResetPasswordPage: React.FC = () => {
 	/* Declarations */

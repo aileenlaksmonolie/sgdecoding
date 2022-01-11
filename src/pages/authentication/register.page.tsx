@@ -7,7 +7,7 @@ import { Button, Card, Container, Form, InputOnChangeData, Message } from "seman
 import { registerOneUser } from "../../api/auth-api";
 import { NewUserRegistration, NewUserRegistrationResponse } from "../../models/UserRegister.model";
 import { RootState } from "../../state/reducers";
-import classes from './Authentication.module.scss';
+import classes from './authentication.module.scss';
 
 const RegisterPage: React.FC = () => {
 	/* Declarations */
