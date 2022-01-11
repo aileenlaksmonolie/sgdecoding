@@ -47,7 +47,7 @@ const DownloadTranscriptButton: React.FC<Props> = ({ transcriptTitle, isDisabled
 		<Button
 			id={id ? id : ''}
 			loading={isLoadingTranscript}
-			icon={isLoadingTranscript ? "spinner" : ""}
+			icon={isLoadingTranscript ? "spinner" : null} // TODO Continue here
 			className={className ? className : ''}
 			disabled={isDisabled}
 			color="green"

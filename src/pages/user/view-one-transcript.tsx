@@ -1,13 +1,11 @@
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
 import { Button, Card, Container, Dropdown, DropdownProps, Grid, Icon, Popup } from 'semantic-ui-react';
 import { getOneAudioRecordingFileSrcUrl } from '../../api/batch-transcribe-api';
 import DownloadTranscriptButton from '../../components/audio/download-transcript-btn';
 import { BatchTranscriptionHistory, LiveTranscriptionHistory } from '../../models/transcribe-history-response.model';
-import { actionCreators } from '../../state';
 import { RootState } from '../../state/reducers';
 import styles from './view-one-transcript.module.scss';
 
@@ -120,10 +118,6 @@ const ViewOneTranscript: React.FC = () => {
 	// 		"createdAt": "2021-09-27T10:01:46.352Z"
 	// 	}
 	// }
-
-	const dispatch = useDispatch();
-	const { } = bindActionCreators(actionCreators, dispatch)
-
 
 	const startTimer = () => {
 		console.log("[DEBUG] Starting Timer...");
@@ -252,7 +246,7 @@ const ViewOneTranscript: React.FC = () => {
 			top: 0,
 			behavior: 'smooth'
 		});
-		console.log(selectedTranscriptHistory);
+		// console.log(selectedTranscriptHistory);
 
 		return () => {
 			audioRef.current.pause();
@@ -269,11 +263,12 @@ const ViewOneTranscript: React.FC = () => {
 		} else {
 			audioRef.current.pause();
 		}
-	}, [isPlaying]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isPlaying, isLoadingAudio]);
 
 
 	//template
-	if (typeof (selectedTranscriptHistory) !== undefined && selectedTranscriptHistory?._id != undefined) {
+	if (typeof (selectedTranscriptHistory) !== undefined && selectedTranscriptHistory?._id !== undefined) {
 		return (
 			<Card fluid>
 				{/* Card Header section */}

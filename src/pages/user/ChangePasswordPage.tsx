@@ -11,7 +11,7 @@ import { RootState } from '../../state/reducers';
 const ChangePasswordPage: React.FC = () => {
 	/* Declarations */
 	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' })
-	const [isDisabled, setIsDiabled] = useState(false)
+	// const [isDisabled, setIsDiabled] = useState(false)
 
 	const navigate = useNavigate()
 	const {
@@ -110,7 +110,7 @@ const ChangePasswordPage: React.FC = () => {
 						placeholder='Enter current password'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
-						disabled={isDisabled}
+						// disabled={isDisabled}
 						error={errors.currentPassword ? { content: errors.currentPassword.message } : false}
 					/>
 				</Form.Field>
@@ -123,7 +123,7 @@ const ChangePasswordPage: React.FC = () => {
 						placeholder='Enter new password'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
-						disabled={isDisabled}
+						// disabled={isDisabled}
 						error={errors.newPassword ? { content: errors.newPassword.message } : false}
 					/>
 				</Form.Field>
@@ -136,7 +136,7 @@ const ChangePasswordPage: React.FC = () => {
 						placeholder='Enter new password again'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
-						disabled={isDisabled}
+						// disabled={isDisabled}
 						error={errors.passwordCfm ? { content: errors.passwordCfm.message } : false}
 					/>
 				</Form.Field>

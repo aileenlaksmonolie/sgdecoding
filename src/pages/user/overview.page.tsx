@@ -1,17 +1,15 @@
 import moment from 'moment';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
 import { Button, Card, Container, Grid, Header, Image } from 'semantic-ui-react';
-import { actionCreators } from '../../state';
 import { RootState } from '../../state/reducers';
 import styles from './overview.page.module.scss';
 
 const OverviewPage: React.FC = () => {
 
-	const dispatch = useDispatch();
-	const { logout } = bindActionCreators(actionCreators, dispatch)
+	// const dispatch = useDispatch();
+	// const { logout } = bindActionCreators(actionCreators, dispatch)
 	const { name } = useSelector((state: RootState) => state.authReducer)
 
 	const currentTime: number = Number(moment(new Date().getTime()).format("HH"));

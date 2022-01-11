@@ -60,7 +60,7 @@ const OfflineTranscribePage: React.FC = () => {
 	const {
 		register,
 		setValue,
-		watch,
+		// watch,
 		getValues,
 		trigger,
 		formState: { errors }
@@ -153,6 +153,7 @@ const OfflineTranscribePage: React.FC = () => {
 			validate: eD => eD >= getValues("startDate") || 'End Date must be after or same as Start Date'
 		});
 
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [register, getValues]);
 
 	/**
@@ -205,7 +206,8 @@ const OfflineTranscribePage: React.FC = () => {
 		setFilteredHistory(filteredItems);
 		setItemsToDisplay(filteredItems.slice(0, ITEMS_PER_PAGE));
 		setNoOfPages(Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
-	}, [filters]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [filters]); // change in history should not trigger this
 
 
 	const renderIcon = (h: (LiveTranscriptionHistory | BatchTranscriptionHistory)) => {

@@ -53,6 +53,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 			x += barWidth + 1;
 		}
 
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isRecording, height, width, canvasCtx]); // Do not add analyser
 
 	// useEffect(() => {
@@ -111,7 +112,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 			}
 
 		}
-
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [stream, audioContext, draw, width, height, canvasCtx]) // Do not add analyser
 
 	return (

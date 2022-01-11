@@ -28,7 +28,7 @@ export interface Transcription {
 
 const LiveDecodePage: React.FC = () => {
 	/* Declarations */
-	const IS_DEBUGGING: boolean = true;
+	const IS_DEBUGGING: boolean = false;
 
 	const [recorder, setRecorder] = useState<MyRecorder>({
 		isMicAccessGiven: false,
@@ -171,9 +171,11 @@ const LiveDecodePage: React.FC = () => {
 		window.addEventListener('beforeunload', confirmNavAway);
 
 		return () => {
-			recorder.audioContext?.close()
+			if(recorder.audioContext !== null)
+				recorder.audioContext.close()
 			window.removeEventListener('beforeunload', confirmNavAway)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loadWorkletNode])
 
 
