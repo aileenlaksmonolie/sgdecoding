@@ -1,11 +1,11 @@
-import { AxiosError, AxiosResponse } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import { Button, Card, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
-import { sendChangeNameRequest } from '../../api/auth-api';
-import { UserChangeName, UserChangeNameResponse } from '../../models/user-authentication.model';
+import { UserChangeName } from '../../models/user-authentication.model';
+import { actionCreators } from '../../state';
 import { RootState } from '../../state/reducers';
 
 
@@ -23,8 +23,10 @@ const ChangeNamePage: React.FC = () => {
 		formState: { errors }
 	} = useForm({ mode: 'onBlur' });
 
-	const { token, rmbMeEmail } = useSelector((state: RootState) => state.authReducer);
+	const { token } = useSelector((state: RootState) => state.authReducer);
 	const isLoggedIn = token !== '';
+	const dispatch = useDispatch();
+	const { changeName } = bindActionCreators(actionCreators, dispatch);
 
 	useEffect(() => {
 		register("newName", {
@@ -55,16 +57,22 @@ const ChangeNamePage: React.FC = () => {
 			newName: data.newName,
 		};
 
-		sendChangeNameRequest(newNameRequest)
-			.then((res: AxiosResponse<UserChangeNameResponse, any>) => {
-				// console.log("[DEBUG] Successful Reset") 
-				setFormMessage({ isShown: true, isError: false, msg: res.data.message });
-			})
-			.catch((err: AxiosError) => {
-				// console.log("[DEBUG] Error Resetting!")
-				// console.log(err.response)
-				setFormMessage({ isShown: true, isError: true, msg: err.message });
-			});
+		try{
+			await changeName(newNameRequest);
+			setFormMessage({ isShown: true, isError: false, msg: "Your name has been successfully changed!" });
+		}catch(error){
+			setFormMessage({ isShown: true, isError: true, msg: "Unfortunately, there was an error resetting your name!" });
+		}
+
+		// sendChangeNameRequest(newNameRequest)
+		// 	.then((res: AxiosResponse<UserChangeNameResponse, any>) => {
+		// 		// console.log("[DEBUG] Successful Reset") 
+
+		// 	})
+		// 	.catch((err: AxiosError) => {
+		// 		// console.log("[DEBUG] Error Resetting!")
+		// 		// console.log(err.response)
+		// 	});
 	};
 
 	return (

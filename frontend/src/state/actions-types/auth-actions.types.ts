@@ -19,5 +19,12 @@ interface LogoutAction{
 	type: AuthTypes.LOGOUT
 }
 
+interface ChangeNameSuccessAction{
+	type: AuthTypes.SET_NEW_NAME,
+	newName: string
+}
 
-export type AuthAction = RememberMeAction | LoginSuccessAction | LoginFailureAction | LogoutAction;
+
+export type AuthAction = RememberMeAction | LoginSuccessAction 
+													| LoginFailureAction | LogoutAction 
+													| ChangeNameSuccessAction;

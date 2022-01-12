@@ -24,6 +24,10 @@ const reducer = (state = INITIAL_STATE, action: AuthAction) => {
 			const { exp, name, role, sub, email } = jwtDecode<JwtPayload>(token) as Token;
 			return { ...state, token, exp: new Date(exp * 1000), name, role, sub, email };
 
+		case AuthTypes.SET_NEW_NAME:
+			const { newName } = action;
+			return { ...state, name: newName };
+
 		case AuthTypes.LOGOUT:
 		case AuthTypes.LOGIN_FAIL:
 			return { ...state, token: '' };
