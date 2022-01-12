@@ -111,7 +111,7 @@ const ChangeNamePage: React.FC = () => {
 					//className={classes.goBackBtn}
 					fluid
 					basic
-					onClick={() => navigate('/auth/login')}>
+					onClick={() => navigate(-1)}>
 					Go Back
 				</Button>
 
