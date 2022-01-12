@@ -4,14 +4,14 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { bindActionCreators } from "redux";
-import { Button, Container, Dropdown, DropdownProps, Form, Grid, Header, Icon, InputOnChangeData, List, Pagination, PaginationProps, Popup } from "semantic-ui-react";
+import { Button, Container, Dropdown, DropdownProps, Form, Grid, Header, Icon, InputOnChangeData, List, Loader, Pagination, PaginationProps, Popup } from "semantic-ui-react";
 import DownloadTranscriptButton from "../../components/audio/download-transcript-btn";
 import { BatchTranscriptionHistory, LiveTranscriptionHistory } from "../../models/transcribe-history-response.model";
 import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
 import styles from './view-all-jobs.module.scss';
 
-const ITEMS_PER_PAGE = 7;
+const ITEMS_PER_PAGE = 9;
 
 interface TranscriptionHistoryFilter {
 	type: string,
@@ -26,6 +26,7 @@ const ViewAllJobs: React.FC = () => {
 	const { history, totalHistory } = useSelector((state: RootState) => state.transcriptionHistoryReducer);
 	const dispatch = useDispatch();
 	const { getLoggedInUserTranscriptionHistory, setSelectedTranscriptionHistory } = bindActionCreators(actionCreators, dispatch);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const [noOfPages, setNoOfPages] = useState(0);
 	const [itemsToDisplay, setItemsToDisplay] = useState<Array<LiveTranscriptionHistory | BatchTranscriptionHistory>>([]);
@@ -140,7 +141,8 @@ const ViewAllJobs: React.FC = () => {
 	};
 
 	useEffect(() => {
-		getLoggedInUserTranscriptionHistory();
+		setIsLoading(true);
+		// getLoggedInUserTranscriptionHistory();
 
 		register("startDate", {
 			// valueAsDate: true,
@@ -163,6 +165,7 @@ const ViewAllJobs: React.FC = () => {
 		console.log(history);
 
 		if (history.length > 0) {
+			setIsLoading(false);
 			setNoOfPages(Math.ceil(totalHistory / ITEMS_PER_PAGE));
 			let firstItems = history.slice(0, ITEMS_PER_PAGE);
 			setFilteredHistory(history);
@@ -341,56 +344,64 @@ const ViewAllJobs: React.FC = () => {
 			<List divided size="large" verticalAlign="middle" className={styles.historyList}>
 				{
 					// TODO Componentise this!
-					itemsToDisplay.map(h => (
-						<List.Item
-							key={h._id}
-							className={styles.historyItem}
-						>
-							<List.Content floated='right' className={styles.historyItemBtns}>
-								<Button
-									color="blue"
-									onClick={(e) => handleViewBtnClick(e, h._id)}
-								>
-									View
-								</Button>
-								<DownloadTranscriptButton
-									transcriptTitle={h.title}
-									isDisabled={h.type === 'live'}
-									transcriptId={h._id}
-								/>
-								<Button color="red" disabled>Delete</Button>
-							</List.Content>
-							{
-								renderIcon(h)
-							}
-							<List.Content className={styles.historyItemContent}>
-								<List.Header as='p'>
-									{/* {h.type === 'live' ? "Live Transcribe on " : "File Upload on "}
+					isLoading === true
+						?
+						// <Progress percent={20} indicating color='teal' />
+						<Container textAlign="center">
+							<Loader active indeterminate inline='centered' />
+							<strong>Loading ... ...</strong>
+						</Container>
+						:
+						itemsToDisplay.map(h => (
+							<List.Item
+								key={h._id}
+								className={styles.historyItem}
+							>
+								<List.Content floated='right' className={styles.historyItemBtns}>
+									<Button
+										color="blue"
+										onClick={(e) => handleViewBtnClick(e, h._id)}
+									>
+										View
+									</Button>
+									<DownloadTranscriptButton
+										transcriptTitle={h.title}
+										isDisabled={h.type === 'live'}
+										transcriptId={h._id}
+									/>
+									<Button color="red" disabled>Delete</Button>
+								</List.Content>
+								{
+									renderIcon(h)
+								}
+								<List.Content className={styles.historyItemContent}>
+									<List.Header as='p'>
+										{/* {h.type === 'live' ? "Live Transcribe on " : "File Upload on "}
 									<Moment format="ddd D MMM YYYY, h:mma">{h.createdAt}</Moment>
 									{h.input[0].errorCode !== null ? ` (${h.input[0].errorCode})` : ''} */}
-									{h.title}
-								</List.Header>
-								<List.Description as='p'>
-									{h.lang.charAt(0).toUpperCase() + h.lang.slice(1)}
-									{
-										h.type === 'live'
-											?
-											" | " + moment.utc((h as LiveTranscriptionHistory).liveSessionDuration * 1000).format("H:mm:ss")
-											:
-											" | " + moment.utc(h.input[0].file.duration * 1000).format("H:mm:ss")
-									}
-									{" | " + h.sampling}
-									{" | " + h.input[0].file.mimeType + " | "}
-									<span title={h.input[0].file.originalName}>
-										{h.input[0].file.originalName.length > 15
-											? h.input[0].file.originalName.slice(0, 5) + '...' + h.input[0].file.originalName.slice(-10)
-											: h.input[0].file.originalName
+										{h.title}
+									</List.Header>
+									<List.Description as='p'>
+										{h.lang.charAt(0).toUpperCase() + h.lang.slice(1)}
+										{
+											h.type === 'live'
+												?
+												" | " + moment.utc((h as LiveTranscriptionHistory).liveSessionDuration * 1000).format("H:mm:ss")
+												:
+												" | " + moment.utc(h.input[0].file.duration * 1000).format("H:mm:ss")
 										}
-									</span>
-								</List.Description>
-							</List.Content>
-						</List.Item>
-					))
+										{" | " + h.sampling}
+										{" | " + h.input[0].file.mimeType + " | "}
+										<span title={h.input[0].file.originalName}>
+											{h.input[0].file.originalName.length > 15
+												? h.input[0].file.originalName.slice(0, 5) + '...' + h.input[0].file.originalName.slice(-10)
+												: h.input[0].file.originalName
+											}
+										</span>
+									</List.Description>
+								</List.Content>
+							</List.Item>
+						))
 				}
 			</List>
 
