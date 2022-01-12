@@ -3,16 +3,18 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import { Button, Card, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
+import { Button, Card, Container, Form, Header, InputOnChangeData, Message } from 'semantic-ui-react';
 import { UserChangeName } from '../../models/user-authentication.model';
 import { actionCreators } from '../../state';
 import { RootState } from '../../state/reducers';
+import styles from './change-name.module.scss';
 
 
 const ChangeNamePage: React.FC = () => {
 	/* Declarations */
 	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' });
 	const [isDisabled, setIsDiabled] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const navigate = useNavigate();
 	const {
@@ -52,6 +54,7 @@ const ChangeNamePage: React.FC = () => {
 	const onSubmit = async (data: { newName: string }) => {
 		// console.log("[DEBUG] onSubmit: ")
 		// console.log(data)
+		setIsLoading(true);
 		const newNameRequest: UserChangeName = {
             token: token,
 			newName: data.newName,
@@ -59,8 +62,10 @@ const ChangeNamePage: React.FC = () => {
 
 		try{
 			await changeName(newNameRequest);
+			setIsLoading(false);
 			setFormMessage({ isShown: true, isError: false, msg: "Your name has been successfully changed!" });
 		}catch(error){
+			setIsLoading(false);
 			setFormMessage({ isShown: true, isError: true, msg: "Unfortunately, there was an error resetting your name!" });
 		}
 
@@ -76,9 +81,9 @@ const ChangeNamePage: React.FC = () => {
 	};
 
 	return (
-		<Card.Content>
+		<Card.Content id={styles.changeNameContainer}>
 			<Container>
-				<h1>Change Name</h1>
+				<Header as="h1">Change Name</Header>
 			</Container>
 
 			<Form
@@ -108,15 +113,17 @@ const ChangeNamePage: React.FC = () => {
 				</Form.Field>
 				
 				<Button
-					//className={classes.registerBtn}
+					id={styles.submitBtn}
 					fluid
 					primary
+					icon={isLoading ? 'spinner' : null}
+					loading={isLoading}
 					type='submit'>
 					Change My Name
 				</Button>
 
 				<Button
-					//className={classes.goBackBtn}
+					id={styles.goBackBtn}
 					fluid
 					basic
 					onClick={() => navigate(-1)}>
