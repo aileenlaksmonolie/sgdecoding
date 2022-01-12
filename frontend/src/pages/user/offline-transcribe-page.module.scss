@@ -1,7 +1,4 @@
-// Have to be placed outside as it is rendered separetely
-#dateFilterPopup {
-	width: 200px;
-}
+
 
 #offlineTranscribePg {
 	#introSection {
@@ -11,58 +8,4 @@
 		background: #ffe2b7;
 	}
 
-	#listPaginator {
-		float: right;
-	}
-
-	.historyList {
-		min-height: 420px;
-	}
-
-	.historyItemBtns {
-		line-height: 52px;
-	}
-
-	.historyItem {
-		&:hover {
-			background: #f0f0f0;
-			transition: background 0.3s linear;
-		}
-	}
-
-	.historyItemIcon {
-		i:nth-child(1) {
-			background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
-			-webkit-background-clip: text;
-			-moz-background-clip: text;
-			background-clip: text;
-			-webkit-text-fill-color: transparent;
-			&.historyItemIconError {
-				background: orangered;
-				-webkit-background-clip: text;
-				-moz-background-clip: text;
-				background-clip: text;
-				-webkit-text-fill-color: transparent;
-			}
-		}
-
-		i:nth-child(2) {
-			color: white;
-			font-size: 0.7em;
-			left: 48%;
-		}
-	}
-
-	.historyItemLoading {
-		background: linear-gradient(134.72deg, #166bea 0%, #6f3bdd 99.54%);
-		-webkit-background-clip: text;
-		-moz-background-clip: text;
-		background-clip: text;
-		-webkit-text-fill-color: transparent;
-	}
-
-	.historyItemContent {
-		display: inline-block;
-		margin-left: 16px;
-	}
 }

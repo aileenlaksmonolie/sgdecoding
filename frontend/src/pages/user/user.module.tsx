@@ -7,6 +7,7 @@ import LiveDecodePage from "./live-decode.page";
 import OfflineTranscribePage from "./offline-transcribe-page";
 import OverviewPage from "./overview.page";
 import ProfilePage from "./profile.page";
+import ViewAllJobs from "./view-all-jobs.page";
 import ViewOneTranscript from "./view-one-transcript";
 
 
@@ -18,6 +19,7 @@ const UserModule: React.FC = () => {
 				<Route path='/' element={<OverviewPage />}></Route>	
 				<Route path='overview' element={<OverviewPage />}></Route>	
 				<Route path='livetranscribe' element={<LiveDecodePage />}></Route>	
+				<Route path='viewalljobs' element={<ViewAllJobs/>}></Route>
 				<Route path='offlinetranscribe' element={<OfflineTranscribePage />}></Route>	
 				<Route path='viewonetranscript' element={<ViewOneTranscript />}></Route>	
 				<Route path='profile' element={<ProfilePage />}></Route>	

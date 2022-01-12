@@ -38,6 +38,16 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 
 				<Menu.Item
 					as={Link}
+					to="/viewalljobs"
+					active={pathname === '/viewalljobs'}
+					className={pathname === '/viewalljobs' ? styles.active : ''}
+				>
+					<Icon name='list layout' />
+					View All Jobs
+				</Menu.Item>
+
+				<Menu.Item
+					as={Link}
 					to="/livetranscribe"
 					active={pathname === '/livetranscribe'}
 					className={pathname === '/livetranscribe' ? styles.active : ''}
