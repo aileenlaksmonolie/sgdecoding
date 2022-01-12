@@ -61,7 +61,7 @@ const OverviewPage: React.FC = () => {
 						</Grid.Column>
 
 						<Grid.Column>
-							<Image src="./images/HeaderImg_male.svg" alt="header image male" />
+							<Image src="/images/HeaderImg_male.svg" alt="header image male" />
 						</Grid.Column>
 					</Grid>
 				</Card.Content>

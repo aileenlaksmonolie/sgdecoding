@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import { Button, Card, Checkbox, CheckboxProps, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
+import { Button, Card, Checkbox, CheckboxProps, Container, Form, Header, Image, InputOnChangeData, Message } from 'semantic-ui-react';
 import { UserLoginModel } from '../../models/user-authentication.model';
 import { actionCreators } from '../../state';
 import { RootState } from '../../state/reducers';
@@ -23,6 +23,7 @@ const LoginPage: React.FC = () => {
 
 	const { rmbMeEmail, token } = useSelector((state: RootState) => state.authReducer);
 	const isLoggedIn = token !== '';
+	const [isLoading, setIsLoading] = useState(false);
 
 	// console.log("[DEBUG] isLoggedIn " + isLoggedIn)
 
@@ -74,6 +75,7 @@ const LoginPage: React.FC = () => {
 
 	const onSubmit = async (data: { email: string, password: string, rmbMe: undefined | boolean }) => {
 		// console.log("[DEBUG] LoginCard rmbMe: " + data.rmbMe)
+		setIsLoading(true);
 		console.log('email ' + data.email);
 		const userCreds: UserLoginModel = {
 			email: data.email,
@@ -86,14 +88,17 @@ const LoginPage: React.FC = () => {
 			// console.log("[DEBUG] Error logging in!")
 			setShowError(true);
 		}
+		setIsLoading(false);
 
 		// console.log("[DEBUG] Submitted, is user logged in? " + isLoggedIn)
 	};
 	return (
 		<Card.Content>
 			<Container className={authModStyles.cardHeader}>
-				<h1>Welcome Back</h1>
+				<Image src="/images/Main_logo.svg" alt="sg decoding logo" />
+				<Header as="h1">Welcome Back</Header>
 				<small>Sign in to continue</small>
+				<div id={authModStyles.blockDivider}></div>
 			</Container>
 			<Form
 				onSubmit={handleSubmit(onSubmit)}
@@ -110,7 +115,7 @@ const LoginPage: React.FC = () => {
 						label='Email'
 						fluid
 						type='email'
-						//defaultValue={rmbMeEmail}
+						defaultValue={rmbMeEmail}
 						placeholder='example@ntu.edu.sg'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
@@ -138,15 +143,23 @@ const LoginPage: React.FC = () => {
 					/>
 				</Form.Field>
 				<Button
-					fluid
+					// fluid
+					className={authModStyles.mainActionBtn}
 					primary
+					icon={isLoading ? "spinner" : null}
+					loading={isLoading}
 					type='submit'>
 					Login
 				</Button>
 			</Form>
-			<Link to='/auth/forgotpassword'><em>Forgot your password?</em></Link>
+			<Link
+				to='/auth/forgotpassword'
+				id={authModStyles.forgotPasswordLink}
+				>
+				<em>Forgot your password?</em>
+			</Link>
 			<br></br>
-			<Link to='/auth/resetpassword'><em>Reset Password</em></Link>
+			{/* <Link to='/auth/resetpassword'><em>Reset Password</em></Link> */}
 			<h4>Don't have an account?
 				<em><Link to='/auth/register'> Register here</Link></em>
 			</h4>

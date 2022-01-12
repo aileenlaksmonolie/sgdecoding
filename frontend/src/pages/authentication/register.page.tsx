@@ -7,7 +7,7 @@ import { Button, Card, Container, Form, InputOnChangeData, Message } from "seman
 import { registerOneUser } from "../../api/auth-api";
 import { NewUserRegistration, NewUserRegistrationResponse } from "../../models/user-authentication.model";
 import { RootState } from "../../state/reducers";
-import classes from './authentication.module.scss';
+import authModStyles from './authentication.module.scss';
 
 const RegisterPage: React.FC = () => {
 	/* Declarations */
@@ -25,6 +25,7 @@ const RegisterPage: React.FC = () => {
 
 	const { token } = useSelector((state: RootState) => state.authReducer);
 	const isLoggedIn = token !== '';
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		register('name', {
@@ -76,29 +77,12 @@ const RegisterPage: React.FC = () => {
 	const onSubmit = async (data: { email: string, name: string, password: string, passwordCfm: string }) => {
 		// console.log("[DEBUG] onSubmit: ")
 		// console.log(data)
-
+		setIsLoading(true);
 		const newUser: NewUserRegistration = {
 			email: data.email,
 			name: data.name,
 			password: data.password,
 		};
-
-		// const response = await fetch ('http://localhost:2000/api/register', {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 	},
-		// 	body: JSON.stringify({
-		// 		email: data.email,
-		// 		name: data.name,
-		// 		password: data.password
-
-		// 	}),
-		// })
-
-		// const res = await response.json()
-
-		// console.log(res)
 
 		registerOneUser(newUser)
 			.then((res: AxiosResponse<NewUserRegistrationResponse, any>) => {
@@ -113,13 +97,19 @@ const RegisterPage: React.FC = () => {
 				if (err.response?.data.statusCode === 422)
 					errMsg = 'Account Already Registered!';
 				setRegMessage({ isShown: true, isError: true, msg: errMsg });
+			})
+			.finally(()=> {
+				setIsLoading(false);
 			});
 	};
+
+	//template
 	return (
 		<Card.Content>
-			<Container className={classes.cardHeader}>
+			<Container className={authModStyles.cardHeader}>
 				<h1>Register a New Account</h1>
 				<small>Join us today by creating a new account!</small>
+				<div id={authModStyles.blockDivider}></div>
 			</Container>
 
 			<Form
@@ -183,18 +173,19 @@ const RegisterPage: React.FC = () => {
 					/>
 				</Form.Field>
 				<Button
-					className={classes.registerBtn}
-					fluid
+					className={authModStyles.mainActionBtn}
+					// fluid
 					primary
+					icon={isLoading ? 'spinner' : null}
+					loading={isLoading}
 					type='submit'>
 					Register
 				</Button>
 
 				<Button
-					className={classes.goBackBtn}
-					fluid
+					className={authModStyles.goBackBtn}
 					basic
-					onClick={() => navigate('/auth/login')}>
+					onClick={() => navigate(-1)}>
 					Go Back
 				</Button>
 

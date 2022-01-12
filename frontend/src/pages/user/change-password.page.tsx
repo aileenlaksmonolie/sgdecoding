@@ -3,14 +3,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
+import { Button, Card, Container, Form, Header, InputOnChangeData, Message } from 'semantic-ui-react';
 import { sendChangePasswordRequest } from '../../api/auth-api';
 import { UserChangePassword, UserChangePasswordResponse } from '../../models/user-authentication.model';
 import { RootState } from '../../state/reducers';
+import styles from './change-password.module.scss';
 
 const ChangePasswordPage: React.FC = () => {
 	/* Declarations */
 	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' });
+	const [isLoading, setIsLoading] = useState(false);
 	// const [isDisabled, setIsDiabled] = useState(false)
 
 	const navigate = useNavigate();
@@ -60,6 +62,7 @@ const ChangePasswordPage: React.FC = () => {
 	};
 
 	const onSubmit = async (data: { currentPassword: string, newPassword: string, passwordCfm: string }) => {
+		setIsLoading(true);
 		// console.log("[DEBUG] onSubmit: ")
 		// console.log(data)
 
@@ -73,19 +76,22 @@ const ChangePasswordPage: React.FC = () => {
 		sendChangePasswordRequest(newPasswordRequest)
 			.then((res: AxiosResponse<UserChangePasswordResponse, any>) => {
 				// console.log("[DEBUG] Successful Reset") 
+				setIsLoading(false);
 				setFormMessage({ isShown: true, isError: false, msg: res.data.message });
 			})
 			.catch((err: AxiosError) => {
 				// console.log("[DEBUG] Error Resetting!")
 				// console.log(err.response)
+				setIsLoading(false);
 				setFormMessage({ isShown: true, isError: true, msg: err.message });
 			});
 	};
 
+	//template
 	return (
-		<Card.Content>
+		<Card.Content id={styles.changePwdContainer}>
 			<Container>
-				<h1>Change Password</h1>
+				<Header as="h1">Change Password</Header>
 			</Container>
 
 			<Form
@@ -141,7 +147,7 @@ const ChangePasswordPage: React.FC = () => {
 				</Form.Field>
 				
 				<Button
-					//className={classes.registerBtn}
+					id={styles.submitBtn}
 					fluid
 					primary
 					type='submit'>
@@ -149,7 +155,7 @@ const ChangePasswordPage: React.FC = () => {
 				</Button>
 
 				<Button
-					//className={classes.goBackBtn}
+					id={styles.goBackBtn}
 					fluid
 					basic
 					onClick={() => navigate(-1)}>

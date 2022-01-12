@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Card, Container, Form, InputOnChangeData, Message } from 'semantic-ui-react';
 import { sendForgotPasswordRequest } from '../../api/auth-api';
 import { RootState } from '../../state/reducers';
-import classes from './authentication.module.scss';
+import authModStyles from './authentication.module.scss';
 
 const ForgotPwdPage: React.FC = () => {
 	/* Declarations */
@@ -20,6 +20,7 @@ const ForgotPwdPage: React.FC = () => {
 
 	const { token } = useSelector((state: RootState) => state.authReducer);
 	const isLoggedIn = token !== '';
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		register("email", {
@@ -47,17 +48,20 @@ const ForgotPwdPage: React.FC = () => {
 	};
 
 	const onSubmit = async (data: { email: string }) => {
-		sendForgotPasswordRequest(data.email);
+		setIsLoading(true);
+		await sendForgotPasswordRequest(data.email);
 		setShowMsg(true);
+		setIsLoading(false);
 	};
 
 
 
 	return (
 		<Card.Content>
-			<Container className={classes.cardHeader}>
+			<Container className={authModStyles.cardHeader}>
 				<h1>Forgot Your Password?</h1>
 				<small>Enter your email and we'll recover your account!</small>
+				<div id={authModStyles.blockDivider}></div>
 			</Container>
 			<Form
 				onSubmit={handleSubmit(onSubmit)}
@@ -81,15 +85,18 @@ const ForgotPwdPage: React.FC = () => {
 					/>
 				</Form.Field>
 				<Button
-					fluid
+					className={authModStyles.mainActionBtn}
+					// fluid
 					primary
+					icon={isLoading ? 'spinner' : null}
+					loading={isLoading}
 					type='submit'>
 					Recover My Account
 				</Button>
 
 				<Button
-					className={classes.goBackBtn}
-					fluid
+					className={authModStyles.goBackBtn}
+					// fluid
 					basic
 					onClick={() => navigate('/auth/login')}>
 					Go Back

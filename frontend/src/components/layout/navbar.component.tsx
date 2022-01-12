@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from "redux";
-import { Dropdown, Icon, Menu } from "semantic-ui-react";
+import { Dropdown, Icon, Image, Menu } from "semantic-ui-react";
 import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
 import styles from './navbar.module.scss';
@@ -18,7 +18,7 @@ const NavBar: React.FC = () => {
 	return (
 		<Menu stackable className={styles.noMarginBot}>
 			<Menu.Item as={Link} to="/" id={styles.logo}>
-				<img src='./images/Main_logo.svg' alt='main logo' width="274"/>
+				<Image src='/images/Main_logo.svg' alt='main logo' width="274"/>
 			</Menu.Item>
 
 			{/* <Menu.Item
