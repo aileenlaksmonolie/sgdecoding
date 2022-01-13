@@ -32,7 +32,7 @@ const LoginPage: React.FC = () => {
 
 	// console.log("[DEBUG] rmbMeEmail: " + rmbMeEmail)
 	if (rmbMeEmail !== '') {
-		//setValue('email', rmbMeEmail) //email does not change
+		setValue('email', rmbMeEmail); //email does not change
 		setValue('rmbMe', true);
 	}
 
@@ -146,11 +146,10 @@ const LoginPage: React.FC = () => {
 					// fluid
 					className={authModStyles.mainActionBtn}
 					primary
-					icon={isLoading ? "spinner" : null}
+					icon={isLoading ? "spinner" : undefined}
 					loading={isLoading}
-					type='submit'>
-					Login
-				</Button>
+					content="Login"
+					type='submit' />
 			</Form>
 			<Link
 				to='/auth/forgotpassword'
