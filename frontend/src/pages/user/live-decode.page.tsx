@@ -222,7 +222,7 @@ const LiveDecodePage: React.FC = () => {
 						}
 						<Grid padded>
 							<Grid.Row>
-								<Grid.Column width={3}>
+								<Grid.Column width={4}>
 									<LiveDecodeBtns
 										// key={transcription.final.length}
 										IS_DEBUGGING={IS_DEBUGGING}
@@ -234,7 +234,7 @@ const LiveDecodePage: React.FC = () => {
 										allRecordedChunks={allRecordedChunks}
 									/>
 								</Grid.Column>
-								<Grid.Column width={13}>
+								<Grid.Column width={12}>
 									{/* <VizSineWave stream={recorder.stream} /> */}
 									{
 										recorder.isMicAccessGiven && recorder.audioContext && recorder.stream ?

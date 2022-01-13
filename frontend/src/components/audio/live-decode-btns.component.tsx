@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, Container, Grid } from "semantic-ui-react";
+import { Button, Container, Dropdown, DropdownProps, Grid } from "semantic-ui-react";
 import { liveDecodeSocket } from "../../api/api";
 import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
@@ -27,6 +27,19 @@ const LiveDecodeBtns: React.FC<Props> = (
 	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks }
 ) => {
 	/* */
+	const languageOptions = [
+		{ key: 'eng_closetalk', text: 'English Closetalk', value: 'eng_closetalk' },
+		{ key: 'eng_telephony', text: 'English Telephony', value: 'eng_telephony' },
+		{ key: 'mandarin_closetalk', text: 'Mandarin Closetalk', value: 'mandarin_closetalk' },
+		{ key: 'mandarin_telephony', text: 'Mandarin Telephony', value: 'mandarin_telephony' },
+		{ key: 'malay_closetalk', text: 'Malay Closetalk', value: 'malay_closetalk' },
+		{ key: 'engmalay_closetalk', text: 'English-Malay Closetalk', value: 'engmalay_closetalk' },
+		{ key: 'cs_closetalk', text: 'Code Switch Closetalk', value: 'cs_closetalk' },
+		{ key: 'cs_telephony', text: 'Code Switch Telephony', value: 'cs_telephony' },
+	];
+	const [selectedLangModel, setSelectedLangModel] = useState<string>("eng_closetalk");
+
+
 	const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
 
 	const [time, setTime] = useState(0);
@@ -43,7 +56,7 @@ const LiveDecodeBtns: React.FC<Props> = (
 		console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING);
 		if (!IS_DEBUGGING) {
 			webSocketConn?.close();
-			const conn = liveDecodeSocket(token);
+			const conn = liveDecodeSocket(token, selectedLangModel);
 
 			conn.onmessage = (event) => {
 				console.log("[DEBUG] Received response from gateway");
@@ -94,7 +107,6 @@ const LiveDecodeBtns: React.FC<Props> = (
 		} else {
 			recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS });
 			setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
-
 		}
 	};
 
@@ -145,6 +157,14 @@ const LiveDecodeBtns: React.FC<Props> = (
 		}
 	};
 
+	const onSelLanguageModelChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+		const {value} = data;
+		console.log("[DEBUG] changed lang model: " + value);
+		if(value && value !== ''){
+			setSelectedLangModel(value as string);
+		}
+	};
+
 	/* */
 	useEffect(() => {
 		let interval: NodeJS.Timeout | null = null;
@@ -167,6 +187,19 @@ const LiveDecodeBtns: React.FC<Props> = (
 
 	return (
 		<Container id={styles.btnsArrayContainer}>
+			<Grid.Row id={styles.langModelDropdown}>
+				<label>Select language model</label>
+				<Dropdown
+					scrolling
+					labeled
+					placeholder='Language Model'
+					fluid
+					selection
+					defaultValue={"eng_closetalk"}
+					options={languageOptions}
+					onChange={onSelLanguageModelChange}
+				/>
+			</Grid.Row>
 			<Grid.Row>
 				{
 					recorder.isRecording === RecordingStates.NOT_STARTED
@@ -185,14 +218,20 @@ const LiveDecodeBtns: React.FC<Props> = (
 				}
 			</Grid.Row>
 			<Grid.Row style={{ marginTop: '12px' }}>
-				<Button
-					disabled={recorder.isRecording !== RecordingStates.STOPPED}
-					fluid
-					color="green"
-					onClick={onDownloadClick}
-					icon="cloud download"
-					content="Download"
-				/>
+				{
+					recorder.isRecording === RecordingStates.STOPPED
+						?
+						<Button
+							disabled={recorder.isRecording !== RecordingStates.STOPPED}
+							fluid
+							color="green"
+							onClick={onDownloadClick}
+							icon="cloud download"
+							content="Download"
+						/>
+						:
+						null
+				}
 			</Grid.Row>
 
 			{/* <Grid.Row>
