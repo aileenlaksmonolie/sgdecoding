@@ -1,9 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { Card, Container, Grid, Header, Icon, Label, TextArea } from "semantic-ui-react";
+import { liveDecodeSocket } from "../../api/api";
 import VizFreqBars from "../../components/audio/freq-bars-visualisation.component";
 import LiveDecodeBtns from "../../components/audio/live-decode-btns.component";
 import NoMicAccess from "../../components/audio/no-mic-access.component";
+import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
+import { RootState } from "../../state/reducers";
 import styles from './live-decode.module.scss';
 
 export enum RecordingStates {
@@ -43,13 +47,14 @@ const LiveDecodePage: React.FC = () => {
 
 	const location = useLocation();
 
-	// const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
+	const { token } = useSelector((state: RootState) => state.authReducer);
+	const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
 	const webSocketConnRef = useRef<WebSocket>();
-	// webSocketConnRef.current = webSocketConn;
+	webSocketConnRef.current = webSocketConn;
 
-	// const [adaptationState, setAdaptationState] = useState<AdaptationState>();
-	// const adaptationStateRef = useRef<AdaptationState>();
-	// adaptationStateRef.current = adaptationState;
+	const [adaptationState, setAdaptationState] = useState<AdaptationState>();
+	const adaptationStateRef = useRef<AdaptationState>();
+	adaptationStateRef.current = adaptationState;
 
 	const [transcription, setTranscription] =
 		useState<Transcription>({
@@ -60,7 +65,6 @@ const LiveDecodePage: React.FC = () => {
 	const [allRecordedChunks, setAllRecordedChunks] = useState<Float32Array[]>([]);
 
 	const [isLoading, setIsLoading] = useState(true);
-
 
 	const reqMicrophoneAccess = async (): Promise<MediaStream> => {
 		const stream = await navigator.mediaDevices.getUserMedia({
@@ -132,6 +136,80 @@ const LiveDecodePage: React.FC = () => {
 			e.returnValue = "";
 	};
 
+	const onStartClick = () => {
+		// console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING);
+		if (!IS_DEBUGGING) {
+			webSocketConn?.close();
+			const conn = liveDecodeSocket(token, "eng_closetalk");
+
+			conn.onmessage = (event) => {
+				console.log("[DEBUG] Received response from gateway");
+				console.log(event);
+				const { data } = event;
+				const response: LiveDecodeResponse = JSON.parse(data);
+				if (response.status === 0) {
+					if (isHypothesisResponse(response)) {
+						console.log('[DEBUG] HYPOTHESIS RESPONSE RECEIVED');
+						const { final, hypotheses } = response.result;
+						let newTranscription = hypotheses[0].transcript;
+						if (final) { // 100% of what the word is
+							setTranscription(prev => ({ nonFinal: "", final: [...prev.final, newTranscription] }));
+						} else { // not 100% what the word is
+							setTranscription(prev => ({ ...prev, nonFinal: "... ..." + newTranscription }));
+						}
+
+					} else {
+						console.log('[DEBUG] ADAPTATION RESPONSE RECEIVED');
+						setAdaptationState((response as AdaptationStateResponse).adaptation_state);
+						// webSocketConn?.send(JSON.stringify(adaptationStateRef.current))
+					}
+				} else if (response.status === 200) {
+					console.log("[DEBUG] Successfully connected to the server");
+					recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS });
+					setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
+
+
+				}
+			};
+
+			conn.onopen = (event) => {
+				console.log("[DEBUG] Connection to backend opened");
+			};
+
+			conn.onerror = (error) => {
+				console.error("[ERROR DEBUG] Error with websocket connection");
+				console.log(error);
+			};
+
+			conn.onclose = (event) => {
+				console.log("[DEBUG] onclose");
+				console.log(event);
+			};
+
+			setWebSocketConn(conn);
+			webSocketConnRef.current = conn;
+		} else {
+			recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS });
+			setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
+		}
+	};
+
+	const onStopClick = () => {
+		recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.STOPPED });
+		setRecorder({ ...recorder, isRecording: RecordingStates.STOPPED });
+
+		if (!IS_DEBUGGING) {
+			webSocketConn?.close();
+			setWebSocketConn(undefined);
+		}
+	};
+
+	const onDebugClick = () => {
+		const date = new Date().toISOString().slice(11, -1);
+		// setTranscription(prev => ({ nonFinal: "", final: [...prev.final, date] }));
+		setTranscription(prev => ({ ...prev, nonFinal: "... ..." + date }));
+	};
+
 	useEffect(()=>{
 		// if(recorder.isRecording === RecordingStates.IN_PROGRESS)
 		console.log(location);
@@ -151,6 +229,7 @@ const LiveDecodePage: React.FC = () => {
 		reqMicrophoneAccess()
 			.then((stream) => {
 				const audioContext = createAudioContext(stream);
+				console.log(stream);
 				loadWorkletNode(audioContext, stream).then(
 					(audioWorklet) => {
 						setRecorder(r => ({ ...r, isMicAccessGiven: true, stream, audioContext, audioWorklet }));
@@ -171,8 +250,14 @@ const LiveDecodePage: React.FC = () => {
 		window.addEventListener('beforeunload', confirmNavAway);
 
 		return () => {
-			if(recorder.audioContext !== null)
-				recorder.audioContext.close();
+			console.log("[DEBUG] Live Decode Page unmounted");
+			// console.log(recorder.stream);
+			// console.log(recorderRef.current);
+			if(recorderRef.current){
+				recorderRef.current.audioContext?.close();
+				recorderRef.current.stream?.getTracks().forEach(track => track.stop());
+			}
+			// recorder.stream!.getAudioTracks()[0].enabled = false;
 			window.removeEventListener('beforeunload', confirmNavAway);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -225,13 +310,12 @@ const LiveDecodePage: React.FC = () => {
 								<Grid.Column width={4}>
 									<LiveDecodeBtns
 										// key={transcription.final.length}
-										IS_DEBUGGING={IS_DEBUGGING}
-										recorder={recorder}
-										setRecorder={setRecorder}
-										transcription={transcription}
-										setTranscription={setTranscription}
-										webSocketRef={webSocketConnRef}
+										// IS_DEBUGGING={IS_DEBUGGING}
+										onStartClick={onStartClick}
+										onStopClick={onStopClick}
+										isRecording={recorder.isRecording}	
 										allRecordedChunks={allRecordedChunks}
+										// onDebugClick={onDebugClick}
 									/>
 								</Grid.Column>
 								<Grid.Column width={12}>

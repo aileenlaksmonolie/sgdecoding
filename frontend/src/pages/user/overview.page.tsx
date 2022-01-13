@@ -124,7 +124,7 @@ const OverviewPage: React.FC = () => {
 						</Card.Header>
 					</Card.Content>
 					<Card.Content>
-						<ResponsiveContainer width={400} height={300}>
+						<ResponsiveContainer width="100%" height={300}>
 							<PieChart>
 								<Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#fffaaa" label>
 									{
@@ -144,7 +144,7 @@ const OverviewPage: React.FC = () => {
 						</Card.Header>
 					</Card.Content>
 					<Card.Content>
-						<ResponsiveContainer width={400} height={300}>
+						<ResponsiveContainer width="100%" height={300}>
 							<PieChart>
 								<Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="56%" innerRadius={60} outerRadius={80} fill="#8884d8" label>
 									{
