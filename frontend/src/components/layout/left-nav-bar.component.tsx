@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Container, Icon, Menu, Sidebar } from "semantic-ui-react";
+import { Container, Icon, Image, Menu, Sidebar } from "semantic-ui-react";
 import styles from './left-nav-bar.module.scss';
 
 interface Props {
@@ -66,6 +66,31 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 					Offline Transcribe
 				</Menu.Item>
 
+
+				<Menu.Item id={styles.ackCont}>
+					{/* <Grid>
+						<Grid.Row>
+							<Grid.Column> */}
+							<div id={styles.ack}>
+								<p>A joint-project in collaboration between</p>
+								<Image src="/images/logo_bw_ntu.svg" alt="" />
+								<Image src="/images/logo_bw_nus.svg" alt="" />
+								<Image src="/images/logo_bw_abax.svg" alt="" />
+								<Image src="/images/logo_bw_ai_sg.svg" alt="" />
+							</div>
+							{/* </Grid.Column>
+							<Grid.Column> */}
+							{/* </Grid.Column>
+						</Grid.Row>
+
+						<Grid.Row>
+							<Grid.Column> */}
+							{/* </Grid.Column>
+							<Grid.Column> */}
+							{/* </Grid.Column>
+						</Grid.Row>
+					</Grid> */}
+				</Menu.Item>
 			</Sidebar>
 
 			<Sidebar.Pusher id={styles.pusherContainer}>

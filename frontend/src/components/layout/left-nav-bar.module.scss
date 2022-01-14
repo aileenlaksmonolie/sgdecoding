@@ -1,5 +1,5 @@
 #sidebarContainer {
-	height: calc(100% - 55px);
+	height: calc(100vh - 60px);
 
 	#sidebar {
 		width: 256px;
@@ -20,6 +20,28 @@
 				padding-right: 16px;
 				margin: 0px auto 0px !important;
 			}
+		}
+		#ackCont {
+			position: absolute;
+			bottom: 16px;	
+
+			p{
+				font-size: 0.9em;
+				color: #999;
+				font-style: italic;
+			}
+
+			#ack {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: space-evenly;
+				row-gap: 12px;
+				column-gap: 0px;
+			}
+		}
+
+		#ackCont::before{
+			background: none;
 		}
 	}
 

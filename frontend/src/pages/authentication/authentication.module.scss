@@ -3,7 +3,7 @@
 
 	#authContainerGrid {
 		position: relative;
-		top: 15%;
+		top: 10%;
 	}
 
 	#authCard {
@@ -19,7 +19,7 @@
 				display: block;
 				width: 329px;
 				height: 48px;
-				margin: 40px auto 40px auto;
+				margin: 32px auto 32px auto;
 			}
 
 			h1 {
@@ -42,6 +42,29 @@
 		.goBackBtn {
 			margin-top: 8px;
 			width: 280px;
+		}
+	}
+
+	#acknow {
+    height: 107px;
+    width: 400px;
+    margin: auto;
+    position: relative;
+    top: 23%;
+		display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+		border: 1px solid #ccc;
+		border-radius: 8px 8px 0px 0px;
+		padding: 16px 24px;
+		box-shadow: 0px 1px 3px 0px #D4D4D5, 0px 0px 0px 1px #D4D4D5;
+
+		p{
+			width: 100%;
+			display: inline-block;
+			font-style:italic;
+			color: #888;
+			margin-bottom:2px;
 		}
 	}
 }
