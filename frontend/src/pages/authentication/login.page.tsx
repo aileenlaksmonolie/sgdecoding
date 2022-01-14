@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { Button, Card, Checkbox, CheckboxProps, Container, Form, Header, Image, InputOnChangeData, Message } from 'semantic-ui-react';
 import { UserLoginModel } from '../../models/user-authentication.model';
@@ -25,7 +25,9 @@ const LoginPage: React.FC = () => {
 	const isLoggedIn = token !== '';
 	const [isLoading, setIsLoading] = useState(false);
 
-	// console.log("[DEBUG] isLoggedIn " + isLoggedIn)
+	const [searchParams, setSearchParams] = useSearchParams();
+	const logoutMsg = searchParams.get('logoutMsg');
+	console.log(logoutMsg);
 
 	const dispatch = useDispatch();
 	const { login } = bindActionCreators(actionCreators, dispatch);
@@ -100,6 +102,12 @@ const LoginPage: React.FC = () => {
 				<small>Sign in to continue</small>
 				<div id={authModStyles.blockDivider}></div>
 			</Container>
+			<Message
+				positive
+				header="You are Logged Out!"
+				content={logoutMsg}
+				hidden={logoutMsg === null} 
+			/>
 			<Form
 				onSubmit={handleSubmit(onSubmit)}
 				error={showError}
@@ -154,7 +162,7 @@ const LoginPage: React.FC = () => {
 			<Link
 				to='/auth/forgotpassword'
 				id={authModStyles.forgotPasswordLink}
-				>
+			>
 				<em>Forgot your password?</em>
 			</Link>
 			<br></br>

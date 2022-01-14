@@ -16,7 +16,8 @@ interface LoginFailureAction{
 
 
 interface LogoutAction{
-	type: AuthTypes.LOGOUT
+	type: AuthTypes.LOGOUT,
+	logoutMsg: string
 }
 
 interface ChangeNameSuccessAction{

@@ -10,7 +10,8 @@ export const INITIAL_STATE = {
 	name: '',
 	role: '',
 	sub: '',
-	email:''
+	email:'',
+	logoutMsg: ''
 };
 
 const reducer = (state = INITIAL_STATE, action: AuthAction) => {
@@ -29,6 +30,8 @@ const reducer = (state = INITIAL_STATE, action: AuthAction) => {
 			return { ...state, name: newName };
 
 		case AuthTypes.LOGOUT:
+			const { logoutMsg } = action;
+			return { ...state, token: '', logoutMsg };
 		case AuthTypes.LOGIN_FAIL:
 			return { ...state, token: '' };
 

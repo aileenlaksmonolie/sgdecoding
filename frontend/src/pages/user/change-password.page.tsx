@@ -1,11 +1,13 @@
 import { AxiosError, AxiosResponse } from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import { Button, Card, Container, Form, Header, InputOnChangeData, Message } from 'semantic-ui-react';
 import { sendChangePasswordRequest } from '../../api/auth-api';
 import { UserChangePassword, UserChangePasswordResponse } from '../../models/user-authentication.model';
+import { actionCreators } from '../../state';
 import { RootState } from '../../state/reducers';
 import styles from './change-password.module.scss';
 
@@ -29,6 +31,8 @@ const ChangePasswordPage: React.FC = () => {
 
 	const { token, rmbMeEmail } = useSelector((state: RootState) => state.authReducer);
 	const isLoggedIn = token !== '';
+	const dispatch = useDispatch();
+	const { logout } = bindActionCreators(actionCreators, dispatch);
 
 	useEffect(() => {
 		register("currentPassword", {
@@ -77,7 +81,8 @@ const ChangePasswordPage: React.FC = () => {
 			.then((res: AxiosResponse<UserChangePasswordResponse, any>) => {
 				// console.log("[DEBUG] Successful Reset") 
 				setIsLoading(false);
-				setFormMessage({ isShown: true, isError: false, msg: res.data.message });
+				// setFormMessage({ isShown: true, isError: false, msg: res.data.message });
+				logout("Password changed successfully, please log in again!");
 			})
 			.catch((err: AxiosError) => {
 				// console.log("[DEBUG] Error Resetting!")

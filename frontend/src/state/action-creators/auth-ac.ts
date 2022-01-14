@@ -50,7 +50,7 @@ export const changeName = (newNameRequest: UserChangeName) => {
 		await sendChangeNameRequest(newNameRequest)
 			.then((res) => {
 				console.log(res);
-				let changeNameSuccess: AuthAction = {
+					let changeNameSuccess: AuthAction = {
 					type: AuthTypes.SET_NEW_NAME,
 					newName: newNameRequest.newName
 				};
@@ -84,11 +84,12 @@ export const changeName = (newNameRequest: UserChangeName) => {
 // 	}
 // }
 
-export const logout = () => {
+export const logout = (logoutMsg?: string) => {
 
 	return (dispatch: Dispatch) => {
 		let logoutAction: AuthAction = {
-			type: AuthTypes.LOGOUT
+			type: AuthTypes.LOGOUT,
+			logoutMsg: logoutMsg ?? ''
 		};
 
 		dispatch(logoutAction);
