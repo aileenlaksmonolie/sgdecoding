@@ -52,7 +52,8 @@ const DownloadTranscriptButton: React.FC<Props> = ({ transcriptTitle, isDisabled
 			disabled={isDisabled}
 			color="green"
 			onClick={onBtnClick}
-		>Download</Button>
+			content='Download'
+		/>
 	);
 };
 

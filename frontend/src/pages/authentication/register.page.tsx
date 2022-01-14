@@ -178,9 +178,9 @@ const RegisterPage: React.FC = () => {
 					primary
 					icon={isLoading ? 'spinner' : null}
 					loading={isLoading}
-					type='submit'>
-					Register
-				</Button>
+					type='submit'
+					content='Register'
+					/>
 
 				<Button
 					className={authModStyles.goBackBtn}

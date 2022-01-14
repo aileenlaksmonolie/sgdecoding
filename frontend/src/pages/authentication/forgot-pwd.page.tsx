@@ -90,9 +90,9 @@ const ForgotPwdPage: React.FC = () => {
 					primary
 					icon={isLoading ? 'spinner' : null}
 					loading={isLoading}
-					type='submit'>
-					Recover My Account
-				</Button>
+					type='submit'
+					content='Recover My Account'
+					/>
 
 				<Button
 					className={authModStyles.goBackBtn}

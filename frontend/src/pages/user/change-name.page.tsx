@@ -118,9 +118,9 @@ const ChangeNamePage: React.FC = () => {
 					primary
 					icon={isLoading ? 'spinner' : null}
 					loading={isLoading}
-					type='submit'>
-					Change My Name
-				</Button>
+					type='submit'
+					content='Change My Name'
+					/>
 
 				<Button
 					id={styles.goBackBtn}
