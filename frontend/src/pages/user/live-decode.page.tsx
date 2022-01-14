@@ -1,13 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { Card, Container, Grid, Header, Icon, Label, TextArea } from "semantic-ui-react";
-import { liveDecodeSocket } from "../../api/api";
 import VizFreqBars from "../../components/audio/freq-bars-visualisation.component";
 import LiveDecodeBtns from "../../components/audio/live-decode-btns.component";
 import NoMicAccess from "../../components/audio/no-mic-access.component";
-import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
-import { RootState } from "../../state/reducers";
 import styles from './live-decode.module.scss';
 
 export enum RecordingStates {
@@ -47,14 +43,13 @@ const LiveDecodePage: React.FC = () => {
 
 	const location = useLocation();
 
-	const { token } = useSelector((state: RootState) => state.authReducer);
-	const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
+	// const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
 	const webSocketConnRef = useRef<WebSocket>();
-	webSocketConnRef.current = webSocketConn;
+	// webSocketConnRef.current = webSocketConn;
 
-	const [adaptationState, setAdaptationState] = useState<AdaptationState>();
-	const adaptationStateRef = useRef<AdaptationState>();
-	adaptationStateRef.current = adaptationState;
+	// const [adaptationState, setAdaptationState] = useState<AdaptationState>();
+	// const adaptationStateRef = useRef<AdaptationState>();
+	// adaptationStateRef.current = adaptationState;
 
 	const [transcription, setTranscription] =
 		useState<Transcription>({
@@ -65,6 +60,7 @@ const LiveDecodePage: React.FC = () => {
 	const [allRecordedChunks, setAllRecordedChunks] = useState<Float32Array[]>([]);
 
 	const [isLoading, setIsLoading] = useState(true);
+
 
 	const reqMicrophoneAccess = async (): Promise<MediaStream> => {
 		const stream = await navigator.mediaDevices.getUserMedia({
@@ -132,85 +128,11 @@ const LiveDecodePage: React.FC = () => {
 	const confirmNavAway = (e: BeforeUnloadEvent) => {
 		e.preventDefault();
 		// console.log(recorderRef.current?.isRecording)
-		if (recorderRef.current?.isRecording !== RecordingStates.NOT_STARTED)
+		if(recorderRef.current?.isRecording !== RecordingStates.NOT_STARTED)
 			e.returnValue = "";
 	};
 
-	const onStartClick = () => {
-		// console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING);
-		if (!IS_DEBUGGING) {
-			webSocketConn?.close();
-			const conn = liveDecodeSocket(token, "eng_closetalk");
-
-			conn.onmessage = (event) => {
-				console.log("[DEBUG] Received response from gateway");
-				console.log(event);
-				const { data } = event;
-				const response: LiveDecodeResponse = JSON.parse(data);
-				if (response.status === 0) {
-					if (isHypothesisResponse(response)) {
-						console.log('[DEBUG] HYPOTHESIS RESPONSE RECEIVED');
-						const { final, hypotheses } = response.result;
-						let newTranscription = hypotheses[0].transcript;
-						if (final) { // 100% of what the word is
-							setTranscription(prev => ({ nonFinal: "", final: [...prev.final, newTranscription] }));
-						} else { // not 100% what the word is
-							setTranscription(prev => ({ ...prev, nonFinal: "... ..." + newTranscription }));
-						}
-
-					} else {
-						console.log('[DEBUG] ADAPTATION RESPONSE RECEIVED');
-						setAdaptationState((response as AdaptationStateResponse).adaptation_state);
-						// webSocketConn?.send(JSON.stringify(adaptationStateRef.current))
-					}
-				} else if (response.status === 200) {
-					console.log("[DEBUG] Successfully connected to the server");
-					recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS });
-					setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
-
-
-				}
-			};
-
-			conn.onopen = (event) => {
-				console.log("[DEBUG] Connection to backend opened");
-			};
-
-			conn.onerror = (error) => {
-				console.error("[ERROR DEBUG] Error with websocket connection");
-				console.log(error);
-			};
-
-			conn.onclose = (event) => {
-				console.log("[DEBUG] onclose");
-				console.log(event);
-			};
-
-			setWebSocketConn(conn);
-			webSocketConnRef.current = conn;
-		} else {
-			recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS });
-			setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
-		}
-	};
-
-	const onStopClick = () => {
-		recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.STOPPED });
-		setRecorder({ ...recorder, isRecording: RecordingStates.STOPPED });
-
-		if (!IS_DEBUGGING) {
-			webSocketConn?.close();
-			setWebSocketConn(undefined);
-		}
-	};
-
-	const onDebugClick = () => {
-		const date = new Date().toISOString().slice(11, -1);
-		// setTranscription(prev => ({ nonFinal: "", final: [...prev.final, date] }));
-		setTranscription(prev => ({ ...prev, nonFinal: "... ..." + date }));
-	};
-
-	useEffect(() => {
+	useEffect(()=>{
 		// if(recorder.isRecording === RecordingStates.IN_PROGRESS)
 		console.log(location);
 		// 	window.confirm("are you sure?")
@@ -242,18 +164,18 @@ const LiveDecodePage: React.FC = () => {
 					setRecorder(r => ({ ...r, isMicAccessGiven: false, errorMsg: msg }));
 				});
 
-		/* 
-			Workaround as usePrompt/useBlocker is not yet available in React Router v6 
-			as of writing, Jan 2021. Ref: https://github.com/remix-run/react-router/issues/8139
-			TODO https://gist.github.com/rmorse/426ffcc579922a82749934826fa9f743
-		*/
+	/* 
+		Workaround as usePrompt/useBlocker is not yet available in React Router v6 
+		as of writing, Jan 2021. Ref: https://github.com/remix-run/react-router/issues/8139
+		TODO https://gist.github.com/rmorse/426ffcc579922a82749934826fa9f743
+	*/
 		window.addEventListener('beforeunload', confirmNavAway);
 
 		return () => {
 			console.log("[DEBUG] Live Decode Page unmounted");
 			// console.log(recorder.stream);
 			// console.log(recorderRef.current);
-			if (recorderRef.current) {
+			if(recorderRef.current){
 				recorderRef.current.audioContext?.close();
 				recorderRef.current.stream?.getTracks().forEach(track => track.stop());
 			}
@@ -290,18 +212,18 @@ const LiveDecodePage: React.FC = () => {
 								</Label>
 								:
 								recorder.isRecording === RecordingStates.IN_PROGRESS
-									?
-									<Label id={styles.inProgressState} className={`${styles.recordingStateLbl} green`}>
-										<Icon loading name="stop circle" />
-										<span>Recording</span>
-										<span></span>
-									</Label>
-									:
-									<Label id={styles.finishedState} className={`${styles.recordingStateLbl} red`}>
-										<Icon name="stop circle outline" />
-										<span>Finished</span>
-										<span></span>
-									</Label>
+								?
+								<Label id={styles.inProgressState} className={`${styles.recordingStateLbl} green`}>
+									<Icon loading name="stop circle" />
+									<span>Recording</span> 
+									<span></span>
+								</Label>
+								:
+								<Label id={styles.finishedState} className={`${styles.recordingStateLbl} red`}>
+									<Icon name="stop circle outline" />
+									<span>Finished</span> 
+									<span></span>
+								</Label>
 
 
 						}
@@ -310,21 +232,20 @@ const LiveDecodePage: React.FC = () => {
 								<Grid.Column width={4}>
 									<LiveDecodeBtns
 										// key={transcription.final.length}
-										// IS_DEBUGGING={IS_DEBUGGING}
-										onStartClick={onStartClick}
-										onStopClick={onStopClick}
-										isRecording={recorder.isRecording}
+										IS_DEBUGGING={IS_DEBUGGING}
+										recorder={recorder}
+										setRecorder={setRecorder}
+										transcription={transcription}
+										setTranscription={setTranscription}
+										webSocketRef={webSocketConnRef}
 										allRecordedChunks={allRecordedChunks}
-									// onDebugClick={onDebugClick}
 									/>
 								</Grid.Column>
 								<Grid.Column width={12}>
-									{/* <VizSineWave stream={recorder.stream!} /> */}
+									{/* <VizSineWave stream={recorder.stream} /> */}
 									{
-										recorder.isMicAccessGiven && recorder.audioContext && recorder.stream
-											?
-											<VizFreqBars recorder={recorder} />
-											:
+										recorder.isMicAccessGiven && recorder.audioContext && recorder.stream ?
+											<VizFreqBars recorder={recorder} /> :
 											<p>Loading Stream....</p>
 									}
 								</Grid.Column>
@@ -343,8 +264,8 @@ const LiveDecodePage: React.FC = () => {
 							</Grid.Row>
 							{/* Debug */}
 							{/* <Grid.Row> */}
-							{/* {showDownload.show && <a href={showDownload.url} download="audio.wav">Download Test</a>} */}
-							{/* <a onClick={createDownloadLink}>Download Test</a>
+								{/* {showDownload.show && <a href={showDownload.url} download="audio.wav">Download Test</a>} */}
+								{/* <a onClick={createDownloadLink}>Download Test</a>
 							</Grid.Row> */}
 						</Grid>
 					</Card.Content>

@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Button, ButtonProps, Container, Dropdown, DropdownProps, Grid } from "semantic-ui-react";
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { Button, Container, Dropdown, DropdownProps, Grid } from "semantic-ui-react";
+import { liveDecodeSocket } from "../../api/api";
 import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
-import { RecordingStates } from "../../pages/user/live-decode.page";
+import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
+import { MyRecorder, RecordingStates, Transcription } from "../../pages/user/live-decode.page";
+import { RootState } from "../../state/reducers";
 import styles from './live-decode-btns.module.scss';
 
 interface Props {
@@ -9,19 +13,18 @@ interface Props {
 	// onStartCb: Function,
 	// onStopCb: Function,
 	// webSocketConn: WebSocket
-	isRecording: RecordingStates,
-	onStartClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: ButtonProps) => void,
-	onStopClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: ButtonProps) => void,
-	// onDebugClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: ButtonProps) => void, 
+	IS_DEBUGGING: boolean,
+	transcription: Transcription,
+	setTranscription: React.Dispatch<React.SetStateAction<Transcription>>,
+	recorder: MyRecorder,
+	setRecorder: React.Dispatch<React.SetStateAction<MyRecorder>>,
+	webSocketRef: React.MutableRefObject<WebSocket | undefined>,
 	allRecordedChunks: Float32Array[]
 }
 
 
 const LiveDecodeBtns: React.FC<Props> = (
-	{ 
-		allRecordedChunks, isRecording, onStartClick, onStopClick, 
-		// onDebugClick
-	}
+	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks }
 ) => {
 	/* */
 	const languageOptions = [
@@ -36,12 +39,86 @@ const LiveDecodeBtns: React.FC<Props> = (
 	];
 	const [selectedLangModel, setSelectedLangModel] = useState<string>("eng_closetalk");
 
+
+	const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
+
 	const [time, setTime] = useState(0);
 
-	// const [adaptationState, setAdaptationState] = useState<AdaptationState>();
-	// const adaptationStateRef = useRef<AdaptationState>();
-	// adaptationStateRef.current = adaptationState;
+	const [adaptationState, setAdaptationState] = useState<AdaptationState>();
+	const adaptationStateRef = useRef<AdaptationState>();
+	adaptationStateRef.current = adaptationState;
 
+	const { token } = useSelector((state: RootState) => state.authReducer);
+	/* 
+		
+	*/
+	const onStartClick = () => {
+		// console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING);
+		if (!IS_DEBUGGING) {
+			webSocketConn?.close();
+			const conn = liveDecodeSocket(token, selectedLangModel);
+
+			conn.onmessage = (event) => {
+				console.log("[DEBUG] Received response from gateway");
+				console.log(event);
+				const { data } = event;
+				const response: LiveDecodeResponse = JSON.parse(data);
+				if (response.status === 0) {
+					if (isHypothesisResponse(response)) {
+						console.log('[DEBUG] HYPOTHESIS RESPONSE RECEIVED');
+						const { final, hypotheses } = response.result;
+						let newTranscription = hypotheses[0].transcript;
+						if (final) { // 100% of what the word is
+							setTranscription(prev => ({ nonFinal: "", final: [...prev.final, newTranscription] }));
+						} else { // not 100% what the word is
+							setTranscription(prev => ({ ...prev, nonFinal: "... ..." + newTranscription }));
+						}
+
+					} else {
+						console.log('[DEBUG] ADAPTATION RESPONSE RECEIVED');
+						setAdaptationState((response as AdaptationStateResponse).adaptation_state);
+						// webSocketConn?.send(JSON.stringify(adaptationStateRef.current))
+					}
+				} else if (response.status === 200) {
+					console.log("[DEBUG] Successfully connected to the server");
+					recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS });
+					setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
+
+
+				}
+			};
+
+			conn.onopen = (event) => {
+				console.log("[DEBUG] Connection to backend opened");
+			};
+
+			conn.onerror = (error) => {
+				console.error("[ERROR DEBUG] Error with websocket connection");
+				console.log(error);
+			};
+
+			conn.onclose = (event) => {
+				console.log("[DEBUG] onclose");
+				console.log(event);
+			};
+
+			setWebSocketConn(conn);
+			webSocketRef.current = conn;
+		} else {
+			recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS });
+			setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
+		}
+	};
+
+	const onStopClick = () => {
+		recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.STOPPED });
+		setRecorder({ ...recorder, isRecording: RecordingStates.STOPPED });
+
+		if (!IS_DEBUGGING) {
+			webSocketConn?.close();
+			setWebSocketConn(undefined);
+		}
+	};
 
 	const onRedoClick = () => {
 		window.location.reload();
@@ -92,9 +169,9 @@ const LiveDecodeBtns: React.FC<Props> = (
 	useEffect(() => {
 		let interval: NodeJS.Timeout | null = null;
 
-		if (isRecording === RecordingStates.IN_PROGRESS) {
+		if (recorder.isRecording === RecordingStates.IN_PROGRESS) {
 			interval = setInterval(() => {
-				// console.log(time);
+				console.log(time);
 				setTime(prevTime => prevTime + 1);
 			}, 1000);
 		}
@@ -106,7 +183,7 @@ const LiveDecodeBtns: React.FC<Props> = (
 				clearInterval(interval);
 			}
 		};
-	}, [isRecording]);
+	}, [recorder.isRecording]);
 
 	return (
 		<Container id={styles.btnsArrayContainer}>
@@ -125,11 +202,11 @@ const LiveDecodeBtns: React.FC<Props> = (
 			</Grid.Row>
 			<Grid.Row>
 				{
-					isRecording === RecordingStates.NOT_STARTED
+					recorder.isRecording === RecordingStates.NOT_STARTED
 						?
 						<Button icon="circle" fluid primary onClick={onStartClick} content="Start" />
 						:
-						isRecording === RecordingStates.IN_PROGRESS
+						recorder.isRecording === RecordingStates.IN_PROGRESS
 							?
 							<Button
 								icon="stop" fluid secondary onClick={onStopClick}
@@ -142,10 +219,10 @@ const LiveDecodeBtns: React.FC<Props> = (
 			</Grid.Row>
 			<Grid.Row style={{ marginTop: '12px' }}>
 				{
-					isRecording === RecordingStates.STOPPED
+					recorder.isRecording === RecordingStates.STOPPED
 						?
 						<Button
-							disabled={isRecording !== RecordingStates.STOPPED}
+							disabled={recorder.isRecording !== RecordingStates.STOPPED}
 							fluid
 							color="green"
 							onClick={onDownloadClick}
@@ -158,10 +235,12 @@ const LiveDecodeBtns: React.FC<Props> = (
 			</Grid.Row>
 
 			{/* <Grid.Row>
-				<Button className="pink" onClick={onDebugClick}>Debug Button</Button>
+				<Button className="blue">Test Button</Button>
 			</Grid.Row> */}
 		</Container>
 	);
 };
 
+// TODO IMPORTANT
+//https://codepen.io/anon/pen/ywJxzV?editors=1111
 export default React.memo(LiveDecodeBtns);
