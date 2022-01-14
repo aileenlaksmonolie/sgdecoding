@@ -158,9 +158,9 @@ const LiveDecodeBtns: React.FC<Props> = (
 	};
 
 	const onSelLanguageModelChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-		const {value} = data;
+		const { value } = data;
 		console.log("[DEBUG] changed lang model: " + value);
-		if(value && value !== ''){
+		if (value && value !== '') {
 			setSelectedLangModel(value as string);
 		}
 	};
@@ -188,7 +188,7 @@ const LiveDecodeBtns: React.FC<Props> = (
 	return (
 		<Container id={styles.btnsArrayContainer}>
 			<Grid.Row id={styles.langModelDropdown}>
-				<label>Select language model</label>
+				<label><strong>Select Language Model: </strong></label>
 				<Dropdown
 					scrolling
 					labeled
@@ -198,6 +198,8 @@ const LiveDecodeBtns: React.FC<Props> = (
 					defaultValue={"eng_closetalk"}
 					options={languageOptions}
 					onChange={onSelLanguageModelChange}
+					disabled={recorder.isRecording === RecordingStates.IN_PROGRESS
+						|| recorder.isRecording === RecordingStates.STOPPED}
 				/>
 			</Grid.Row>
 			<Grid.Row>

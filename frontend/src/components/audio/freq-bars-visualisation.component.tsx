@@ -30,7 +30,11 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		var bufferLength: number = analyser.frequencyBinCount;
 		analyser.getByteFrequencyData(dataArray.current);
 
-		canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
+		if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
+			canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
+		}else{
+			canvasCtx!.fillStyle = 'rgb(252, 255, 252)';
+		}
 		canvasCtx!.fillRect(0, 0, width, height);
 		var barWidth = ((width - (bufferLength-1)) / bufferLength);
 		var barHeight;
@@ -53,28 +57,15 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isRecording, height, width, canvasCtx]); // Do not add analyser
 
-	// useEffect(() => {
 
-	// 	console.log("isRecxording in FreqBars: " + isRecording)
-
-	// }, [isRecording]);
 
 	useEffect(() => {
-		// if (canvasRef.current) {
-		// width.current = canvasRef.current.width;
-		// height.current = canvasRef.current.height;
-		// }
 		setWidth(containerRef.current!.clientWidth);
 		setHeight(containerRef.current!.clientHeight);
 	}, []);
 
 
 	useEffect(() => {
-
-		// We create a separate audio context here as we want to keep visualisation alive
-		// const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-		// console.log(width + ' ' + height)
-
 		if (width !== 0 && height !== 0) {
 			var source: MediaStreamAudioSourceNode;
 			var distortion: WaveShaperNode;
@@ -86,10 +77,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 			distortion = audioContext.createWaveShaper();
 			gainNode = audioContext.createGain();
-			// biquadFilter = audioContext.createBiquadFilter()
-			// convolver = audioContext.createConvolver()
 			distortion.oversample = '4x';
-			// biquadFilter.gain.setTargetAtTime(0, audioContext.currentTime, 0)
 
 			analyser.fftSize = 128; // fft = fast fourier transform
 			dataArray.current = new Uint8Array(analyser.frequencyBinCount);

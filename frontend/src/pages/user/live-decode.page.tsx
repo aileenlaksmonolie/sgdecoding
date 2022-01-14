@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
-import { Card, Container, Grid, Header, Icon, Label, TextArea } from "semantic-ui-react";
+import { Card, Container, Grid, Header, Icon, Label, Segment } from "semantic-ui-react";
 import VizFreqBars from "../../components/audio/freq-bars-visualisation.component";
 import LiveDecodeBtns from "../../components/audio/live-decode-btns.component";
 import NoMicAccess from "../../components/audio/no-mic-access.component";
@@ -128,11 +128,11 @@ const LiveDecodePage: React.FC = () => {
 	const confirmNavAway = (e: BeforeUnloadEvent) => {
 		e.preventDefault();
 		// console.log(recorderRef.current?.isRecording)
-		if(recorderRef.current?.isRecording !== RecordingStates.NOT_STARTED)
+		if (recorderRef.current?.isRecording !== RecordingStates.NOT_STARTED)
 			e.returnValue = "";
 	};
 
-	useEffect(()=>{
+	useEffect(() => {
 		// if(recorder.isRecording === RecordingStates.IN_PROGRESS)
 		console.log(location);
 		// 	window.confirm("are you sure?")
@@ -164,18 +164,18 @@ const LiveDecodePage: React.FC = () => {
 					setRecorder(r => ({ ...r, isMicAccessGiven: false, errorMsg: msg }));
 				});
 
-	/* 
-		Workaround as usePrompt/useBlocker is not yet available in React Router v6 
-		as of writing, Jan 2021. Ref: https://github.com/remix-run/react-router/issues/8139
-		TODO https://gist.github.com/rmorse/426ffcc579922a82749934826fa9f743
-	*/
+		/* 
+			Workaround as usePrompt/useBlocker is not yet available in React Router v6 
+			as of writing, Jan 2021. Ref: https://github.com/remix-run/react-router/issues/8139
+			TODO https://gist.github.com/rmorse/426ffcc579922a82749934826fa9f743
+		*/
 		window.addEventListener('beforeunload', confirmNavAway);
 
 		return () => {
 			console.log("[DEBUG] Live Decode Page unmounted");
 			// console.log(recorder.stream);
 			// console.log(recorderRef.current);
-			if(recorderRef.current){
+			if (recorderRef.current) {
 				recorderRef.current.audioContext?.close();
 				recorderRef.current.stream?.getTracks().forEach(track => track.stop());
 			}
@@ -201,7 +201,10 @@ const LiveDecodePage: React.FC = () => {
 					<Header as="h1">Live Transcribe</Header>
 					<p>Live decoding transcribes your speech into text as you speak into the microphone. Click the start button to begin decoding!</p>
 				</Container>
-				<Card fluid>
+				<Card
+					// color={recorder.isRecording === RecordingStates.IN_PROGRESS ? "green" : "purple"}
+					fluid
+				>
 					<Card.Content>
 						{
 							recorder.isRecording === RecordingStates.NOT_STARTED
@@ -212,18 +215,18 @@ const LiveDecodePage: React.FC = () => {
 								</Label>
 								:
 								recorder.isRecording === RecordingStates.IN_PROGRESS
-								?
-								<Label id={styles.inProgressState} className={`${styles.recordingStateLbl} green`}>
-									<Icon loading name="stop circle" />
-									<span>Recording</span> 
-									<span></span>
-								</Label>
-								:
-								<Label id={styles.finishedState} className={`${styles.recordingStateLbl} red`}>
-									<Icon name="stop circle outline" />
-									<span>Finished</span> 
-									<span></span>
-								</Label>
+									?
+									<Label id={styles.inProgressState} className={`${styles.recordingStateLbl} green`}>
+										<Icon loading name="stop circle" />
+										<span>Recording</span>
+										<span></span>
+									</Label>
+									:
+									<Label id={styles.finishedState} className={`${styles.recordingStateLbl} red`}>
+										<Icon name="stop circle outline" />
+										<span>Finished</span>
+										<span></span>
+									</Label>
 
 
 						}
@@ -253,19 +256,32 @@ const LiveDecodePage: React.FC = () => {
 
 							<Grid.Row>
 								<Grid.Column>
-									<TextArea
+									{/* <TextArea
 										placeholder='Press "Start" to begin ...'
 										rows={8}
 										style={{ minHeight: '200px', minWidth: '100%', padding: '16px' }}
 										disabled
 										value={transcription.final.join(" ").toString() + transcription.nonFinal.toString()}
-									/>
+									/> */}
+									<Segment 
+										padded
+										color={ recorder.isRecording=== RecordingStates.IN_PROGRESS ? "green" : "purple" }
+										style={{ minHeight: '200px', textAlign: 'left', background:'#fdfdfd'}}
+										>
+										{
+											recorder.isRecording === RecordingStates.NOT_STARTED
+											?
+											"Press \"Start\" to begin..."
+											:
+											transcription.final.join(" ").toString() + transcription.nonFinal.toString()
+										}
+									</Segment>
 								</Grid.Column>
 							</Grid.Row>
 							{/* Debug */}
 							{/* <Grid.Row> */}
-								{/* {showDownload.show && <a href={showDownload.url} download="audio.wav">Download Test</a>} */}
-								{/* <a onClick={createDownloadLink}>Download Test</a>
+							{/* {showDownload.show && <a href={showDownload.url} download="audio.wav">Download Test</a>} */}
+							{/* <a onClick={createDownloadLink}>Download Test</a>
 							</Grid.Row> */}
 						</Grid>
 					</Card.Content>
