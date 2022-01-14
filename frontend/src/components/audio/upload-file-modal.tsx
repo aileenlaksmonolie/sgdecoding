@@ -257,7 +257,9 @@ const ModalUploadFile: React.FC = () => {
           animated="fade"
           attached="bottom"
         >
-          <Button.Content visible>Choose a File</Button.Content>
+          <Button.Content 
+						visible
+						>Choose a File</Button.Content>
           <Button.Content hidden>
             <Icon name="file" />
           </Button.Content>

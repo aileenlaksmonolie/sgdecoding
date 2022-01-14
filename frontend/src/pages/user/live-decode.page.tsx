@@ -132,7 +132,7 @@ const LiveDecodePage: React.FC = () => {
 	const confirmNavAway = (e: BeforeUnloadEvent) => {
 		e.preventDefault();
 		// console.log(recorderRef.current?.isRecording)
-		if(recorderRef.current?.isRecording !== RecordingStates.NOT_STARTED)
+		if (recorderRef.current?.isRecording !== RecordingStates.NOT_STARTED)
 			e.returnValue = "";
 	};
 
@@ -210,7 +210,7 @@ const LiveDecodePage: React.FC = () => {
 		setTranscription(prev => ({ ...prev, nonFinal: "... ..." + date }));
 	};
 
-	useEffect(()=>{
+	useEffect(() => {
 		// if(recorder.isRecording === RecordingStates.IN_PROGRESS)
 		console.log(location);
 		// 	window.confirm("are you sure?")
@@ -242,18 +242,18 @@ const LiveDecodePage: React.FC = () => {
 					setRecorder(r => ({ ...r, isMicAccessGiven: false, errorMsg: msg }));
 				});
 
-	/* 
-		Workaround as usePrompt/useBlocker is not yet available in React Router v6 
-		as of writing, Jan 2021. Ref: https://github.com/remix-run/react-router/issues/8139
-		TODO https://gist.github.com/rmorse/426ffcc579922a82749934826fa9f743
-	*/
+		/* 
+			Workaround as usePrompt/useBlocker is not yet available in React Router v6 
+			as of writing, Jan 2021. Ref: https://github.com/remix-run/react-router/issues/8139
+			TODO https://gist.github.com/rmorse/426ffcc579922a82749934826fa9f743
+		*/
 		window.addEventListener('beforeunload', confirmNavAway);
 
 		return () => {
 			console.log("[DEBUG] Live Decode Page unmounted");
 			// console.log(recorder.stream);
 			// console.log(recorderRef.current);
-			if(recorderRef.current){
+			if (recorderRef.current) {
 				recorderRef.current.audioContext?.close();
 				recorderRef.current.stream?.getTracks().forEach(track => track.stop());
 			}
@@ -290,18 +290,18 @@ const LiveDecodePage: React.FC = () => {
 								</Label>
 								:
 								recorder.isRecording === RecordingStates.IN_PROGRESS
-								?
-								<Label id={styles.inProgressState} className={`${styles.recordingStateLbl} green`}>
-									<Icon loading name="stop circle" />
-									<span>Recording</span> 
-									<span></span>
-								</Label>
-								:
-								<Label id={styles.finishedState} className={`${styles.recordingStateLbl} red`}>
-									<Icon name="stop circle outline" />
-									<span>Finished</span> 
-									<span></span>
-								</Label>
+									?
+									<Label id={styles.inProgressState} className={`${styles.recordingStateLbl} green`}>
+										<Icon loading name="stop circle" />
+										<span>Recording</span>
+										<span></span>
+									</Label>
+									:
+									<Label id={styles.finishedState} className={`${styles.recordingStateLbl} red`}>
+										<Icon name="stop circle outline" />
+										<span>Finished</span>
+										<span></span>
+									</Label>
 
 
 						}
@@ -313,16 +313,18 @@ const LiveDecodePage: React.FC = () => {
 										// IS_DEBUGGING={IS_DEBUGGING}
 										onStartClick={onStartClick}
 										onStopClick={onStopClick}
-										isRecording={recorder.isRecording}	
+										isRecording={recorder.isRecording}
 										allRecordedChunks={allRecordedChunks}
-										// onDebugClick={onDebugClick}
+									// onDebugClick={onDebugClick}
 									/>
 								</Grid.Column>
 								<Grid.Column width={12}>
-									{/* <VizSineWave stream={recorder.stream} /> */}
+									{/* <VizSineWave stream={recorder.stream!} /> */}
 									{
-										recorder.isMicAccessGiven && recorder.audioContext && recorder.stream ?
-											<VizFreqBars recorder={recorder} /> :
+										recorder.isMicAccessGiven && recorder.audioContext && recorder.stream
+											?
+											<VizFreqBars recorder={recorder} />
+											:
 											<p>Loading Stream....</p>
 									}
 								</Grid.Column>
@@ -341,8 +343,8 @@ const LiveDecodePage: React.FC = () => {
 							</Grid.Row>
 							{/* Debug */}
 							{/* <Grid.Row> */}
-								{/* {showDownload.show && <a href={showDownload.url} download="audio.wav">Download Test</a>} */}
-								{/* <a onClick={createDownloadLink}>Download Test</a>
+							{/* {showDownload.show && <a href={showDownload.url} download="audio.wav">Download Test</a>} */}
+							{/* <a onClick={createDownloadLink}>Download Test</a>
 							</Grid.Row> */}
 						</Grid>
 					</Card.Content>

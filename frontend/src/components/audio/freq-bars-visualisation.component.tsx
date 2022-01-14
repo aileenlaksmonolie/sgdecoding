@@ -32,10 +32,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 		canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
 		canvasCtx!.fillRect(0, 0, width, height);
-		//TODO important! Do not Remove. To be fixed!
-		var barWidth = ((width / bufferLength) * (width % 20));
-		// console.log(barWidth)
-		// console.log(bufferLength)
+		var barWidth = ((width - (bufferLength-1)) / bufferLength);
 		var barHeight;
 		var x = 0;
 
@@ -94,7 +91,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 			distortion.oversample = '4x';
 			// biquadFilter.gain.setTargetAtTime(0, audioContext.currentTime, 0)
 
-			analyser.fftSize = 256;
+			analyser.fftSize = 128; // fft = fast fourier transform
 			dataArray.current = new Uint8Array(analyser.frequencyBinCount);
 
 			source = audioContext.createMediaStreamSource(stream);
@@ -123,7 +120,6 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 				minHeight: '200px'
 			}}
 			ref={containerRef}>
-
 			{
 				width !== 0
 					?

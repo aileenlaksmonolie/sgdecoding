@@ -142,7 +142,7 @@ const ViewAllJobs: React.FC = () => {
 
 	useEffect(() => {
 		setIsLoading(true);
-		// getLoggedInUserTranscriptionHistory();
+		getLoggedInUserTranscriptionHistory();
 
 		register("startDate", {
 			// valueAsDate: true,
