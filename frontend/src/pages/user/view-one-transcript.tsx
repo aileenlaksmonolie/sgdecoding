@@ -1,10 +1,12 @@
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button, Card, Container, Dropdown, DropdownProps, Grid, Icon, Popup } from 'semantic-ui-react';
 import { getOneAudioRecordingFileSrcUrl } from '../../api/batch-transcribe-api';
 import DownloadTranscriptButton from '../../components/audio/download-transcript-btn';
 import { BatchTranscriptionHistory, LiveTranscriptionHistory } from '../../models/transcribe-history-response.model';
+import { RootState } from '../../state/reducers';
 import styles from './view-one-transcript.module.scss';
 
 const ViewOneTranscript: React.FC = () => {
@@ -37,85 +39,85 @@ const ViewOneTranscript: React.FC = () => {
 		{ key: 2, text: '2x', value: 2 }
 	];
 
-	// const { selectedTranscriptHistory } = useSelector((state: RootState) => state.transcriptionHistoryReducer)
+	const { selectedTranscriptHistory } = useSelector((state: RootState) => state.transcriptionHistoryReducer);
 	//DEBUG
-	const selectedTranscriptHistory: any =
-	{
-		"title": "This is a debugging object",
-		"queue": "normal",
-		"status": "done",
-		"formats": [
-			"stm",
-			"srt",
-			"TextGrid"
-		],
-		"sampling": "16khz",
-		"lang": "english",
-		"name": "Note",
-		"_id": "6151968a7b428800306dea9b",
-		"webhook": "https://2c55-42-61-133-176.ngrok.io",
-		"userCreated": {
-			"role": "user",
-			"type": "normal",
-			"name": "Noname",
-			"_id": "5f7539cb8fb89d0029597fe4",
-			"isBlocked": false,
-			"isDeleted": false,
-			"isVerified": true,
-			"email": "user@ntu.edu.sg",
-			"createdAt": "2020-10-01T02:07:07.992Z",
-			"updatedAt": "2021-12-19T05:18:09.171Z",
-			"__v": 0,
-			"forgetPasswordCode": "603e1f",
-			"forgetPasswordCodeSentAt": "2021-12-15T08:56:35.096Z"
-		},
-		"input": [
-			{
-				"isSubmitted": true,
-				"errorCode": 0,
-				"status": "done",
-				"progress": [
-					{
-						"content": "DECODING",
-						"createdAt": "2021-09-27T10:01:56.368Z"
-					},
-					{
-						"content": "DONE",
-						"createdAt": "2021-09-27T10:03:52.455Z"
-					}
-				],
-				"_id": "6151968a7b428800306dea9d",
-				"file": {
-					"children": [],
-					"parent": "",
-					"_id": "6151968a7b428800306dea9c",
-					"originalName": "file.wav",
-					"mimeType": "audio/wave",
-					"filename": "ebd77d5f-0856-4a0f-8f1b-213dfc9df544-1632736906012.wav",
-					"size": 2474028,
-					"duration": 12.885333,
-					"userCreated": "5f7539cb8fb89d0029597fe4",
-					"createdAt": "2021-09-27T10:01:46.352Z"
-				}
-			}
-		],
-		"type": "batch",
-		"createdAt": "2021-09-27T10:01:46.308Z",
-		"updatedAt": "2021-09-27T10:03:52.540Z",
-		"__v": 0,
-		"sourceFile": {
-			"children": [],
-			"parent": "",
-			"_id": "6151968a7b428800306dea9c",
-			"originalName": "file.wav",
-			"mimeType": "audio/wave",
-			"filename": "ebd77d5f-0856-4a0f-8f1b-213dfc9df544-1632736906012.wav",
-			"size": 2474028,
-			"duration": 12.885333,
-			"userCreated": "5f7539cb8fb89d0029597fe4",
-			"createdAt": "2021-09-27T10:01:46.352Z"
-		}
-	};
+	// const selectedTranscriptHistory: any =
+	// {
+	// 	"title": "This is a debugging object",
+	// 	"queue": "normal",
+	// 	"status": "done",
+	// 	"formats": [
+	// 		"stm",
+	// 		"srt",
+	// 		"TextGrid"
+	// 	],
+	// 	"sampling": "16khz",
+	// 	"lang": "english",
+	// 	"name": "Note",
+	// 	"_id": "6151968a7b428800306dea9b",
+	// 	"webhook": "https://2c55-42-61-133-176.ngrok.io",
+	// 	"userCreated": {
+	// 		"role": "user",
+	// 		"type": "normal",
+	// 		"name": "Noname",
+	// 		"_id": "5f7539cb8fb89d0029597fe4",
+	// 		"isBlocked": false,
+	// 		"isDeleted": false,
+	// 		"isVerified": true,
+	// 		"email": "user@ntu.edu.sg",
+	// 		"createdAt": "2020-10-01T02:07:07.992Z",
+	// 		"updatedAt": "2021-12-19T05:18:09.171Z",
+	// 		"__v": 0,
+	// 		"forgetPasswordCode": "603e1f",
+	// 		"forgetPasswordCodeSentAt": "2021-12-15T08:56:35.096Z"
+	// 	},
+	// 	"input": [
+	// 		{
+	// 			"isSubmitted": true,
+	// 			"errorCode": 0,
+	// 			"status": "done",
+	// 			"progress": [
+	// 				{
+	// 					"content": "DECODING",
+	// 					"createdAt": "2021-09-27T10:01:56.368Z"
+	// 				},
+	// 				{
+	// 					"content": "DONE",
+	// 					"createdAt": "2021-09-27T10:03:52.455Z"
+	// 				}
+	// 			],
+	// 			"_id": "6151968a7b428800306dea9d",
+	// 			"file": {
+	// 				"children": [],
+	// 				"parent": "",
+	// 				"_id": "6151968a7b428800306dea9c",
+	// 				"originalName": "file.wav",
+	// 				"mimeType": "audio/wave",
+	// 				"filename": "ebd77d5f-0856-4a0f-8f1b-213dfc9df544-1632736906012.wav",
+	// 				"size": 2474028,
+	// 				"duration": 12.885333,
+	// 				"userCreated": "5f7539cb8fb89d0029597fe4",
+	// 				"createdAt": "2021-09-27T10:01:46.352Z"
+	// 			}
+	// 		}
+	// 	],
+	// 	"type": "batch",
+	// 	"createdAt": "2021-09-27T10:01:46.308Z",
+	// 	"updatedAt": "2021-09-27T10:03:52.540Z",
+	// 	"__v": 0,
+	// 	"sourceFile": {
+	// 		"children": [],
+	// 		"parent": "",
+	// 		"_id": "6151968a7b428800306dea9c",
+	// 		"originalName": "file.wav",
+	// 		"mimeType": "audio/wave",
+	// 		"filename": "ebd77d5f-0856-4a0f-8f1b-213dfc9df544-1632736906012.wav",
+	// 		"size": 2474028,
+	// 		"duration": 12.885333,
+	// 		"userCreated": "5f7539cb8fb89d0029597fe4",
+	// 		"createdAt": "2021-09-27T10:01:46.352Z"
+	// 	}
+	// };
 
 	const startTimer = () => {
 		console.log("[DEBUG] Starting Timer...");
