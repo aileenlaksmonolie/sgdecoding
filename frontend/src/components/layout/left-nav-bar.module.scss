@@ -36,7 +36,20 @@
 				flex-wrap: wrap;
 				justify-content: space-evenly;
 				row-gap: 12px;
-				column-gap: 0px;
+				column-gap: 16px;
+
+				a{
+					margin: auto 0;
+				}
+
+				img{
+					filter: grayscale(100%);
+					transition: filter 0.25s linear 0s;
+				}
+
+				img:hover{
+					filter: grayscale(0%);
+				}
 			}
 		}
 

@@ -1,24 +1,26 @@
 import { useState } from "react";
 import { Button } from "semantic-ui-react";
 import { getOneTranscriptResult } from "../../api/batch-transcribe-api";
+import { TranscriptionHistory } from "../../models/transcribe-history-response.model";
 
 interface Props {
 	isDisabled: boolean,
-	transcriptTitle: string,
-	transcriptId: string,
+	// transcriptTitle: string,
+	// transcriptId: string,
+	transcriptHistory: TranscriptionHistory,
 	children?: any,
 	id?: any,
 	className?: any,
 }
 
 
-const DownloadTranscriptButton: React.FC<Props> = ({ transcriptTitle, isDisabled, transcriptId, id, className }) => {
+const DownloadTranscriptButton: React.FC<Props> = ({ transcriptHistory, isDisabled, id, className }) => {
 	const [isLoadingTranscript, setIsLoadingTranscript] = useState(false);
 
 	const onBtnClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		try {
 			setIsLoadingTranscript(true);
-			const result = await getOneTranscriptResult(transcriptId);
+			const result = await getOneTranscriptResult(transcriptHistory._id);
 
 			console.log("[DEBUG] Download Result: ");
 			console.log(result);
@@ -27,7 +29,8 @@ const DownloadTranscriptButton: React.FC<Props> = ({ transcriptTitle, isDisabled
 			let anchor = document.createElement('a');
 			anchor.style.display = 'none';
 			anchor.href = url;
-			anchor.download = transcriptTitle.replace(' ', '_') + ".zip";
+			//TODO Not working! Can't set the download file name
+			anchor.download = transcriptHistory.title.replace(' ', '_') + ".zip";
 			document.body.appendChild(anchor);
 			anchor.onclick = () => {
 				requestAnimationFrame(() => {

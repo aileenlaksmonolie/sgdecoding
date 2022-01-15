@@ -365,9 +365,8 @@ const ViewAllJobs: React.FC = () => {
 										View
 									</Button>
 									<DownloadTranscriptButton
-										transcriptTitle={h.title}
-										isDisabled={h.type === 'live'}
-										transcriptId={h._id}
+										isDisabled={h.type === 'live' || h.input[0].status === 'error'}
+										transcriptHistory={h} 
 									/>
 									<Button color="red" disabled>Delete</Button>
 								</List.Content>

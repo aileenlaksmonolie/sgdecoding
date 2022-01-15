@@ -22,12 +22,14 @@ const AuthenticationModule: React.FC = () => {
 				</Card>
 			</Grid>
 
-			<div id={styles.acknow}>
-				<p>A joint-project in collaboration between</p>
-				<Image src="/images/logo_bw_ntu.svg" alt="" />
-				<Image src="/images/logo_bw_nus.svg" alt="" />
-				<Image src="/images/logo_bw_abax.svg" alt="" />
-				<Image src="/images/logo_bw_ai_sg.svg" alt="" />
+			<div id={styles.ackContainer}>
+				<div id={styles.acknow}>
+					<p>A joint-project in collaboration between</p>
+					<Image as="a" href="https://www.ntu.edu.sg/" src="/images/logo_col_ntu.svg" alt="" />
+					<Image as="a" href="https://www.nus.edu.sg/" src="/images/logo_col_nus.svg" alt="" />
+					<Image as="a" href="https://aisingapore.org/" src="/images/logo_col_ai_sg.svg" alt="" />
+					<Image as="a" href="https://www.abax.ai/" src="/images/logo_col_abax.svg" alt="" />
+				</div>
 			</div>
 
 		</div>

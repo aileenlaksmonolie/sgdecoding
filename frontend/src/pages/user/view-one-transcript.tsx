@@ -301,9 +301,8 @@ const ViewOneTranscript: React.FC = () => {
 						</Card.Meta>
 					</Container>
 					<DownloadTranscriptButton
-						transcriptTitle={selectedTranscriptHistory.title}
+						transcriptHistory={selectedTranscriptHistory}
 						isDisabled={selectedTranscriptHistory.type === 'live'}
-						transcriptId={selectedTranscriptHistory._id}
 						id={styles.downloadBtn}
 					/>
 				</Card.Content>
