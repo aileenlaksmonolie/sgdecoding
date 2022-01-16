@@ -6,8 +6,9 @@ const FormData = require('form-data');
 const fs = require('fs');
 const multer = require('multer')
 //const upload = multer({ dest: 'uploads/' })
-const storage = multer.memoryStorage()
-const upload = multer({ storage: storage })
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+const yauzl = require('yauzl');
 //const path = require('path')
 //const { Readable } = require('stream')
 
@@ -299,9 +300,9 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 
 	// Download to temporary folder
 	// TODO delete the zipped folder after done
-	const reqFileStr = "_temp/" + new Date().toLocaleTimeString().replaceAll(":", "_") + ".zip";
+	const reqFileStr = "_temp/" + new Date().toLocaleTimeString().replaceAll(":", "_").slice(0, -3);
 
-	var fileWriter = fs.createWriteStream(reqFileStr);
+	var fileWriter = fs.createWriteStream(`${reqFileStr}.zip`);
 
 	await axios.get(
 		`https://gateway.speechlab.sg/speech/${req.params.id}/result`,
@@ -310,34 +311,77 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 			responseType: 'json'
 		})
 		.then((getUrlRes) => {
-			// console.log(getUrlRes);
 			return axios.get(getUrlRes.data.url, {
 				responseType: 'stream'
 			});
 		})
-		.then((getZippedFileRes) => {
-			console.log("Success sending download url, is it downloaded?")
-			console.log(getZippedFileRes);
-			getZippedFileRes.data.pipe(fileWriter);
+		.then((dlZippedFileRes) => {
+			console.log("[DEBUG] Success sending download url, is it downloaded?")
+			// console.log(dlZippedFileRes);
+			dlZippedFileRes.data.pipe(fileWriter);
 
-			let error = null;
+			// handle error
 			fileWriter.on('error', (err) => {
 				fileWriter.close();
-				error = err;
+				res.status(500).json(err);
 			});
 
+			var unzippedFileWriter; 
 			fileWriter.on('close', () => {
-				if (!error)
-					console.log("OK")
-			})
+				console.log("[DEBUG] Successfully write file to local temp folder");
+				yauzl.open(`${reqFileStr}.zip`, { lazyEntries: true },  (err, zipfile) => {
+					if (err) throw err;
+					zipfile.readEntry();
+					zipfile.on("entry", (entry) => {
+						console.log(`[DEBUG] reading file: ${entry.fileName} `);
 
-			res.status(getZippedFileRes.status).json({ msg: "success" });
+						if (/\/$/.test(entry.fileName)) {
+							console.log("[DEBUG] if (/\/$/.test(entry.fileName))");
+							// Directory file names end with '/'.
+							// Note that entires for directories themselves are optional.
+							// An entry's fileName implicitly requires its parent directories to exist.
+							zipfile.readEntry();
+						} else {
+							console.log("[DEBUG] else");
+							// file entry
+							zipfile.openReadStream(entry, (err, readStream) => {
+								if (err) throw err;
+
+								readStream.on("end", () => {
+									console.log("[DEBUG] readStream.on(end)");
+									zipfile.readEntry();
+								});
+
+								readStream.on("error", (err) => {
+									console.log("[DEBUG] Error in readStream");
+									console.log(err);
+								})
+
+								// TODO refactor reqFileStr and rename to something more meaningful
+								// Make folder and write currently unzipped file to folder
+								console.log("[DEBUG] Writing " + entry.fileName + " to " + reqFileStr + "/");
+								if(!fs.existsSync(reqFileStr))
+									fs.mkdirSync(reqFileStr);
+								unzippedFileWriter = fs.createWriteStream(`${reqFileStr}/${entry.fileName}`);
+								// console.log("[DEBUG] readStream.pipe(fileWriter2)");
+								readStream.pipe(unzippedFileWriter);
+							});
+						}
+					});
+
+					zipfile.on('close', ()=> {
+						console.log("[DEBUG] Closing Zip File");
+						console.log("[DEBUG] Sending Response OK");
+						res.status(200).json({msg: "operation OK"});
+					})
+				}); // END yauzl.open(path)
+			}) // END filewriter.on('close')
+
 		})
 		.catch((error) => {
 			console.log(error)
 			//res.status(error.response.status).json(error.response.data)
 			res.status(500).json({ msg: "Something went wrong. See Logsc" });
-		})
-
+		});
 
 });
