@@ -25,7 +25,9 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 
 	const draw = useCallback(() => {
-		requestAnimationFrame(draw);
+		console.log("drawing...");
+		if(canvasRef.current) // Stop Recursive Call when component unmounts
+			requestAnimationFrame(draw);
 
 		var bufferLength: number = analyser.frequencyBinCount;
 		analyser.getByteFrequencyData(dataArray.current);
@@ -95,8 +97,11 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 				canvasCtx.clearRect(0, 0, width, height);
 				draw();
 			}
-
 		}
+
+		return () => {
+			console.log("freq-bars unmounted");
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [stream, audioContext, draw, width, height, canvasCtx]); // Do not add analyser
 

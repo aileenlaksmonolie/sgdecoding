@@ -20,15 +20,16 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 	const [width, setWidth] = useState(0);
 	const [height, setHeight] = useState(0);
 
-	const draw = useCallback(() =>{
-		requestAnimationFrame(draw);
+	const draw = useCallback(() => {
+		if (canvasRef.current)
+			requestAnimationFrame(draw);
 
 		var bufferLength = analyser.frequencyBinCount;
 		analyser.getByteTimeDomainData(dataArray.current);
 
 		if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
 			canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
-		}else{
+		} else {
 			canvasCtx!.fillStyle = 'rgb(252, 255, 252)';
 		}
 
@@ -36,29 +37,28 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 		canvasCtx!.lineWidth = 3;
 		if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
 			canvasCtx!.strokeStyle = 'rgb(197, 25, 209)';
-		}else{
+		} else {
 			canvasCtx!.strokeStyle = 'rgb(22, 95, 204)';
 		}
-		canvasCtx!.beginPath();
-		var sliceWidth = width * 1.0 / bufferLength;
-		var x = 0;
 
-		for (var i = 0; i < bufferLength; i++) {
-
-			var v = dataArray.current[i] / 128.0;
-			var y = v * height / 2;
-
-			if (i === 0) {
-				canvasCtx!.moveTo(x, y);
-			} else {
-				canvasCtx!.lineTo(x, y);
+		if (canvasRef.current) {
+			canvasCtx!.beginPath();
+			var sliceWidth = width * 1.0 / bufferLength;
+			var x = 0;
+			for (var i = 0; i < bufferLength; i++) {
+				var v = dataArray.current[i] / 128.0;
+				var y = v * height / 2;
+				if (i === 0) {
+					canvasCtx!.moveTo(x, y);
+				} else {
+					canvasCtx!.lineTo(x, y);
+				}
+				x += sliceWidth;
 			}
 
-			x += sliceWidth;
+			canvasCtx!.lineTo(canvasRef.current!.width, canvasRef.current!.height / 2);
+			canvasCtx!.stroke();
 		}
-
-		canvasCtx!.lineTo(canvasRef.current!.width, canvasRef.current!.height / 2);
-		canvasCtx!.stroke();
 	}, [isRecording, height, width, canvasCtx]);
 
 	useEffect(() => {
@@ -96,6 +96,10 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 				draw();
 			}
 		}
+
+		return () => {
+			console.log("[DEBUG] Oscilloscope unmounted!");
+		};
 	}, [stream, audioContext, draw, width, height, canvasCtx]);
 
 
