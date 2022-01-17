@@ -8,6 +8,7 @@ const multer = require('multer')
 //const upload = multer({ dest: 'uploads/' })
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+const compression = require('compression');
 const yauzl = require('yauzl');
 const { ParseSRT_JSON } = require("./helpers");
 //const path = require('path')
@@ -15,6 +16,8 @@ const { ParseSRT_JSON } = require("./helpers");
 
 app.use(cors());
 app.use(express.json());
+app.use(compression());
+
 app.listen(2000, () => {
 	console.log("server started on 2000");
 });
@@ -192,7 +195,7 @@ app.get("/speech/history", async (req, res) => {
 		},
 		{ responseType: 'json' })
 		.then((response) => {
-			console.log(response)
+			// console.log(response)
 			res.status(response.status).json(response.data)
 		})
 		.catch((error) => {
@@ -393,10 +396,11 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 								&& t.text === value.text)
 							) === index
 						);
-						console.log(testRes);
+						// console.log(testRes);
 
-						fs.rmSync(`${reqFileStr}/`, {recursive: true, force: true});
-						fs.rmSync(`${reqFileStr}.zip`);
+						fs.rmSync(`${reqFileStr}/`, { recursive: true, force: true });
+						// fs.rmdirSync(`${reqFileStr}`, {recursive: true, force: true}); // works
+						fs.rmSync(`${reqFileStr}.zip`, { recursive: true, force: true });
 
 						res.status(200).json({ transcribedText: testRes });
 					})
@@ -415,7 +419,7 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 });
 
 
-app.get('/files/:id/download', async(req, res) => {
+app.get('/files/:id/download', async (req, res) => {
 	const { id } = req.params;
 
 	await axios.get(
@@ -432,7 +436,7 @@ app.get('/files/:id/download', async(req, res) => {
 		).catch(
 			(error) => {
 				console.log(error);
-				res.status(500).json({msg: "Something went wrong with your request!"});
+				res.status(500).json({ msg: "Something went wrong with your request!" });
 			}
 		)
 
