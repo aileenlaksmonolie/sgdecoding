@@ -9,6 +9,7 @@ const multer = require('multer')
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const yauzl = require('yauzl');
+const { ParseSRT_JSON } = require("./helpers");
 //const path = require('path')
 //const { Readable } = require('stream')
 
@@ -326,14 +327,23 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 				res.status(500).json(err);
 			});
 
-			var unzippedFileWriter; 
-			fileWriter.on('close', () => {
+			var unzippedFileWriter;
+			fileWriter.on('close', async () => {
 				console.log("[DEBUG] Successfully write file to local temp folder");
-				yauzl.open(`${reqFileStr}.zip`, { lazyEntries: true },  (err, zipfile) => {
+				yauzl.open(`${reqFileStr}.zip`, { lazyEntries: true }, (err, zipfile) => {
+
 					if (err) throw err;
+
 					zipfile.readEntry();
+
+					let srtFileName = '';
+
 					zipfile.on("entry", (entry) => {
 						console.log(`[DEBUG] reading file: ${entry.fileName} `);
+
+						if (entry.fileName.slice(-4) === '.srt') {
+							srtFileName = entry.fileName.slice(0, -4);
+						}
 
 						if (/\/$/.test(entry.fileName)) {
 							console.log("[DEBUG] if (/\/$/.test(entry.fileName))");
@@ -341,9 +351,9 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 							// Note that entires for directories themselves are optional.
 							// An entry's fileName implicitly requires its parent directories to exist.
 							zipfile.readEntry();
+							// } else if (entry.fileName.slice(-4) === '.srt') {
 						} else {
-							console.log("[DEBUG] else");
-							// file entry
+							console.log("[DEBUG] is srt file! opening read stream!");
 							zipfile.openReadStream(entry, (err, readStream) => {
 								if (err) throw err;
 
@@ -360,7 +370,7 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 								// TODO refactor reqFileStr and rename to something more meaningful
 								// Make folder and write currently unzipped file to folder
 								console.log("[DEBUG] Writing " + entry.fileName + " to " + reqFileStr + "/");
-								if(!fs.existsSync(reqFileStr))
+								if (!fs.existsSync(reqFileStr))
 									fs.mkdirSync(reqFileStr);
 								unzippedFileWriter = fs.createWriteStream(`${reqFileStr}/${entry.fileName}`);
 								// console.log("[DEBUG] readStream.pipe(fileWriter2)");
@@ -369,12 +379,31 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 						}
 					});
 
-					zipfile.on('close', ()=> {
+					zipfile.on('close', (d) => {
 						console.log("[DEBUG] Closing Zip File");
 						console.log("[DEBUG] Sending Response OK");
-						res.status(200).json({msg: "operation OK"});
+
+						let testStr = fs.readFileSync(`${reqFileStr}/${srtFileName}.srt`).toString();
+
+						let testRes = ParseSRT_JSON.parse(testStr);
+						testRes = testRes.filter((value, index, array) =>
+							array.findIndex(t =>
+							(
+								t.startTime === value.startTime
+								&& t.endTime === value.endTime
+								&& t.text === value.text)
+							) === index
+						);
+						console.log(testRes);
+
+						fs.rmSync(`${reqFileStr}/`, {recursive: true, force: true});
+						fs.rmSync(`${reqFileStr}.zip`);
+
+						res.status(200).json({ msg: "operation OK" });
 					})
 				}); // END yauzl.open(path)
+
+
 			}) // END filewriter.on('close')
 
 		})

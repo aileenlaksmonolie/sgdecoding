@@ -29,7 +29,6 @@ const liveDecodeSocket = (accessToken: string, langModel: string) => {
 		`content-type=audio/x-raw,+layout=(string)interleaved,+rate=(int)16000,+format=(string)S16LE,+channels=(int)1` +
 		`&accessToken=${accessToken}` + 
 		`&model=${langModel}`);
-	
 };
 
 export { speechGatewayApi, liveDecodeSocket };
