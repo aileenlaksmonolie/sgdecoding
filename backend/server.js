@@ -320,7 +320,7 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 			});
 		})
 		.then((dlZippedFileRes) => {
-			console.log("[DEBUG] Success sending download url, is it downloaded?")
+			// console.log("[DEBUG] Success sending download url, is it downloaded?")
 			// console.log(dlZippedFileRes);
 			dlZippedFileRes.data.pipe(fileWriter);
 
@@ -332,7 +332,7 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 
 			var unzippedFileWriter;
 			fileWriter.on('close', async () => {
-				console.log("[DEBUG] Successfully write file to local temp folder");
+				// console.log("[DEBUG] Successfully write file to local temp folder");
 				yauzl.open(`${reqFileStr}.zip`, { lazyEntries: true }, (err, zipfile) => {
 
 					if (err) throw err;
@@ -342,26 +342,26 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 					let srtFileName = '';
 
 					zipfile.on("entry", (entry) => {
-						console.log(`[DEBUG] reading file: ${entry.fileName} `);
+						// console.log(`[DEBUG] reading file: ${entry.fileName} `);
 
 						if (entry.fileName.slice(-4) === '.srt') {
 							srtFileName = entry.fileName.slice(0, -4);
 						}
 
 						if (/\/$/.test(entry.fileName)) {
-							console.log("[DEBUG] if (/\/$/.test(entry.fileName))");
+							// console.log("[DEBUG] if (/\/$/.test(entry.fileName))");
 							// Directory file names end with '/'.
 							// Note that entires for directories themselves are optional.
 							// An entry's fileName implicitly requires its parent directories to exist.
 							zipfile.readEntry();
 							// } else if (entry.fileName.slice(-4) === '.srt') {
 						} else {
-							console.log("[DEBUG] is srt file! opening read stream!");
+							// console.log("[DEBUG] opening read stream!");
 							zipfile.openReadStream(entry, (err, readStream) => {
 								if (err) throw err;
 
 								readStream.on("end", () => {
-									console.log("[DEBUG] readStream.on(end)");
+									// console.log("[DEBUG] readStream.on(end)");
 									zipfile.readEntry();
 								});
 
@@ -384,7 +384,6 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 
 					zipfile.on('close', (d) => {
 						console.log("[DEBUG] Closing Zip File");
-						console.log("[DEBUG] Sending Response OK");
 
 						let testStr = fs.readFileSync(`${reqFileStr}/${srtFileName}.srt`).toString();
 
@@ -402,6 +401,7 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 						// fs.rmdirSync(`${reqFileStr}`, {recursive: true, force: true}); // works
 						fs.rmSync(`${reqFileStr}.zip`, { recursive: true, force: true });
 
+						console.log("[DEBUG] Sending Response OK");
 						res.status(200).json({ transcribedText: testRes });
 					})
 				}); // END yauzl.open(path)
