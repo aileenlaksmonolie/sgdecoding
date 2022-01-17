@@ -414,3 +414,27 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 		});
 
 });
+
+
+app.get('/files/:id/download', async(req, res) => {
+	const { id } = req.params;
+
+	await axios.get(
+		`https://gateway.speechlab.sg/files/${id}/download`,
+		{
+			headers: {
+				'Authorization': `${req.headers.authorization}`,
+			}
+		},
+		{ responseType: 'json' }).then(
+			(response) => {
+				res.status(200).json(response.data);
+			}
+		).catch(
+			(error) => {
+				console.log(error);
+				res.status(500).json({msg: "Something went wrong with your request!"});
+			}
+		)
+
+});
