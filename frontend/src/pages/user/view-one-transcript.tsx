@@ -254,10 +254,6 @@ const ViewOneTranscript: React.FC = () => {
 	// }, [selectedTranscriptionText, trackProgress, audioRef.current.currentTime]);
 
 	useEffect(() => {
-		document.getElementsByClassName('pushable')[0]?.scrollTo({
-			top: 0,
-			behavior: 'smooth'
-		});
 		// console.log(selectedTranscriptHistory);
 
 		if (selectedTranscriptHistory?._id)

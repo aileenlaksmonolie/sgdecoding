@@ -1,4 +1,5 @@
-import { Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Layout from "../../components/layout/layout.component";
 import NotFoundPage from "../authentication/not-found.page";
 import ChangeNamePage from './change-name.page';
@@ -12,6 +13,15 @@ import ViewOneTranscript from "./view-one-transcript";
 
 
 const UserModule: React.FC = () => {
+
+	const location = useLocation();
+
+	useEffect(() => {
+		document.getElementsByClassName('pushable')[0]?.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	}, [location]);
 
 	return (
 		<Layout>
