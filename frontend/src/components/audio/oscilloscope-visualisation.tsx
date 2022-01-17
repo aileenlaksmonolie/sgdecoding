@@ -68,8 +68,8 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 
 	useEffect(() => {
 		if (width !== 0 && height !== 0) {
-			console.log(canvasRef.current);
-			console.log(canvasRef.current?.width);
+			// console.log(canvasRef.current);
+			// console.log(canvasRef.current?.width);
 
 			analyser.minDecibels = -40;
 			analyser.maxDecibels = 0;

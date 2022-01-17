@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
-import { Card, Container, Grid, Header, Icon, Label, Segment } from "semantic-ui-react";
+import { Button, ButtonProps, Card, Container, Grid, Header, Icon, Label, Segment } from "semantic-ui-react";
+import VizFreqBars from "../../components/audio/freq-bars-visualisation.component";
 import LiveDecodeBtns from "../../components/audio/live-decode-btns.component";
 import NoMicAccess from "../../components/audio/no-mic-access.component";
 import VizOscilloscope from "../../components/audio/oscilloscope-visualisation";
@@ -60,6 +61,7 @@ const LiveDecodePage: React.FC = () => {
 	const [allRecordedChunks, setAllRecordedChunks] = useState<Float32Array[]>([]);
 
 	const [isLoading, setIsLoading] = useState(true);
+	const [selectedViz, setSelectedViz] = useState("Oscilloscope");
 
 
 	const reqMicrophoneAccess = async (): Promise<MediaStream> => {
@@ -130,6 +132,12 @@ const LiveDecodePage: React.FC = () => {
 		// console.log(recorderRef.current?.isRecording)
 		if (recorderRef.current?.isRecording !== RecordingStates.NOT_STARTED)
 			e.returnValue = "";
+	};
+
+	const onChangeVizBtnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: ButtonProps) => {
+		console.log(data);
+		if(data.children)
+			setSelectedViz(data.children.toString());
 	};
 
 	useEffect(() => {
@@ -245,12 +253,42 @@ const LiveDecodePage: React.FC = () => {
 									/>
 								</Grid.Column>
 								<Grid.Column width={12}>
-									{
-										recorder.isMicAccessGiven && recorder.audioContext && recorder.stream ?
-											<VizOscilloscope recorder={recorder} /> :
-											// <VizFreqBars recorder={recorder} /> :
-											<p>Loading Stream....</p>
-									}
+									<div id={styles.visualisationContainer}>
+										{/* {
+											recorder.isMicAccessGiven && recorder.audioContext && recorder.stream ?
+												<VizOscilloscope recorder={recorder} /> :
+												// <p style={{height: '200px', border: '1px solid gray'}}>Test</p> :
+												// <VizFreqBars recorder={recorder} /> :
+												<p>Loading Stream....</p>
+										} */}
+										{
+											selectedViz === 'Oscilloscope'
+											?
+											<VizOscilloscope recorder={recorder} />
+											:
+											<VizFreqBars recorder={recorder} />
+										}
+										
+										<div id={styles.changeVizBtns}>
+											<Button.Group inverted size="large">
+												<Button
+													onClick={onChangeVizBtnClick}
+													primary={selectedViz === 'Frequency Bars'}
+												>
+													Frequency Bars
+												</Button>
+
+												<Button.Or />
+
+												<Button
+													primary={selectedViz === 'Oscilloscope'}
+													onClick={onChangeVizBtnClick}
+												>
+													Oscilloscope
+												</Button>
+											</Button.Group>
+										</div>
+									</div>
 								</Grid.Column>
 							</Grid.Row>
 

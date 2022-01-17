@@ -25,7 +25,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 
 	const draw = useCallback(() => {
-		console.log("drawing...");
+		// console.log("drawing...");
 		if(canvasRef.current) // Stop Recursive Call when component unmounts
 			requestAnimationFrame(draw);
 

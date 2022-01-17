@@ -11,11 +11,11 @@
 		position: relative;
 		top: -32px;
 		text-align: center;
-		
+
 		& > i {
 			font-size: 1.15rem;
 		}
-		&:nth-child(1){
+		&:nth-child(1) {
 			font-size: 1.05rem;
 		}
 
@@ -27,7 +27,7 @@
 		&#inProgressState {
 			text-align: left;
 			padding-left: 44px;
-			
+
 			span:nth-child(2)::after {
 				content: "";
 				overflow: hidden;
@@ -35,8 +35,6 @@
 				animation-fill-mode: forwards;
 			}
 		}
-
-
 
 		@keyframes ellipsis-repeat {
 			17% {
@@ -57,6 +55,32 @@
 			100% {
 				content: "... ...";
 			}
+		}
+	}
+
+	#visualisationContainer {
+		width: 100%;
+
+		#changeVizBtns {
+			// display: none;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: absolute;
+			top: 0px;
+			height: 100%;
+			width: calc(100% - 28px);
+			opacity: 0%;
+			background-color: rgba(0, 0, 0, 0.5);
+			margin: auto 0;
+			transition: opacity 0.5s ease-in;
+		}
+	}
+
+	#visualisationContainer:hover {
+		#changeVizBtns {
+			// display: block;
+			opacity: 100%;
 		}
 	}
 }
