@@ -1,21 +1,28 @@
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import { Button, Card, Container, Dropdown, DropdownProps, Grid, Icon, Popup } from 'semantic-ui-react';
 import { getOneAudioRecordingFileSrcUrl } from '../../api/batch-transcribe-api';
 import DownloadTranscriptButton from '../../components/audio/download-transcript-btn';
 import { BatchTranscriptionHistory, LiveTranscriptionHistory } from '../../models/transcribe-history-response.model';
+import { actionCreators } from '../../state';
 import { RootState } from '../../state/reducers';
 import styles from './view-one-transcript.module.scss';
 
 const ViewOneTranscript: React.FC = () => {
 	// history = history.type === 'live' ? (history as LiveTranscriptionHistory) : (history as BatchTranscriptionHistory);
 
+	const dispatch = useDispatch();
+	const { getSelectedTranscriptionText } = bindActionCreators(actionCreators, dispatch);
+	const { selectedTranscriptionText } = useSelector((state: RootState) => state.transcriptionHistoryReducer);
+
 	const [trackProgress, setTrackProgress] = useState(0);
 	const [isLoadingAudio, setIsLoadingAudio] = useState(false);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [volume, setVolume] = useState(50);
+	// const [transcriptionTextEle, setTranscriptionTextEle] = useState<JSX.Element[]>([]);
 
 	const audioRef = useRef(new Audio());
 	const intervalRef = useRef<NodeJS.Timeout>();
@@ -243,6 +250,9 @@ const ViewOneTranscript: React.FC = () => {
 		return (<p>{h.name}</p>);
 	};
 
+	// const processTranscriptionText = useCallback(() => {
+	// }, [selectedTranscriptionText, trackProgress, audioRef.current.currentTime]);
+
 	useEffect(() => {
 		document.getElementsByClassName('pushable')[0]?.scrollTo({
 			top: 0,
@@ -250,12 +260,19 @@ const ViewOneTranscript: React.FC = () => {
 		});
 		// console.log(selectedTranscriptHistory);
 
+		if (selectedTranscriptHistory?._id)
+			getSelectedTranscriptionText(selectedTranscriptHistory._id);
+
 		return () => {
 			audioRef.current.pause();
 			if (intervalRef.current)
 				clearInterval(intervalRef.current);
 		};
 	}, []);
+
+	useEffect(() => {
+		console.log(selectedTranscriptionText);
+	}, [selectedTranscriptionText]);
 
 	useEffect(() => {
 		console.log(`isPlaying: ${isPlaying} | isLoading: ${isLoadingAudio} | ${audioRef.current.src}`);
@@ -313,11 +330,21 @@ const ViewOneTranscript: React.FC = () => {
 				<Card.Content>
 					<Card.Description>
 						<p id={styles.transcriptPlayback}>
-							The quick brown fox jumps over the lazy dog.
-							The quick brown fox jumps over the lazy dog.
-							The quick brown fox jumps over the lazy dog.
-							The quick brown fox jumps over the lazy dog.
-							The quick brown fox jumps over the lazy dog.
+							{/* {transcriptionTextEle} */}
+							{
+								selectedTranscriptionText.map((v, i, a) => {
+										return <span key={v.startTime.toString()}>
+											{/* <code style={{ fontSize: '0.8em' }}>{v.startTime} | {audioRef.current.currentTime} | {trackProgress} </code> */}
+											<span
+												// className={trackProgress > v.startTime && trackProgress < v.endTime ? styles.isPlayingThis : ''}
+												className={audioRef.current.currentTime >= v.startTime ? styles.isPlayingThis : ''}
+											>
+												{v.text}
+											</span>
+											&nbsp;
+										</span>;
+								})
+							}
 						</p>
 					</Card.Description>
 				</Card.Content>
@@ -416,7 +443,7 @@ const ViewOneTranscript: React.FC = () => {
 		return (
 			<Container>
 				<p>Something went wrong! Unable to load the resource, please try again!</p>
-				<Button as={Link} to="/offlinetranscribe" negative>Go Back</Button>
+				<Button as={Link} to="/viewalljobs" negative>Go Back</Button>
 			</Container>
 		);
 	}

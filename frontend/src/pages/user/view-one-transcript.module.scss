@@ -47,6 +47,12 @@
 
 #transcriptPlayback {
 	min-height: 200px;
+	font-size: 1.3rem;
+
+	.isPlayingThis{
+		font-weight: bold;
+		// text-decoration: underline;
+	}
 }
 
 #audioControls {

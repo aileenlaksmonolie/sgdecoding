@@ -1,17 +1,20 @@
 import { MgtTranscriptHistoriesAction } from '../actions-types/transcript-history-actions.types';
 import { UserTranscriptionTypes } from '../types/index';
+import { TranscribedText } from './../../models/offline-transcribe-job.model';
 import { TranscriptionHistory } from './../../models/transcribe-history-response.model';
 
 interface TranscriptHistoryState{
 	history: TranscriptionHistory[],
 	totalHistory: number,
-	selectedTranscriptHistory: TranscriptionHistory | undefined
+	selectedTranscriptHistory: TranscriptionHistory | undefined,
+	selectedTranscriptionText: TranscribedText[]
 }
 
 export const INITIAL_STATE: TranscriptHistoryState = {
 	history: [] as TranscriptionHistory[],
 	totalHistory: 0,
-	selectedTranscriptHistory: undefined
+	selectedTranscriptHistory: undefined,
+	selectedTranscriptionText: []
 };
 
 const reducer = (state = INITIAL_STATE, action: MgtTranscriptHistoriesAction) => {
@@ -23,6 +26,10 @@ const reducer = (state = INITIAL_STATE, action: MgtTranscriptHistoriesAction) =>
 		case UserTranscriptionTypes.SET_SELECTED_TRANSCRIPTION_HISTORY:
 			const { selectedTranscriptHistory } = action;
 			return { ...state, selectedTranscriptHistory};
+
+		case UserTranscriptionTypes.SET_SELECTED_TRANSCRIPTION_TEXT:
+			const { selectedTranscriptionText } = action;
+			return { ...state, selectedTranscriptionText };
 
 		default:
 			return state;

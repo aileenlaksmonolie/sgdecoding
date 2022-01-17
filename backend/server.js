@@ -390,7 +390,6 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 							array.findIndex(t =>
 							(
 								t.startTime === value.startTime
-								&& t.endTime === value.endTime
 								&& t.text === value.text)
 							) === index
 						);
@@ -399,7 +398,7 @@ app.get("/speech/:id/result/tojson", async (req, res) => {
 						fs.rmSync(`${reqFileStr}/`, {recursive: true, force: true});
 						fs.rmSync(`${reqFileStr}.zip`);
 
-						res.status(200).json({ msg: "operation OK" });
+						res.status(200).json({ transcribedText: testRes });
 					})
 				}); // END yauzl.open(path)
 

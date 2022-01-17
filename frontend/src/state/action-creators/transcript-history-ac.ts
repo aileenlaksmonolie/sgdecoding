@@ -6,6 +6,8 @@ import { OneUserTranscriptionHistoryResponse } from '../../models/transcribe-his
 import { MgtTranscriptHistoriesAction } from '../actions-types/transcript-history-actions.types';
 import { store } from "../store";
 import { UserTranscriptionTypes } from '../types';
+import { getOneTranscriptInJson } from './../../api/batch-transcribe-api';
+import { TranscribedTextResponse } from './../../models/offline-transcribe-job.model';
 import { TranscriptionHistory } from './../../models/transcribe-history-response.model';
 
 
@@ -48,4 +50,33 @@ export const setSelectedTranscriptionHistory = (selectedTranscriptHistory: Trans
 
 		dispatch(action);
 	};
+};
+
+
+export const getSelectedTranscriptionText = (selectedTranscriptionId: string) => {
+	return async (dispatch: Dispatch) => {
+		await getOneTranscriptInJson(selectedTranscriptionId).then(
+			(res: AxiosResponse<TranscribedTextResponse>) => {
+				let postProcTranscribedText = res.data.transcribedText.map(
+					(v, i, a) => {
+						// console.log(v);
+						// console.log(moment(v.startTime, 'HH:mm:ss,SSS').diff(moment().startOf('day'), 'seconds'));
+						// console.log(moment(v.startTime, 'HH:mm:ss,SSS').diff(moment().startOf('day'), 'millisecond'));
+						// console.log(moment(v.startTime, 'HH:mm:ss,SSS').format('ss.SSSSS'));
+						// console.log(moment.duration(v.startTime).asSeconds());
+						v.startTime = Number(moment(v.startTime, 'HH:mm:ss,SSS').format('ss.SSSSS'));
+						v.endTime = Number(moment(v.endTime, 'HH:mm:ss,SSS').format('ss.SSSSS'));
+						return v;
+					});
+
+				let action: MgtTranscriptHistoriesAction = {
+					type: UserTranscriptionTypes.SET_SELECTED_TRANSCRIPTION_TEXT,
+					selectedTranscriptionText: postProcTranscribedText
+				};
+
+				dispatch(action);
+			}
+		);
+	};
+
 };

@@ -20,9 +20,15 @@ export const getOneAudioRecordingFileSrcUrl = (inputZeroFileId: string) => {  //
 };
 
 
-export const getOneTranscriptResult = (batchTranscribeId: string) => {
+export const downloadOneTranscriptionZipped = (batchTranscribeId: string) => {
 	return speechGatewayApi.get(
 		`/speech/${batchTranscribeId}/result`
+	);
+};
+
+export const getOneTranscriptInJson = (batchTranscribeId: string) => {
+	return speechGatewayApi.get(
+		`/speech/${batchTranscribeId}/result/tojson`
 	);
 };
 
