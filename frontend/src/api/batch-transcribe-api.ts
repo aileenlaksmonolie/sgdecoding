@@ -41,7 +41,7 @@ export const submitOneJob = (file: FormData) => {
 			{
 				'Content-Type': 'multipart/form-data',
 			},
-			onUploadProgress: progressEvent => console.log(progressEvent.loaded)
+			//onUploadProgress: progressEvent => console.log(Math.round( (progressEvent.loaded * 100) / progressEvent.total)),
 		},
 	);
 };

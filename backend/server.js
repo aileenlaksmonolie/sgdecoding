@@ -2,9 +2,9 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const axios = require("axios").default;
-const FormData = require('form-data');
-const fs = require('fs');
-const multer = require('multer')
+const FormData = require("form-data");
+const fs = require("fs");
+const multer = require("multer");
 //const upload = multer({ dest: 'uploads/' })
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -169,13 +169,12 @@ app.post("/speech/", upload.single('file'), async (req, res) => {
 		{ responseType: 'json' })
 		.then((response) => {
 			console.log('submit job success')
-			console.log(response)
-			//res.status(response.status).json(response.data)
+			//console.log(response)
+			res.json(response.status);
 		})
 		.catch((error) => {
 			console.log('submit job failed')
-			console.log(error.response.data)
-			//res.status(error.response.status).json(error.response.data)
+			res.json(error.response.status)
 		}
 		)
 })
@@ -199,7 +198,7 @@ app.get("/speech/history", async (req, res) => {
 			res.status(response.status).json(response.data)
 		})
 		.catch((error) => {
-			console.log(error.response)
+			//console.log(error.response)
 			res.status(error.response.status).json(error.response.data)
 		})
 })
@@ -224,80 +223,130 @@ app.post("/speech/result", async (req, res) => {
 		})
 })
 
-app.post("/users/dashboard", async (req, res) => {
-	console.log('')
-	let auth = req.body
-	let historyData
-	let historyCount
-	await axios.get(
-		"https://gateway.speechlab.sg/speech/history",
-		{
-			headers: {
-				'Authorization': `Bearer ${auth.token}`
-			}
+app.get("/users/statistics", async (req, res) => {
+  let historyData;
+  let transcriptionCount;
+  await axios
+    .get(
+      "https://gateway.speechlab.sg/speech/history",
+      {
+        headers: {
+          Authorization: `${req.headers.authorization}`,
+        },
+      },
+      { responseType: "json" }
+    )
+    .then((response) => {
+      //console.log(response)
+      historyData = response.data.history;
+      transcriptionCount = response.data.totalHistory;
+      //res.status(response.status).json(response.data)
+    })
+    .catch((error) => {
+      //console.log(error)
+      //res.status(error.response.status).json(error.response.data)
+    });
+  //console.log(historyData)
 
-		},
-		{ responseType: 'json' })
-		.then((response) => {
-			//console.log(response)
-			historyData = response.data.history
-			historyCount = response.data.totalHistory
-			//res.status(response.status).json(response.data)
-		})
-		.catch((error) => {
-			//console.log(error)
-			//res.status(error.response.status).json(error.response.data)
-		})
-	//console.log(historyData)
+  var dt = new Date();
+  var currentMonth = dt.getMonth();
+  var currentYear = dt.getFullYear();
+  //var firstDay = new Date(dt.getFullYear(), dt.getMonth(), 1);
 
-	let totalDuration = 0
-	let totalSize = 0
-	let batchCount = 0
-	let liveCount = 0
-	historyData.forEach(obj => {
-		Object.entries(obj).forEach(([key, value]) => {
-			//console.log(`${key} ${value}`);
-			if (key == 'sourceFile') {
-				totalDuration += value.duration
-				totalSize += value.size
-			}
-			if (key == 'type') {
-				if (value == 'batch') {
-					batchCount++
-				} else {
-					liveCount++
-				}
-			}
-		});
-		//console.log('-------------------');
-	});
+  let totalDuration = 0;
+  let batchCount = 0;
+  let liveCount = 0;
+  let batchDuration = 0;
+  let liveDuration = 0;
+  let pendingCount = 0;
+  let monthlyFileCount = 0;
 
-	//Convert seconds to hms
-	const hours = Math.floor(totalDuration / 3600);
-	totalDuration %= 3600;
-	const minutes = Math.floor(totalDuration / 60);
-	const seconds = totalDuration % 60;
+  let monthlyBatchDuration = 0;
+  let monthlyLiveDuration = 0;
 
-	console.log(`Total Duration: ${hours} Hours, ${minutes} Minutes, ${seconds.toFixed(2)} Seconds`)
-	console.log(`Total Size: ${totalSize}`)
+  historyData.forEach((obj) => {
+    const fileDate = new Date(obj.createdAt);
 
-	console.log(`Total Number of Transcriptions: ${historyCount}`)
-	console.log(`${batchCount} Batch Transcriptions`)
-	console.log(`${liveCount} Live Transcriptions`)
+    const fileMonth = fileDate.getMonth();
+    const fileYear = fileDate.getFullYear();
+    if (fileMonth === currentMonth && fileYear === currentYear) {
+      monthlyFileCount++;
+      if (obj.liveSessionDuration != null) {
+        monthlyLiveDuration += obj.liveSessionDuration;
+      } else {
+        monthlyBatchDuration += obj.sourceFile.duration;
+      }
+    }
+    Object.entries(obj).forEach(([key, value]) => {
+      //console.log(key + " : " + value)
+      if (key === "input") {
+        //console.log(value[0])
+        if (value[0].status === "pending") {
+          //status types: pending, unknown, error, done
+          pendingCount++;
+        }
+      }
+      if (key === "type") {
+        if (value === "batch") {
+          batchCount++;
+        } else {
+          liveCount++;
+        }
+      }
+      if (key === "liveSessionDuration") {
+        //console.log("live: " + value);
+        liveDuration += value;
+        totalDuration += value;
+      }
+      if (key === "sourceFile") {
+        //console.log("sf: " + value.duration);
+        batchDuration += value.duration;
+        totalDuration += value.duration;
+      }
+    });
+  });
 
-	res.json(
-		JSON.stringify({
-			historyCount,
-			batchCount,
-			liveCount,
-			totalDuration,
-			hours,
-			minutes,
-			seconds,
-			totalSize
-		})
-	)
-})
+  //Convert seconds to hms
+    const hoursTranscribed = Math.floor(totalDuration / 3600);
+  //   totalDuration %= 3600;
+  //   const minutes = Math.floor(totalDuration / 60);
+  //   const seconds = totalDuration % 60;
+
+  //   console.log(
+  //     `Total Duration: ${hours} Hours, ${minutes} Minutes, ${seconds.toFixed(
+  //       2
+  //     )} Seconds`
+  //   );
+
+//   console.log(`Total Number of Transcriptions: ${transcriptionCount}`);
+//   console.log(`${batchCount} Batch Transcriptions`);
+//   console.log(`${liveCount} Live Transcriptions`);
+//   console.log(`Total Duration: ${totalDuration}`);
+//   console.log(`Total Batch Duration: ${batchDuration}`);
+//   console.log(`Total Live Duration: ${liveDuration}`);
+//   console.log(`Total Pending Jobs: ${pendingCount}`);
+//   console.log("Total Transcriptions This Month: " + monthlyFileCount);
+//   console.log("This Month's Live Duration: " + monthlyLiveDuration);
+//   console.log("This Month's Batch Duration: " + monthlyBatchDuration);
+//   console.log("-----------------------------------------------------------");
+
+  const monthlyLiveDurationMins = Math.round(monthlyLiveDuration/60);
+  //console.log(monthlyLiveDurationMins);
+
+  const monthlyBatchDurationMins = Math.round(monthlyBatchDuration/60);
+  //console.log(monthlyBatchDurationMins)
+
+
+  res.json(
+    JSON.stringify({
+      transcriptionCount,
+      pendingCount,
+      hoursTranscribed,
+      monthlyLiveDurationMins,
+      monthlyBatchDurationMins,
+    })
+  );
+});
 
 app.get("/speech/:id/result/tojson", async (req, res) => {
 	console.log("[DEBUG] received id: " + req.params.id);
