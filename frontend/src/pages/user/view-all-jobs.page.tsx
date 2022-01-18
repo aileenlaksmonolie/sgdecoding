@@ -1,5 +1,5 @@
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -10,6 +10,7 @@ import { BatchTranscriptionHistory, LiveTranscriptionHistory } from "../../model
 import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
 import styles from './view-all-jobs.module.scss';
+import { useSearchParams } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -42,6 +43,8 @@ const ViewAllJobs: React.FC = () => {
 		endDate: ''
 	});
 
+	const [searchParams, setSearchParams] = useSearchParams();
+	const [currentPage, setCurrentPage] = useState(1);
 
 	const typeFilterOptions = [
 		{ key: 'none', text: 'Both', value: '' },
@@ -73,9 +76,35 @@ const ViewAllJobs: React.FC = () => {
 		{ key: 'long', text: '> 10mins', value: 'long' }
 	];
 
+	const usePrevious = (value: any) => {
+		const ref = useRef();
+		useEffect(() => {
+		  ref.current = value;
+		});
+		return ref.current;
+	};
+	const previousSearchParam = usePrevious(searchParams);
+
+	const addSearchParam = (key: string, value: any) => {
+		const newParams = searchParams;
+		if (newParams.has(key)) {
+			if (value !== null) {
+				newParams.set(key, value);
+			} else{
+				newParams.delete(key);
+			}
+		} else {
+			newParams.append(key, value);
+		}
+		// console.log("param string");
+		// console.log(newParams.toString());
+		setSearchParams(newParams);
+	};
+
 	const handleTypeFilterChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
 		console.log(data);
 		setFilters({ ...filters, type: data.value as string });
+		addSearchParam("type", data.value as string);
 	};
 
 	const handleLangFilterChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
@@ -83,11 +112,42 @@ const ViewAllJobs: React.FC = () => {
 		// if(data.value !== '')
 		setFilters({ ...filters, lang: data.value as [] });
 		console.log(filters);
+		addSearchParam("lang", data.value?.toString());
 	};
 
 	const handleLengthFilterChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
 		console.log(data);
 		setFilters({ ...filters, duration: data.value as string });
+		addSearchParam("duration", data.value as string);
+	};
+
+	const checkLangExists = (input: string) => {
+		var found = false;
+		for (const langOption of langFilterOptions) {
+			if (input === langOption.value) {
+				found = true;
+			}
+		}
+		return found;
+	};
+	const checkTypeExists = (input: string) => {
+		var found = false;
+		for (const typeOption of typeFilterOptions) {
+			if (input === typeOption.value) {
+				found = true;
+			}
+		}
+		return found;
+	};
+	
+	const checkLengthExists = (input: string) => {
+		var found = false;
+		for (const lengthOption of lengthFilterOptions) {
+			if (input === lengthOption.value) {
+				found = true;
+			}
+		}
+		return found;
 	};
 
 	const handlePageChange = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, { activePage }: PaginationProps) => {
@@ -98,6 +158,8 @@ const ViewAllJobs: React.FC = () => {
 		let endIdx = ((activePage * ITEMS_PER_PAGE));
 		setItemsToDisplay(filteredHistory.slice(startIdx, endIdx));
 		// }
+		// addSearchParam("page", activePage);
+		// setCurrentPage(activePage);
 	};
 
 	const handlePopupOpen = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -138,6 +200,8 @@ const ViewAllJobs: React.FC = () => {
 		setFilters({ ...filters, startDate: getValues("startDate"), endDate: getValues("endDate") });
 		// because form is re-created when popup is opened again
 		setDefDateVals({ startDate: getValues("startDate"), endDate: getValues("endDate") });
+		addSearchParam("startdate", getValues("startDate"));
+		addSearchParam("enddate", getValues("endDate"));
 	};
 
 	useEffect(() => {
@@ -189,7 +253,7 @@ const ViewAllJobs: React.FC = () => {
 				else if (filters.duration === 'long' && audioDuration < 600)
 					return false;
 			}
-
+			
 			if (filters.type !== '' && i.type !== filters.type)
 				return false;
 
@@ -204,13 +268,51 @@ const ViewAllJobs: React.FC = () => {
 
 			return true;
 		});
-		// console.log(filteredItems);
+		console.log(filteredItems);
 		setFilteredHistory(filteredItems);
 		setItemsToDisplay(filteredItems.slice(0, ITEMS_PER_PAGE));
 		setNoOfPages(Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filters]); // change in history should not trigger this
+	}, [filters, history]); // change in history should not trigger this
 
+	useEffect(() => {
+		if (searchParams !== previousSearchParam) {
+			const currentParams = Object.fromEntries([...searchParams]);
+			//setCurrentPage(1);
+			for (const key in currentParams) {
+				if (key === "page") {
+					const pageNum = Number(currentParams[key]);
+					setCurrentPage(pageNum);
+					// let startIdx = (ITEMS_PER_PAGE * (pageNum - 1));
+					// let endIdx = ((pageNum * ITEMS_PER_PAGE));
+					// setItemsToDisplay(filteredHistory.slice(startIdx, endIdx));
+					
+				}
+				if (key === "lang") {
+					const langSplit = currentParams[key].split(",");
+					langSplit.forEach(langItem => {
+						if (!checkLangExists(langItem)) {
+							langSplit.splice(langSplit.indexOf(langItem), 1);
+						}
+					});
+					setFilters(filters => ({ ...filters, lang: langSplit as []}));
+				}
+				if (key === "type" && checkTypeExists(currentParams[key])) {
+					setFilters(filters => ({ ...filters, type: currentParams[key]}));
+				}
+				if (key === "duration" && checkLengthExists(currentParams[key])) {
+					setFilters(filters => ({ ...filters, duration: currentParams[key]}));
+				}
+				if (key === "startdate") {
+					setFilters(filters => ({ ...filters, startDate: currentParams[key]}));
+				}
+				if (key === "enddate") {
+					setFilters(filters => ({ ...filters, endDate: currentParams[key]}));
+				}
+				
+			}
+		} //history, filteredHistory, itemsToDisplay, totalHistory
+	}, [previousSearchParam, searchParams, filters, currentPage, itemsToDisplay, filteredHistory]);
 
 	const renderIcon = (h: (LiveTranscriptionHistory | BatchTranscriptionHistory)) => {
 		if (h.type === 'live') {
@@ -268,6 +370,7 @@ const ViewAllJobs: React.FC = () => {
 						placeholder='Filter Live/Offline'
 						fluid
 						selection
+						value={filters.type}
 						options={typeFilterOptions}
 						onChange={handleTypeFilterChange}
 					/>
@@ -278,6 +381,7 @@ const ViewAllJobs: React.FC = () => {
 						fluid
 						multiple
 						selection
+						value={filters.lang}
 						options={langFilterOptions}
 						key="test"
 						onChange={handleLangFilterChange}
@@ -288,6 +392,7 @@ const ViewAllJobs: React.FC = () => {
 						placeholder='Filter Length'
 						fluid
 						selection
+						value={filters.duration}
 						options={lengthFilterOptions}
 						onChange={handleLengthFilterChange}
 					/>
@@ -415,6 +520,7 @@ const ViewAllJobs: React.FC = () => {
 				prevItem={{ content: <Icon name='angle left' />, icon: true }}
 				nextItem={{ content: <Icon name='angle right' />, icon: true }}
 				totalPages={noOfPages}
+				//activePage={currentPage}
 			/>
 		</Container>
 	);

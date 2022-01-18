@@ -1,23 +1,65 @@
 import moment from 'moment';
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts';
 import { Button, Card, Container, Grid, Header, Icon, Image, Statistic } from 'semantic-ui-react';
 import { RootState } from '../../state/reducers';
 import styles from './overview.page.module.scss';
+import { getStatistics } from '../../api/auth-api';
+import { Stats } from 'fs';
 
 const OverviewPage: React.FC = () => {
 
+	const { name } = useSelector((state: RootState) => state.authReducer);
+	const [userStats, setUserStats] = useState(
+		{
+			transcriptionCount: 0,
+      		pendingCount: 0,
+      		hoursTranscribed: 0,
+      		monthlyLiveDurationMins: 0,
+      		monthlyBatchDurationMins: 0,
+		}
+	);
+
+	useEffect(() => {
+		getUserData();
+	}, []);
+
+	async function getUserData() {
+		const res = await getStatistics();
+		const resData = JSON.parse(res.data);
+		setUserStats(
+			{ 
+				transcriptionCount: resData.transcriptionCount,
+				pendingCount: resData.pendingCount,
+				hoursTranscribed: resData.hoursTranscribed,
+				monthlyLiveDurationMins: resData.monthlyLiveDurationMins,
+				monthlyBatchDurationMins: resData.monthlyBatchDurationMins,
+			}
+		);
+	}
+
 	/* For Development */
-	const data01 = [
+	const liveUsage = [
 		{
 			"name": "Total Remaining",
 			"value": 400
 		},
 		{
 			"name": "Used This Month",
-			"value": 300
+			"value": userStats.monthlyLiveDurationMins
+		}
+	];
+
+	const offlineUsage = [
+		{
+			"name": "Total Remaining",
+			"value": 400
+		},
+		{
+			"name": "Used This Month",
+			"value": userStats.monthlyBatchDurationMins
 		}
 	];
 	const COLORS_LIVE = [
@@ -27,7 +69,6 @@ const OverviewPage: React.FC = () => {
 		"#0CB5AC", "#F0171C"
 	];
 	/* END: For Development */
-	const { name } = useSelector((state: RootState) => state.authReducer);
 
 	const currentTime: number = Number(moment(new Date().getTime()).format("HH"));
 
@@ -79,7 +120,7 @@ const OverviewPage: React.FC = () => {
 							<Icon name='clipboard check' />
 						</Icon.Group>
 						<Statistic size="tiny">
-							<Statistic.Value>10</Statistic.Value>
+							<Statistic.Value>{userStats.transcriptionCount}</Statistic.Value>
 							<Statistic.Label>Jobs in Total</Statistic.Label>
 						</Statistic>
 					</Card.Content>
@@ -92,7 +133,7 @@ const OverviewPage: React.FC = () => {
 							<Icon name='hourglass half' />
 						</Icon.Group>
 						<Statistic size="tiny">
-							<Statistic.Value>4</Statistic.Value>
+							<Statistic.Value>{userStats.pendingCount}</Statistic.Value>
 							<Statistic.Label>Pending Jobs</Statistic.Label>
 						</Statistic>
 					</Card.Content>
@@ -105,7 +146,7 @@ const OverviewPage: React.FC = () => {
 							<Icon name='clock' />
 						</Icon.Group>
 						<Statistic size="tiny">
-							<Statistic.Value>55 hrs</Statistic.Value>
+							<Statistic.Value>{userStats.hoursTranscribed} hrs</Statistic.Value>
 							<Statistic.Label>Transcribed</Statistic.Label>
 						</Statistic>
 					</Card.Content>
@@ -126,9 +167,9 @@ const OverviewPage: React.FC = () => {
 					<Card.Content>
 						<ResponsiveContainer width="100%" height={300}>
 							<PieChart>
-								<Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#fffaaa" label>
+								<Pie data={liveUsage} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#fffaaa" label>
 									{
-										data01.map((entry, index) => <Cell key={index} fill={COLORS_OFFLINE[index % COLORS_OFFLINE.length]} />)
+										liveUsage.map((entry, index) => <Cell key={index} fill={COLORS_OFFLINE[index % COLORS_OFFLINE.length]} />)
 									}
 								</Pie>
 								<Legend verticalAlign="top" height={36} />
@@ -146,9 +187,9 @@ const OverviewPage: React.FC = () => {
 					<Card.Content>
 						<ResponsiveContainer width="100%" height={300}>
 							<PieChart>
-								<Pie data={data01} dataKey="value" nameKey="name" cx="50%" cy="56%" innerRadius={60} outerRadius={80} fill="#8884d8" label>
+								<Pie data={offlineUsage} dataKey="value" nameKey="name" cx="50%" cy="56%" innerRadius={60} outerRadius={80} fill="#8884d8" label>
 									{
-										data01.map((entry, index) => <Cell key={index} fill={COLORS_LIVE[index % COLORS_LIVE.length]} />)
+										offlineUsage.map((entry, index) => <Cell key={index} fill={COLORS_LIVE[index % COLORS_LIVE.length]} />)
 									}
 								</Pie>
 								<Legend verticalAlign="top" height={36} />

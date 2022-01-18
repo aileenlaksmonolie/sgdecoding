@@ -47,3 +47,10 @@ export const sendChangeNameRequest = (newNameRequest: UserChangeName) => {
 		{responseType: 'json'}	
 	);
 };
+
+export const getStatistics = () => {
+	return speechGatewayApi.get(
+		`/users/statistics`,
+		{responseType: 'json'}
+	);
+};

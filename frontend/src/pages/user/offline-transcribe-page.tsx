@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Card, Container, Header } from "semantic-ui-react";
 import styles from './offline-transcribe-page.module.scss';
-
+import ModalUploadFile from '../../components/audio/upload-file-modal';
 
 
 const OfflineTranscribePage: React.FC = () => {
@@ -19,7 +19,8 @@ const OfflineTranscribePage: React.FC = () => {
 							generate the text for you. The time taken for the transcription process depends
 							on the length of audio file.
 						</p>
-						<Button color="teal">Upload Audio Files / Record Now</Button>
+						{/* <Button color="teal">Upload Audio Files / Record Now</Button> */}
+						<ModalUploadFile>Upload Audio Files</ModalUploadFile>
 					</Container>
 				</Card.Description>
 			</Card>
