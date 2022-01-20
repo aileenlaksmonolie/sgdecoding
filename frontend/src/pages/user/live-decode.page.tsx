@@ -70,7 +70,7 @@ const LiveDecodePage: React.FC = () => {
 				sampleRate: 48000, // Changing to 16k does nothing because browser capability is limited to min 48k
 				sampleSize: 16,		 // 16-bits
 				channelCount: 1, 	 // mono
-				noiseSuppression: true,
+				// noiseSuppression: true,
 				echoCancellation: true
 			},
 			video: false

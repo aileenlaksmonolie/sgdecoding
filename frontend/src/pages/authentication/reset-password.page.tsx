@@ -12,7 +12,7 @@ import classes from './authentication.module.scss';
 const ResetPasswordPage: React.FC = () => {
 	/* Declarations */
 	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' });
-	const [isDisabled, setIsDiabled] = useState(false);
+	// const [isDisabled, setIsDiabled] = useState(false);
 
 	const {search} = useLocation();
 	const code = new URLSearchParams(search).get('code')!;
@@ -154,7 +154,7 @@ const ResetPasswordPage: React.FC = () => {
 						placeholder='Password'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
-						disabled={isDisabled}
+						// disabled={isDisabled}
 						error={errors.password ? { content: errors.password.message } : false}
 					/>
 				</Form.Field>
@@ -167,7 +167,7 @@ const ResetPasswordPage: React.FC = () => {
 						placeholder='Enter password again'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
-						disabled={isDisabled}
+						// disabled={isDisabled}
 						error={errors.passwordCfm ? { content: errors.passwordCfm.message } : false}
 					/>
 				</Form.Field>

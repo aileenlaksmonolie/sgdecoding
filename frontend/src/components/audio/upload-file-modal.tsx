@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import {
-  Button,
-  Checkbox,
-  Dropdown,
-  DropdownProps,
-  Form,
-  Grid,
-  GridColumn,
-  Icon,
-  Modal,
-  Progress,
+	Button,
+	Checkbox,
+	Dropdown,
+	DropdownProps,
+	Form,
+	Grid,
+	GridColumn,
+	Icon,
+	Modal,
+	Progress
 } from "semantic-ui-react";
 import { submitOneJob } from "../../api/batch-transcribe-api";
 
@@ -217,9 +217,9 @@ const ModalUploadFile: React.FC = () => {
     }
   };
 
-  function timeout(delay: number) {
-    return new Promise((res) => setTimeout(res, delay));
-  }
+  // function timeout(delay: number) {
+  //   return new Promise((res) => setTimeout(res, delay));
+  // }
 
   const uploadFile = async () => {
     setCancelDisabled(true);

@@ -13,7 +13,7 @@ import styles from './change-name.module.scss';
 const ChangeNamePage: React.FC = () => {
 	/* Declarations */
 	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' });
-	const [isDisabled, setIsDiabled] = useState(false);
+	// const [isDisabled, setIsDiabled] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const navigate = useNavigate();
@@ -21,7 +21,7 @@ const ChangeNamePage: React.FC = () => {
 		register,
 		handleSubmit,
 		setValue,
-		watch,
+		// watch,
 		formState: { errors }
 	} = useForm({ mode: 'onBlur' });
 
@@ -107,7 +107,7 @@ const ChangeNamePage: React.FC = () => {
 						placeholder='Enter New Name'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
-						disabled={isDisabled}
+						// disabled={isDisabled}
 						error={errors.newName ? { content: errors.newName.message } : false}
 					/>
 				</Form.Field>

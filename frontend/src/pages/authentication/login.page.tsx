@@ -25,6 +25,7 @@ const LoginPage: React.FC = () => {
 	const isLoggedIn = token !== '';
 	const [isLoading, setIsLoading] = useState(false);
 
+	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [searchParams, setSearchParams] = useSearchParams();
 	const logoutMsg = searchParams.get('logoutMsg');
 	console.log(logoutMsg);

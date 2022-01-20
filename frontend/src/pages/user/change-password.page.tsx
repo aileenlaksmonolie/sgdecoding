@@ -155,8 +155,12 @@ const ChangePasswordPage: React.FC = () => {
 					id={styles.submitBtn}
 					fluid
 					primary
-					type='submit'>
-					Change My Password
+					icon={isLoading ? "spinner": null}
+					loading={isLoading}
+					type='submit'
+					content="Change My Password"
+					>
+					
 				</Button>
 
 				<Button

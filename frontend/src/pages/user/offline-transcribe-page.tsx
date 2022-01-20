@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, Card, Container, Header } from "semantic-ui-react";
-import styles from './offline-transcribe-page.module.scss';
+import { Card, Container, Header } from "semantic-ui-react";
 import ModalUploadFile from '../../components/audio/upload-file-modal';
+import styles from './offline-transcribe-page.module.scss';
 
 
 const OfflineTranscribePage: React.FC = () => {

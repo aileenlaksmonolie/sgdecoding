@@ -59,6 +59,7 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 			canvasCtx!.lineTo(canvasRef.current!.width, canvasRef.current!.height / 2);
 			canvasCtx!.stroke();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isRecording, height, width, canvasCtx]);
 
 	useEffect(() => {
@@ -77,8 +78,8 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 			var source: MediaStreamAudioSourceNode;
 			var distortion = audioContext.createWaveShaper();
 			var gainNode = audioContext.createGain();
-			var biquadFilter = audioContext.createBiquadFilter();
-			var convolver = audioContext.createConvolver();
+			// var biquadFilter = audioContext.createBiquadFilter();
+			// var convolver = audioContext.createConvolver();
 
 			analyser.fftSize = 2048;
 			dataArray.current = new Uint8Array(analyser.frequencyBinCount);
@@ -100,6 +101,7 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 		return () => {
 			console.log("[DEBUG] Oscilloscope unmounted!");
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [stream, audioContext, draw, width, height, canvasCtx]);
 
 
