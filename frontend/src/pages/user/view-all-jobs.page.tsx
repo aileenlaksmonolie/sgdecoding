@@ -158,8 +158,8 @@ const ViewAllJobs: React.FC = () => {
 		let endIdx = ((activePage * ITEMS_PER_PAGE));
 		setItemsToDisplay(filteredHistory.slice(startIdx, endIdx));
 		// }
-		// addSearchParam("page", activePage);
-		// setCurrentPage(activePage);
+		addSearchParam("page", activePage);
+		setCurrentPage(activePage);
 	};
 
 	const handlePopupOpen = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -227,15 +227,22 @@ const ViewAllJobs: React.FC = () => {
 	useEffect(() => {
 		console.log("[DEBUG] Total Transcription History count: " + totalHistory);
 		console.log(history);
-
 		if (history.length > 0) {
 			setIsLoading(false);
-			setNoOfPages(Math.ceil(totalHistory / ITEMS_PER_PAGE));
-			let firstItems = history.slice(0, ITEMS_PER_PAGE);
-			setFilteredHistory(history);
-			setItemsToDisplay(firstItems);
+			//setNoOfPages(Math.ceil(totalHistory / ITEMS_PER_PAGE));
+			//let firstItems = history.slice(0, ITEMS_PER_PAGE);
+			//setFilteredHistory(history);
+			//setItemsToDisplay(firstItems);
+			// setFilters(filters => ({ ...filters, lang: langSplit as []}));
+
+			//setFilteredHistory(history => ({...filteredHistory, history}));
+			setNoOfPages(Math.ceil(history.length / ITEMS_PER_PAGE));
+			let startIdx = (ITEMS_PER_PAGE * (currentPage - 1));
+			let endIdx = ((currentPage * ITEMS_PER_PAGE));
+			setItemsToDisplay(history.slice(startIdx, endIdx));
+			
 		}
-	}, [history, totalHistory]);
+	}, [history, totalHistory]); // history, totalHistory
 
 	/**
 	 * Change the displayed transcription history as user changed the filters
@@ -270,24 +277,23 @@ const ViewAllJobs: React.FC = () => {
 		});
 		console.log(filteredItems);
 		setFilteredHistory(filteredItems);
-		setItemsToDisplay(filteredItems.slice(0, ITEMS_PER_PAGE));
+
+		let startIdx = (ITEMS_PER_PAGE * (currentPage - 1));
+		let endIdx = ((currentPage * ITEMS_PER_PAGE));
+		console.log("filter current page: " + currentPage);
+		console.log("filter start index: " + startIdx);
+		console.log("filter end index: " + endIdx);
+		setItemsToDisplay(filteredItems.slice(startIdx, endIdx));
+		
+		//setItemsToDisplay(filteredItems.slice(0, ITEMS_PER_PAGE));
 		setNoOfPages(Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filters, history]); // change in history should not trigger this
+	}, [filters, history, searchParams, currentPage]); // change in history should not trigger this
 
 	useEffect(() => {
 		if (searchParams !== previousSearchParam) {
 			const currentParams = Object.fromEntries([...searchParams]);
-			//setCurrentPage(1);
 			for (const key in currentParams) {
-				if (key === "page") {
-					const pageNum = Number(currentParams[key]);
-					setCurrentPage(pageNum);
-					// let startIdx = (ITEMS_PER_PAGE * (pageNum - 1));
-					// let endIdx = ((pageNum * ITEMS_PER_PAGE));
-					// setItemsToDisplay(filteredHistory.slice(startIdx, endIdx));
-					
-				}
 				if (key === "lang") {
 					const langSplit = currentParams[key].split(",");
 					langSplit.forEach(langItem => {
@@ -309,10 +315,18 @@ const ViewAllJobs: React.FC = () => {
 				if (key === "enddate") {
 					setFilters(filters => ({ ...filters, endDate: currentParams[key]}));
 				}
+				if (key === "page") {
+					const pageNum = Number(currentParams[key]);
+					console.log("search param page number:"+ pageNum);
+					setCurrentPage(pageNum);
+					// let startIdx = (ITEMS_PER_PAGE * (pageNum - 1));
+					// let endIdx = ((pageNum * ITEMS_PER_PAGE));
+					// setItemsToDisplay(filteredHistory.slice(startIdx, endIdx));
+				}
 				
 			}
-		} //history, filteredHistory, itemsToDisplay, totalHistory
-	}, [previousSearchParam, searchParams, filters, currentPage, itemsToDisplay, filteredHistory]);
+		} //history, filteredHistory, itemsToDisplay, totalHistory, filters
+	}, [previousSearchParam, searchParams]);
 
 	const renderIcon = (h: (LiveTranscriptionHistory | BatchTranscriptionHistory)) => {
 		if (h.type === 'live') {
@@ -512,7 +526,7 @@ const ViewAllJobs: React.FC = () => {
 			{/* Paginator */}
 			<Pagination
 				id={styles.listPaginator}
-				defaultActivePage={1}
+				//defaultActivePage={1}
 				onPageChange={handlePageChange}
 				ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
 				firstItem={{ content: <Icon name='angle double left' />, icon: true }}
@@ -520,7 +534,7 @@ const ViewAllJobs: React.FC = () => {
 				prevItem={{ content: <Icon name='angle left' />, icon: true }}
 				nextItem={{ content: <Icon name='angle right' />, icon: true }}
 				totalPages={noOfPages}
-				//activePage={currentPage}
+				activePage={currentPage}
 			/>
 		</Container>
 	);

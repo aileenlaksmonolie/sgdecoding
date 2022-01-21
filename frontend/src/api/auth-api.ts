@@ -48,9 +48,26 @@ export const sendChangeNameRequest = (newNameRequest: UserChangeName) => {
 	);
 };
 
-export const getStatistics = () => {
-	return speechGatewayApi.get(
+export const getStatistics = (userID: string) => {
+	return speechGatewayApi.post(
 		`/users/statistics`,
+		{ userID },
+		{responseType: 'json'}
+	);
+};
+
+export const updateLastLogin = (userID: string) => {
+	return speechGatewayApi.post(
+		`/update-last-login`,
+		{ userID },
+		{responseType: 'json'}
+	);
+};
+
+export const getLastLogin = (userID: string) => {
+	return speechGatewayApi.post(
+		`/last-login`,
+		{ userID },
 		{responseType: 'json'}
 	);
 };

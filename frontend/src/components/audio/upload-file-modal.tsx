@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state/reducers';
 import {
   Button,
   Checkbox,
@@ -67,6 +69,7 @@ const ModalUploadFile: React.FC = () => {
   //   size: undefined,
   // });
   // const { open, size } = state;
+  //const { sub } = useSelector((state: RootState) => state.authReducer);
   const [cancelDisabled, setCancelDisabled] = useState(false);
   const [uploadDisabled, setUploadDisabled] = useState(true);
   const [optionsDisabled, setOptionsDisabled] = useState(false);
