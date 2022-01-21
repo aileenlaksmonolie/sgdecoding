@@ -19,7 +19,10 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
 		return children;
   }
 
-	const logoutPath = '/auth/login?logoutMsg=' + logoutMsg; 
+	let logoutPath = '/auth/login';
+	
+	if(logoutMsg)
+		logoutPath += '?logoutMsg=' + logoutMsg;
 
 	console.info("[DEBUG] ProtectedRoute: User is NOT logged in, going to /login");
   return <Navigate to={logoutPath} />;
