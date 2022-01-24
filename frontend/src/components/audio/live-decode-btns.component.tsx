@@ -171,7 +171,7 @@ const LiveDecodeBtns: React.FC<Props> = (
 
 		if (recorder.isRecording === RecordingStates.IN_PROGRESS) {
 			interval = setInterval(() => {
-				console.log(time);
+				// console.log(time);
 				setTime(prevTime => prevTime + 1);
 			}, 1000);
 		}
