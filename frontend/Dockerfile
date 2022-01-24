@@ -2,7 +2,7 @@
 # Stage 1 - build React App first
 
 # latest @ Jan 2022
-FROM node:16.13.2 as build
+FROM node:16-alpine3.14 as build
 
 LABEL version="1.0"
 LABEL description="Annie are you okay?"
@@ -10,17 +10,13 @@ LABEL maintainer=["htan116@e.ntu.edu.sg"]
 
 WORKDIR /app
 
-ENV PATH /app/node_modules/.bin:$PATH
+# ENV PATH /app/node_modules/.bin:$PATH
 
 COPY ["package.json", "package-lock.json", "./"]
 
-RUN npm install --quiet
+RUN npm install
 
 COPY . /app
-
-# EXPOSE 3000
-
-# CMD ["npm", "run", "build"]
 
 RUN npm run build
 

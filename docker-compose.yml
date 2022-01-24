@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  backend:
+    # env_file:
+    #     "./backend/backend.env"
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    image: "sg_decoding_backend"
+    ports:
+      - "2000:2000"
+    
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    image: "sg_decoding_frontend"
+    ports:
+      - "80:80"
+    links:
+      - "backend:be"
