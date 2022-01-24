@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, RouteProps } from 'react-router-dom';
-import { store } from '../../state';
+import { bindActionCreators } from 'redux';
+import { actionCreators, store } from '../../state';
 import { RootState } from '../../state/reducers';
 
 export type ProtectedRouteProps = {
@@ -13,6 +14,8 @@ export type ProtectedRouteProps = {
 export default function ProtectedRoute({ children }: { children: JSX.Element }) {
 	const isLoggedIn = useSelector((state: RootState) => state.authReducer.token) !== '';
 	const { logoutMsg } = store.getState().authReducer;
+	const dispatch = useDispatch();
+	const { clearLogoutMsg } = bindActionCreators(actionCreators, dispatch);
 
   if(isLoggedIn) {
 		console.info("[DEBUG] ProtectedRoute: User is logged in, navigating to protected route");
@@ -21,8 +24,10 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
 
 	let logoutPath = '/auth/login';
 	
-	if(logoutMsg)
+	if(logoutMsg){
 		logoutPath += '?logoutMsg=' + logoutMsg;
+		clearLogoutMsg();
+	}
 
 	console.info("[DEBUG] ProtectedRoute: User is NOT logged in, going to /login");
   return <Navigate to={logoutPath} />;

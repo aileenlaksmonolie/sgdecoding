@@ -29,11 +29,13 @@ const reducer = (state = INITIAL_STATE, action: AuthAction) => {
 			const { newName } = action;
 			return { ...state, name: newName };
 
-		case AuthTypes.LOGOUT:
+		case AuthTypes.SET_LOGOUT_MSG:
 			const { logoutMsg } = action;
-			return { ...state, token: '', logoutMsg };
-		case AuthTypes.LOGIN_FAIL:
-			return { ...state, token: '' };
+			return { ...state, logoutMsg };
+		case AuthTypes.DELETE_LOGOUT_MSG:
+			return { ...state, logoutMsg: ''};
+		case AuthTypes.DELETE_TOKEN:
+			return { ...state, token: ''};
 
 		default:
 			return state;

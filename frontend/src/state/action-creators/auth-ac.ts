@@ -31,11 +31,11 @@ export const login = (userCreds: UserLoginModel) => {
 				console.log('test');
 				console.error(error);
 
-				let loginFail: AuthAction = {
-					type: AuthTypes.LOGIN_FAIL
-				};
+				// let loginFail: AuthAction = {
+				// 	type: AuthTypes.LOGIN_FAIL
+				// };
 
-				dispatch(loginFail);
+				// dispatch(loginFail);
 				return Promise.reject();
 			});
 	};
@@ -87,11 +87,13 @@ export const changeName = (newNameRequest: UserChangeName) => {
 export const logout = (logoutMsg?: string) => {
 
 	return (dispatch: Dispatch) => {
-		let logoutAction: AuthAction = {
-			type: AuthTypes.LOGOUT,
-			logoutMsg: logoutMsg ?? ''
-		};
+		dispatch({ type: AuthTypes.DELETE_TOKEN });
+		dispatch({ type: AuthTypes.SET_LOGOUT_MSG, logoutMsg });
+	};
+};
 
-		dispatch(logoutAction);
+export const clearLogoutMsg = () => {
+	return (dispatch: Dispatch) => {
+		dispatch({ type: AuthTypes.DELETE_LOGOUT_MSG });
 	};
 };

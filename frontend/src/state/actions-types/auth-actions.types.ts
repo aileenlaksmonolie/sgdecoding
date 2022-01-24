@@ -10,14 +10,18 @@ interface LoginSuccessAction{
 	token: string,
 }
 
-interface LoginFailureAction{
-	type: AuthTypes.LOGIN_FAIL
+
+interface DeleteTokenAction{
+	type: AuthTypes.DELETE_TOKEN,
 }
 
-
-interface LogoutAction{
-	type: AuthTypes.LOGOUT,
+interface SetLogoutMsgAction{
+	type: AuthTypes.SET_LOGOUT_MSG,
 	logoutMsg: string
+}
+
+interface DeleteLogoutMsgAction{
+	type: AuthTypes.DELETE_LOGOUT_MSG
 }
 
 interface ChangeNameSuccessAction{
@@ -27,5 +31,5 @@ interface ChangeNameSuccessAction{
 
 
 export type AuthAction = RememberMeAction | LoginSuccessAction 
-													| LoginFailureAction | LogoutAction 
-													| ChangeNameSuccessAction;
+												| SetLogoutMsgAction | DeleteLogoutMsgAction 
+												| ChangeNameSuccessAction | DeleteTokenAction;

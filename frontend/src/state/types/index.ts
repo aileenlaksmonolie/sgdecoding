@@ -6,9 +6,11 @@ export enum TestType{
 
 export enum AuthTypes {
 	RMB_ME = 'rmbMe',
-	LOGIN_SUCCESS = 'login_succ',
-	LOGIN_FAIL = 'login_fail',
-	LOGOUT = 'logout',
+	LOGIN_SUCCESS = 'loginSuccess',
+	LOGIN_FAIL = 'loginFail',
+	DELETE_TOKEN = 'logout',
+	SET_LOGOUT_MSG = 'setLogoutMsg',
+	DELETE_LOGOUT_MSG = 'delLogoutMsg',
 	SET_NEW_NAME = 'setnewname',
 	ISADMIN = 'isAdmin'
 }
