@@ -210,6 +210,7 @@ const ViewAllJobs: React.FC = () => {
 		console.log(data);
 		const { value } = data;
 		setFilters({ ...filters, searchStr: value });
+		addSearchParam("search", value);
 	};
 
 	useEffect(() => {
@@ -317,18 +318,20 @@ const ViewAllJobs: React.FC = () => {
 					});
 					setFilters(filters => ({ ...filters, lang: langSplit as [] }));
 				}
-				if (key === "type" && checkTypeExists(currentParams[key])) {
+				if (key === "type" && checkTypeExists(currentParams[key]))
 					setFilters(filters => ({ ...filters, type: currentParams[key] }));
-				}
-				if (key === "duration" && checkLengthExists(currentParams[key])) {
+				
+				if (key === "duration" && checkLengthExists(currentParams[key])) 
 					setFilters(filters => ({ ...filters, duration: currentParams[key] }));
-				}
-				if (key === "startdate") {
+				
+				if (key === "startdate")
 					setFilters(filters => ({ ...filters, startDate: currentParams[key] }));
-				}
-				if (key === "enddate") {
+				
+				if (key === "enddate") 
 					setFilters(filters => ({ ...filters, endDate: currentParams[key] }));
-				}
+				
+				if(key === "search")
+					setFilters(filters => ({...filters, searchStr: currentParams[key]}));
 
 			}
 		} //history, filteredHistory, itemsToDisplay, totalHistory
@@ -390,11 +393,12 @@ const ViewAllJobs: React.FC = () => {
 						// label='Search'
 						placeholder='Search here'
 						onChange={onSearchChange}
+						value={filters.searchStr}
 					/>
 				</Form>
 			</div>
 
-
+			{/* Filters */}
 			<Grid columns={8} id={styles.filterContainer}>
 				<Grid.Column></Grid.Column>
 				<Grid.Column width={3}>
