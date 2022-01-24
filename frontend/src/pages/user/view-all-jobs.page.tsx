@@ -1,8 +1,9 @@
 import moment from "moment";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { useSearchParams } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import { Button, Container, Dropdown, DropdownProps, Form, Grid, Header, Icon, InputOnChangeData, List, Loader, Pagination, PaginationProps, Popup } from "semantic-ui-react";
 import DownloadTranscriptButton from "../../components/audio/download-transcript-btn";
@@ -10,7 +11,6 @@ import { BatchTranscriptionHistory, LiveTranscriptionHistory } from "../../model
 import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
 import styles from './view-all-jobs.module.scss';
-import { useSearchParams } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -19,7 +19,8 @@ interface TranscriptionHistoryFilter {
 	lang: string[],
 	duration: string,
 	startDate: string,
-	endDate: string
+	endDate: string,
+	searchStr: string
 }
 
 const ViewAllJobs: React.FC = () => {
@@ -40,7 +41,8 @@ const ViewAllJobs: React.FC = () => {
 		lang: [],
 		duration: '',
 		startDate: '',
-		endDate: ''
+		endDate: '',
+		searchStr: ''
 	});
 
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -79,7 +81,7 @@ const ViewAllJobs: React.FC = () => {
 	const usePrevious = (value: any) => {
 		const ref = useRef();
 		useEffect(() => {
-		  ref.current = value;
+			ref.current = value;
 		});
 		return ref.current;
 	};
@@ -90,7 +92,7 @@ const ViewAllJobs: React.FC = () => {
 		if (newParams.has(key)) {
 			if (value !== null) {
 				newParams.set(key, value);
-			} else{
+			} else {
 				newParams.delete(key);
 			}
 		} else {
@@ -139,7 +141,7 @@ const ViewAllJobs: React.FC = () => {
 		}
 		return found;
 	};
-	
+
 	const checkLengthExists = (input: string) => {
 		var found = false;
 		for (const lengthOption of lengthFilterOptions) {
@@ -204,6 +206,12 @@ const ViewAllJobs: React.FC = () => {
 		addSearchParam("enddate", getValues("endDate"));
 	};
 
+	const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
+		console.log(data);
+		const { value } = data;
+		setFilters({ ...filters, searchStr: value });
+	};
+
 	useEffect(() => {
 		setIsLoading(true);
 		getLoggedInUserTranscriptionHistory();
@@ -242,7 +250,9 @@ const ViewAllJobs: React.FC = () => {
 	 */
 	useEffect(() => {
 		console.log("[DEBUG] Filtering ... ...");
-		console.log(history);
+		// console.log(history);
+		let searchStrLC = filters.searchStr.toLowerCase();
+		console.log(searchStrLC);
 		let filteredItems = history.filter((i) => {
 			let audioDuration = (i as LiveTranscriptionHistory).liveSessionDuration | i.input[0].file.duration;
 			if (filters.duration !== '') {
@@ -253,7 +263,7 @@ const ViewAllJobs: React.FC = () => {
 				else if (filters.duration === 'long' && audioDuration < 600)
 					return false;
 			}
-			
+
 			if (filters.type !== '' && i.type !== filters.type)
 				return false;
 
@@ -266,9 +276,20 @@ const ViewAllJobs: React.FC = () => {
 					return false;
 			}
 
+			// console.log(i.title);
+			if (searchStrLC !== '') {
+				if (!i.title.toLowerCase().includes(searchStrLC)
+					&& !i.input[0].file.filename.toLowerCase().includes(searchStrLC)
+					&& !i.lang.toLowerCase().includes(searchStrLC)
+					&& !i.input[0].file.mimeType.toLowerCase().includes(searchStrLC)
+				)
+					return false;
+			}
+
 			return true;
 		});
-		console.log(filteredItems);
+		// console.log(filteredItems);
+		console.log("[DEBUG] filtered results length" + filteredItems.length);
 		setFilteredHistory(filteredItems);
 		setItemsToDisplay(filteredItems.slice(0, ITEMS_PER_PAGE));
 		setNoOfPages(Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
@@ -286,7 +307,7 @@ const ViewAllJobs: React.FC = () => {
 					// let startIdx = (ITEMS_PER_PAGE * (pageNum - 1));
 					// let endIdx = ((pageNum * ITEMS_PER_PAGE));
 					// setItemsToDisplay(filteredHistory.slice(startIdx, endIdx));
-					
+
 				}
 				if (key === "lang") {
 					const langSplit = currentParams[key].split(",");
@@ -295,21 +316,21 @@ const ViewAllJobs: React.FC = () => {
 							langSplit.splice(langSplit.indexOf(langItem), 1);
 						}
 					});
-					setFilters(filters => ({ ...filters, lang: langSplit as []}));
+					setFilters(filters => ({ ...filters, lang: langSplit as [] }));
 				}
 				if (key === "type" && checkTypeExists(currentParams[key])) {
-					setFilters(filters => ({ ...filters, type: currentParams[key]}));
+					setFilters(filters => ({ ...filters, type: currentParams[key] }));
 				}
 				if (key === "duration" && checkLengthExists(currentParams[key])) {
-					setFilters(filters => ({ ...filters, duration: currentParams[key]}));
+					setFilters(filters => ({ ...filters, duration: currentParams[key] }));
 				}
 				if (key === "startdate") {
-					setFilters(filters => ({ ...filters, startDate: currentParams[key]}));
+					setFilters(filters => ({ ...filters, startDate: currentParams[key] }));
 				}
 				if (key === "enddate") {
-					setFilters(filters => ({ ...filters, endDate: currentParams[key]}));
+					setFilters(filters => ({ ...filters, endDate: currentParams[key] }));
 				}
-				
+
 			}
 		} //history, filteredHistory, itemsToDisplay, totalHistory
 	}, [previousSearchParam, searchParams, filters, currentPage, itemsToDisplay, filteredHistory]);
@@ -361,9 +382,20 @@ const ViewAllJobs: React.FC = () => {
 	return (
 		<Container id={styles.viewAllJobsContainer}>
 
-			<Header as="h2">View Previous Transcription Jobs</Header>
+			<div id={styles.headerContainer}>
+				<Header as="h2">View Previous Transcription Jobs</Header>
 
-			<Grid columns={8}>
+				<Form id={styles.search}>
+					<Form.Input
+						// label='Search'
+						placeholder='Search here'
+						onChange={onSearchChange}
+					/>
+				</Form>
+			</div>
+
+
+			<Grid columns={8} id={styles.filterContainer}>
 				<Grid.Column></Grid.Column>
 				<Grid.Column width={3}>
 					<Dropdown
@@ -471,7 +503,7 @@ const ViewAllJobs: React.FC = () => {
 									</Button>
 									<DownloadTranscriptButton
 										isDisabled={h.type === 'live' || h.input[0].status === 'error'}
-										transcriptHistory={h} 
+										transcriptHistory={h}
 									/>
 									<Button color="red" disabled>Delete</Button>
 								</List.Content>
@@ -520,7 +552,7 @@ const ViewAllJobs: React.FC = () => {
 				prevItem={{ content: <Icon name='angle left' />, icon: true }}
 				nextItem={{ content: <Icon name='angle right' />, icon: true }}
 				totalPages={noOfPages}
-				//activePage={currentPage}
+			//activePage={currentPage}
 			/>
 		</Container>
 	);

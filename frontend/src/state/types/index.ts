@@ -7,7 +7,6 @@ export enum TestType{
 export enum AuthTypes {
 	RMB_ME = 'rmbMe',
 	LOGIN_SUCCESS = 'loginSuccess',
-	LOGIN_FAIL = 'loginFail',
 	DELETE_TOKEN = 'logout',
 	SET_LOGOUT_MSG = 'setLogoutMsg',
 	DELETE_LOGOUT_MSG = 'delLogoutMsg',

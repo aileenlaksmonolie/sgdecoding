@@ -1,4 +1,22 @@
 #viewAllJobsContainer {
+	#headerContainer{
+		display: block;
+
+		h2{
+			display: inline-block;
+			clear: both;
+		}
+
+		#search{
+			display: block;
+			float: right;
+		}
+	}
+
+	#filterContainer{
+		clear: both;
+	}
+
 	#listPaginator {
 		float: right;
 	}
