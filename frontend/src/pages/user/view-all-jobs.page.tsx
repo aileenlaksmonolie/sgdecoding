@@ -252,13 +252,12 @@ const ViewAllJobs: React.FC = () => {
 		console.log("[DEBUG] Filtering ... ...");
 		// console.log(history);
 		let searchStrLC = filters.searchStr.toLowerCase();
-		console.log(searchStrLC);
 		let filteredItems = history.filter((i) => {
 			let audioDuration = (i as LiveTranscriptionHistory).liveSessionDuration | i.input[0].file.duration;
 			if (filters.duration !== '') {
 				if (filters.duration === 'short' && (audioDuration > 180))
 					return false;
-				else if (filters.duration === 'medium' && audioDuration < 180 && audioDuration > 600)
+				else if (filters.duration === 'medium' && (audioDuration < 180 || audioDuration > 600))
 					return false;
 				else if (filters.duration === 'long' && audioDuration < 600)
 					return false;
@@ -288,8 +287,8 @@ const ViewAllJobs: React.FC = () => {
 
 			return true;
 		});
-		// console.log(filteredItems);
-		console.log("[DEBUG] filtered results length" + filteredItems.length);
+		console.log(filteredItems);
+		console.log("[DEBUG] filtered results length: " + filteredItems.length);
 		setFilteredHistory(filteredItems);
 		setItemsToDisplay(filteredItems.slice(0, ITEMS_PER_PAGE));
 		setNoOfPages(Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
@@ -333,6 +332,7 @@ const ViewAllJobs: React.FC = () => {
 
 			}
 		} //history, filteredHistory, itemsToDisplay, totalHistory
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [previousSearchParam, searchParams, filters, currentPage, itemsToDisplay, filteredHistory]);
 
 	const renderIcon = (h: (LiveTranscriptionHistory | BatchTranscriptionHistory)) => {
@@ -481,14 +481,8 @@ const ViewAllJobs: React.FC = () => {
 			<List divided size="large" verticalAlign="middle" className={styles.historyList}>
 				{
 					// TODO Componentise this!
-					isLoading === true
+					isLoading === false && itemsToDisplay.length > 0
 						?
-						// <Progress percent={20} indicating color='teal' />
-						<Container textAlign="center">
-							<Loader active indeterminate inline='centered' />
-							<strong>Loading ... ...</strong>
-						</Container>
-						:
 						itemsToDisplay.map(h => (
 							<List.Item
 								key={h._id}
@@ -538,6 +532,18 @@ const ViewAllJobs: React.FC = () => {
 								</List.Content>
 							</List.Item>
 						))
+						:
+						isLoading
+							?
+							<Container textAlign="center">
+								<Loader active indeterminate inline='centered' />
+								<strong>Loading ... ...</strong>
+							</Container>
+							:
+							<Container text textAlign="center" id={styles.notFoundContainer}>
+								<Icon name="question circle outline" size="huge" />
+								<p>Your Filtering/Search yielded no results, please try again!</p>
+							</Container>
 				}
 			</List>
 
