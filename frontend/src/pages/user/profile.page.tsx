@@ -1,14 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from 'react-redux';
 import { Card } from 'semantic-ui-react';
 import { RootState } from '../../state/reducers';
-import { getStatistics } from '../../api/auth-api';
 
 const ProfilePage: React.FC = () => {
-	const { name, role, rmbMeEmail } = useSelector((state: RootState) => state.authReducer);
-	useEffect(() => {
-		getStatistics();
-	});
+	const { name, role, email, type } = useSelector((state: RootState) => state.authReducer);
 	return (
 		<Card.Group>
 		<Card>
@@ -23,7 +19,7 @@ const ProfilePage: React.FC = () => {
 			<Card.Content>
 			<Card.Header>Email Address</Card.Header>
 			<Card.Description>
-				<strong>{rmbMeEmail}</strong>
+				<strong>{email}</strong>
 			</Card.Description>
 			</Card.Content>
 		</Card>
@@ -39,7 +35,7 @@ const ProfilePage: React.FC = () => {
 			<Card.Content>
 			<Card.Header>User Type</Card.Header>
 			<Card.Description>
-				<strong></strong>
+				<strong>{type}</strong>
 			</Card.Description>
 			</Card.Content>
 		</Card>

@@ -4,20 +4,21 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts';
 import { Button, Card, Container, Grid, Header, Icon, Image, Statistic } from 'semantic-ui-react';
-import { getStatistics } from '../../api/auth-api';
+import { getLastLogin, getStatistics } from '../../api/auth-api';
 import { RootState } from '../../state/reducers';
 import styles from './overview.page.module.scss';
 
 const OverviewPage: React.FC = () => {
 
-	const { name } = useSelector((state: RootState) => state.authReducer);
+	const { name, sub } = useSelector((state: RootState) => state.authReducer);
 	const [userStats, setUserStats] = useState(
 		{
 			transcriptionCount: 0,
       		pendingCount: 0,
-      		hoursTranscribed: 0,
+      		minutesTranscribed: 0,
       		monthlyLiveDurationMins: 0,
       		monthlyBatchDurationMins: 0,
+			lastLogin: "2019-02-16T05:00:00.000+00:00",
 		}
 	);
 
@@ -26,15 +27,19 @@ const OverviewPage: React.FC = () => {
 	}, []);
 
 	async function getUserData() {
-		const res = await getStatistics();
-		const resData = JSON.parse(res.data);
+		const statRes = await getStatistics(sub);
+		const lastLoginRes = await getLastLogin(sub);
+		const statData = statRes.data;
+		const lastLoginData = lastLoginRes.data;
+		console.log(statData);
 		setUserStats(
 			{ 
-				transcriptionCount: resData.transcriptionCount,
-				pendingCount: resData.pendingCount,
-				hoursTranscribed: resData.hoursTranscribed,
-				monthlyLiveDurationMins: resData.monthlyLiveDurationMins,
-				monthlyBatchDurationMins: resData.monthlyBatchDurationMins,
+				transcriptionCount: statData.transcriptionCount,
+				pendingCount: statData.pendingCount,
+				minutesTranscribed: statData.minutesTranscribed,
+				monthlyLiveDurationMins: statData.monthlyLiveDurationMins,
+				monthlyBatchDurationMins: statData.monthlyBatchDurationMins,
+				lastLogin: lastLoginData.lastLogin,
 			}
 		);
 	}
@@ -95,7 +100,7 @@ const OverviewPage: React.FC = () => {
 							<Card.Header as="h3">
 								Welcome Back to SG Decoding!
 							</Card.Header>
-							<p>You last logged in at &lt; TO BE DONE &gt; Click on any of the following when you are ready to start transcribing with us.</p>
+							<p>You last logged in on {userStats.lastLogin}. Click on any of the following when you are ready to start transcribing with us.</p>
 							<Button as={Link} to="/livetranscribe" primary>Live Transcribe</Button>
 							<Button as={Link} to="/offlinetranscribe" color="orange">Offline Transcribe</Button>
 						</Grid.Column>
@@ -145,7 +150,7 @@ const OverviewPage: React.FC = () => {
 							<Icon name='clock' />
 						</Icon.Group>
 						<Statistic size="tiny">
-							<Statistic.Value>{userStats.hoursTranscribed} hrs</Statistic.Value>
+							<Statistic.Value>{userStats.minutesTranscribed} mins</Statistic.Value>
 							<Statistic.Label>Transcribed</Statistic.Label>
 						</Statistic>
 					</Card.Content>
