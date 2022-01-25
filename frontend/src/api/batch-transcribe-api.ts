@@ -1,9 +1,11 @@
 //import { OfflineTranscribeJob } from '../models/OfflineTranscribeJob.model';
 
+import { proxyAPI } from "./api";
+
 
 export const getOneUserSpeechHistory = (email: string) => {
 	return proxyAPI.get(
-		`/speech/history`,
+		`/api/speech/history`,
 		{
 			data: {
 				email
@@ -14,26 +16,26 @@ export const getOneUserSpeechHistory = (email: string) => {
 
 export const getOneAudioRecordingFileSrcUrl = (inputZeroFileId: string) => {  // refer to recording.input[0].file._id
 	return proxyAPI.get(
-		`/files/${inputZeroFileId}/download`
+		`/api/files/${inputZeroFileId}/download`
 	);
 };
 
 
 export const downloadOneTranscriptionZipped = (batchTranscribeId: string) => {
 	return proxyAPI.get(
-		`/speech/${batchTranscribeId}/result`
+		`/api/speech/${batchTranscribeId}/result`
 	);
 };
 
 export const getOneTranscriptInJson = (batchTranscribeId: string) => {
 	return proxyAPI.get(
-		`/speech/${batchTranscribeId}/result/tojson`
+		`/api/speech/${batchTranscribeId}/result/tojson`
 	);
 };
 
 export const submitOneJob = (file: FormData) => {
 	return proxyAPI.post(
-		`/speech`,
+		`/api/speech`,
 		file,
 		{
 			headers:
