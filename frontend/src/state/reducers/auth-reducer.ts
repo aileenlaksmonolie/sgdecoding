@@ -12,7 +12,8 @@ export const INITIAL_STATE = {
 	type: '',
 	sub: '',
 	email:'',
-	logoutMsg: ''
+	logoutMsg: '',
+	lastLogin: new Date()
 };
 
 const reducer = (state = INITIAL_STATE, action: AuthAction) => {
@@ -22,9 +23,9 @@ const reducer = (state = INITIAL_STATE, action: AuthAction) => {
 			return {...state, rmbMeEmail };
 
 		case AuthTypes.LOGIN_SUCCESS:
-			const { token } = action;
+			const { token, lastLogin } = action;
 			const { exp, name, role, sub, email, type } = jwtDecode<JwtPayload>(token) as Token;
-			return { ...state, token, exp: new Date(exp * 1000), name, role, sub, email, type };
+			return { ...state, token, exp: new Date(exp * 1000), name, role, sub, email, type, lastLogin };
 
 		case AuthTypes.SET_NEW_NAME:
 			const { newName } = action;

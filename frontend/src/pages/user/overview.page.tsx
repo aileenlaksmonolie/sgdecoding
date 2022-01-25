@@ -7,10 +7,14 @@ import { Button, Card, Container, Grid, Header, Icon, Image, Statistic } from 's
 import { getLastLogin, getStatistics } from '../../api/auth-api';
 import { RootState } from '../../state/reducers';
 import styles from './overview.page.module.scss';
+<<<<<<< Updated upstream
+=======
+import { getStatistics } from '../../api/auth-api';
+>>>>>>> Stashed changes
 
 const OverviewPage: React.FC = () => {
 
-	const { name, sub } = useSelector((state: RootState) => state.authReducer);
+	const { name, sub, lastLogin } = useSelector((state: RootState) => state.authReducer);
 	const [userStats, setUserStats] = useState(
 		{
 			transcriptionCount: 0,
@@ -18,7 +22,6 @@ const OverviewPage: React.FC = () => {
       		minutesTranscribed: 0,
       		monthlyLiveDurationMins: 0,
       		monthlyBatchDurationMins: 0,
-			lastLogin: "2019-02-16T05:00:00.000+00:00",
 		}
 	);
 
@@ -28,9 +31,7 @@ const OverviewPage: React.FC = () => {
 
 	async function getUserData() {
 		const statRes = await getStatistics(sub);
-		const lastLoginRes = await getLastLogin(sub);
 		const statData = statRes.data;
-		const lastLoginData = lastLoginRes.data;
 		console.log(statData);
 		setUserStats(
 			{ 
@@ -39,7 +40,6 @@ const OverviewPage: React.FC = () => {
 				minutesTranscribed: statData.minutesTranscribed,
 				monthlyLiveDurationMins: statData.monthlyLiveDurationMins,
 				monthlyBatchDurationMins: statData.monthlyBatchDurationMins,
-				lastLogin: lastLoginData.lastLogin,
 			}
 		);
 	}
@@ -75,6 +75,7 @@ const OverviewPage: React.FC = () => {
 	/* END: For Development */
 
 	const currentTime: number = Number(moment(new Date().getTime()).format("HH"));
+	const lastLoginTime = moment(lastLogin).format("ddd D MMM YYYY, h:mma");
 
 	return (<Container>
 		<section id={styles.welcomeSection}>
@@ -100,7 +101,7 @@ const OverviewPage: React.FC = () => {
 							<Card.Header as="h3">
 								Welcome Back to SG Decoding!
 							</Card.Header>
-							<p>You last logged in on {userStats.lastLogin}. Click on any of the following when you are ready to start transcribing with us.</p>
+							<p>You last logged in on {lastLoginTime}. Click on any of the following when you are ready to start transcribing with us.</p>
 							<Button as={Link} to="/livetranscribe" primary>Live Transcribe</Button>
 							<Button as={Link} to="/offlinetranscribe" color="orange">Offline Transcribe</Button>
 						</Grid.Column>

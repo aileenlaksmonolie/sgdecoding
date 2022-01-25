@@ -55,19 +55,3 @@ export const getStatistics = (userID: string) => {
 		{responseType: 'json'}
 	);
 };
-
-export const updateLastLogin = (userID: string) => {
-	return speechGatewayApi.post(
-		`/update-last-login`,
-		{ userID },
-		{responseType: 'json'}
-	);
-};
-
-export const getLastLogin = (userID: string) => {
-	return speechGatewayApi.post(
-		`/last-login`,
-		{ userID },
-		{responseType: 'json'}
-	);
-};

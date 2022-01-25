@@ -22,7 +22,8 @@ export const login = (userCreds: UserLoginModel) => {
 			.then(({ data }) => {
 				let loginSuccess: AuthAction = {
 					type: AuthTypes.LOGIN_SUCCESS,
-					token: data.accessToken
+					token: data.accessToken,
+					lastLogin: data.lastLogin
 				};
 				dispatch(loginSuccess);
 

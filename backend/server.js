@@ -14,11 +14,54 @@ const { ParseSRT_JSON } = require("./helpers");
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
 const Statistics = require("./models/statistics.model");
+const httpProxy = require("http-proxy");
+const jwt_decode = require("jwt-decode");
 
-app.use(cors());
-app.use(express.json());
-app.use(compression());
+// Live Transcribe Proxy
+var liveJobOpen = false;
+var proxyUserID = "";
+const proxy = httpProxy
+  .createServer({
+    target: "wss://gateway.speechlab.sg",
+    changeOrigin: true,
+    ws: true,
+  })
+  .listen(8080, () => console.log(`Live Transcribe Proxy Server started on port 8080`));
 
+proxy.on("error", function (err, req, res) {
+  res.writeHead(500, {
+    "Content-Type": "text/plain",
+  });
+  res.end("Live Transcribe Connection Failed");
+});
+
+proxy.on('proxyReqWs', function(proxyReqWs) {
+  const path = proxyReqWs.path;
+  const startPos = path.search("accessToken=");
+  const endPos = path.search("&model");  
+  const proxyToken = path.substring(startPos+12, endPos);
+  proxyUserID = jwt_decode(proxyToken).sub;
+});
+
+proxy.on("open", function (proxySocket) {
+  // listen for messages coming FROM the target here
+  console.log("Live Transcribe Connection Open");
+  liveJobOpen = true;
+  proxySocket.on("data", (buffer) => {
+    console.log(buffer.toString());
+  });
+});
+
+proxy.on("close", function (res, socket, head) {
+  // view disconnected websocket connections
+  console.log("Live Transcribe Disconnected");
+  if (liveJobOpen) {
+    setUpdatedFalse(proxyUserID);
+    liveJobOpen = false;
+  }
+});
+
+// Mongoose (MongoDB) Database
 mongoose.connect(
   "mongodb+srv://terry:node1234@cluster0.m84iv.mongodb.net/SG_Decoding?retryWrites=true&w=majority"
 );
@@ -30,8 +73,12 @@ db.once("open", function () {
   console.log("Mongoose Connection Successful!");
 });
 
+app.use(cors());
+app.use(express.json());
+app.use(compression());
+
 app.listen(2000, () => {
-  console.log("server started on 2000");
+  console.log("Server started on port 2000");
 });
 
 app.post("/add_user", async (request, response) => {
@@ -82,8 +129,8 @@ app.post("/auth/register", async (req, res) => {
 
 app.post("/auth/login", async (req, res) => {
   let userCreds = req.body;
-  console.log("email " + userCreds.email);
-  console.log("pw " + userCreds.password);
+  console.log("Email: " + userCreds.email);
+  console.log("PW: " + userCreds.password);
   await axios
     .post(
       "https://gateway.speechlab.sg/auth/login",
@@ -91,29 +138,19 @@ app.post("/auth/login", async (req, res) => {
       { responseType: "json" }
     )
     .then(async (response) => {
-      console.log("login success");
-      //console.log(response.status); //201
-      console.log("login token: " + response.data.accessToken);
-
-      res.status(response.status).json(response.data);
+      console.log("Login Success");
+      const userLastLogin = await getLoginAndUpdate(userCreds.email);
+      res.status(response.status).json(
+        {
+          accessToken: response.data.accessToken,
+          lastLogin: userLastLogin
+        });
     })
     .catch((error) => {
-      console.log("login failed");
-      console.log(error.response.status); //401
+      console.log("Login Failed");
+      console.log(error.response.status);
       res.status(error.response.status).json(error.response.data);
     });
-});
-
-app.post("/update-last-login", async (req, res) => {
-  try {
-    const filter = { _id: req.body.userID };
-    const update = { last_login: new Date() };
-    await User.findOneAndUpdate(filter, update);
-    res.json("last login updated");
-  } 
-  catch(err) {
-    res.json(err);
-  }
 });
 
 app.post("/auth/change-password", async (req, res) => {
@@ -215,7 +252,7 @@ app.post("/speech/", upload.single("file"), async (req, res) => {
       {
         headers: {
           ...form.getHeaders(),
-          Authorization: `${req.headers.authorization}`,
+          //Authorization: `${req.headers.authorization}`,
           //'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRsdnVAbnR1LmVkdS5zZyIsInJvbGUiOiJ1c2VyIiwibmFtZSI6Ikx5IFZUIiwidHlwZSI6Im5vcm1hbCIsImlhdCI6MTY0MTg2NTc0MiwibmJmIjoxNjQxODY1NzQyLCJleHAiOjE2NDQ0NTc3NDIsImlzcyI6Imh0dHBzOi8vZ2F0ZXdheS5zcGVlY2hsYWIuc2ciLCJzdWIiOiI1ZjM0Y2ExOGJkZDg4ZDAwMjlmMWQ3N2UifQ.qJnlfP779Kwl0k9y9oLZqJjL-PMxfqO6diGkPLyCHkgj-JrEKRDaUdo-gbfSrtPe25XyZqf9vqk4KLtkyMmDX7_MgmKZ5rFPyXGlufkmpw3UdsogUr6JPm_i6t0zcbNNRhd_zRGNH-_Hq1mkgfD4TLGAyun8NvD3utVRqPQfl5vLPGtAK3669QQDCGDxl9mzmPfyHWPAJIjpQEA5luZ7IC0pM7yrUVb7tUiwhuz1VTiYKj1PqmM2q958qvTO9HUd2AnPt5XzRrwYqkIwsezaSfGRthxPcZ52Q3VgJ2jmqUc_4qZInyqrEBBLs0t6Eq5gqtQQGi7XJXRw32u2yJymbg',
           "Content-Type": "multipart/form-data",
         },
@@ -225,8 +262,8 @@ app.post("/speech/", upload.single("file"), async (req, res) => {
     )
     .then((response) => {
       console.log("submit job success");
-
       //console.log(response)
+      setUpdatedFalse(req.body.userID);
       res.json(response.status);
     })
     .catch((error) => {
@@ -408,26 +445,44 @@ app.post("/users/statistics", async (req, res) => {
   }
 });
 
-app.post("/last-login", async (req, res) => {
+async function getLoginAndUpdate(userEmail) {
   try {
-    const user = await User.findById(req.body.userID);
-    res.json({lastLogin: user.last_login.toLocaleString()});
-  }
+    const filter = { email: userEmail };
+    const update = { last_login: new Date() };
+    const user = await User.findOneAndUpdate(filter, update);
+    console.log("last login updated");
+    return user.last_login; // previous value before update
+  } 
   catch(err) {
-    console.log(err);
-    res.json(err);
+    console.log("last login update failed");
+    return err;
   }
-});
+}
 
 async function getStats(userID) {
-  const updatedStat = await Statistics.findById(userID);
-  return {
-    transcriptionCount: updatedStat.total_jobs,
-    pendingCount: updatedStat.pending_jobs,
-    minutesTranscribed: updatedStat.total_minutes_transcribed,
-    monthlyLiveDurationMins: updatedStat.monthly_live_minutes,
-    monthlyBatchDurationMins: updatedStat.monthly_offline_minutes,
-  };
+  try {
+    const updatedStat = await Statistics.findById(userID);
+    return {
+      transcriptionCount: updatedStat.total_jobs,
+      pendingCount: updatedStat.pending_jobs,
+      minutesTranscribed: updatedStat.total_minutes_transcribed,
+      monthlyLiveDurationMins: updatedStat.monthly_live_minutes,
+      monthlyBatchDurationMins: updatedStat.monthly_offline_minutes,
+    };
+  } catch(err) {
+    console.log("get stats failed");
+    return err;
+  }
+}
+
+async function setUpdatedFalse(userID) {
+  try {
+    const update = { updated: false };
+    await Statistics.findByIdAndUpdate(userID, update);
+  } catch(err) {
+    console.log("set update to false failed");
+    return err;
+  }
 }
 
 app.get("/speech/:id/result/tojson", async (req, res) => {

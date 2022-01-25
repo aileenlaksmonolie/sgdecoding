@@ -8,6 +8,7 @@ interface RememberMeAction{
 interface LoginSuccessAction{
 	type: AuthTypes.LOGIN_SUCCESS,
 	token: string,
+	lastLogin: Date
 }
 
 

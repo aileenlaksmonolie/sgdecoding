@@ -63,15 +63,10 @@ const audioOptions = [
 ];
 
 const ModalUploadFile: React.FC = () => {
-
-  // const [state, dispatch] = React.useReducer(exampleReducer, {
-  //   open: false,
-  //   size: undefined,
-  // });
-  // const { open, size } = state;
-  //const { sub } = useSelector((state: RootState) => state.authReducer);
+  const { sub } = useSelector((state: RootState) => state.authReducer);
   const [cancelDisabled, setCancelDisabled] = useState(false);
   const [uploadDisabled, setUploadDisabled] = useState(true);
+  const [uploadAttempt, setUploadAttempt] = useState(false);
   const [optionsDisabled, setOptionsDisabled] = useState(false);
   const [uploadArray, setUploadArray] = useState<
     Array<{
@@ -220,10 +215,13 @@ const ModalUploadFile: React.FC = () => {
     }
   };
 
+<<<<<<< Updated upstream
   // function timeout(delay: number) {
   //   return new Promise((res) => setTimeout(res, delay));
   // }
 
+=======
+>>>>>>> Stashed changes
   const uploadFile = async () => {
     setCancelDisabled(true);
     setUploadDisabled(true);
@@ -242,6 +240,7 @@ const ModalUploadFile: React.FC = () => {
         uploadHasError: false,
         uploadLabel: "Uploading...",
       });
+      formData.append('userID', sub);
 
       const res = submitOneJob(formData);
       console.log((await res).data);
@@ -262,22 +261,10 @@ const ModalUploadFile: React.FC = () => {
           uploadLabel: "Upload Error",
         });
       }
+      setUploadAttempt(true);
       setCancelDisabled(false);
     });
   };
-
-  
-  // function exampleReducer(state: any, action: any) {
-  //   switch (action.type) {
-  //     case "close":
-  //       resetState();
-  //       return { open: false };
-  //     case "open":
-  //       return { open: true, size: action.size };
-  //     default:
-  //       throw new Error("Unsupported action...");
-  //   }
-  // }
 
   return (
     <div>
@@ -407,10 +394,10 @@ const ModalUploadFile: React.FC = () => {
         <Modal.Actions>
           <Button
             disabled={cancelDisabled}
-            negative
+            negative={uploadAttempt? false: true}
             onClick={() => dispatch({ type: "close" })}
           >
-            Cancel
+            {uploadAttempt? "Ok": "Cancel"}
           </Button>
           {/* <Button positive onClick={() =>
             dispatch({ type: "close" })}>

@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
 
 	// console.log("[DEBUG] rmbMeEmail: " + rmbMeEmail)
 	if (rmbMeEmail !== '') {
-		setValue('email', rmbMeEmail); //email does not change
+		//setValue('email', rmbMeEmail); //email does not change
 		setValue('rmbMe', true);
 	}
 
@@ -124,7 +124,7 @@ const LoginPage: React.FC = () => {
 						label='Email'
 						fluid
 						type='email'
-						defaultValue={rmbMeEmail}
+						//defaultValue={rmbMeEmail}
 						placeholder='example@ntu.edu.sg'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
