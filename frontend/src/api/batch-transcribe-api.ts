@@ -1,9 +1,8 @@
-import { speechGatewayApi } from './api';
 //import { OfflineTranscribeJob } from '../models/OfflineTranscribeJob.model';
 
 
 export const getOneUserSpeechHistory = (email: string) => {
-	return speechGatewayApi.get(
+	return proxyAPI.get(
 		`/speech/history`,
 		{
 			data: {
@@ -14,26 +13,26 @@ export const getOneUserSpeechHistory = (email: string) => {
 
 
 export const getOneAudioRecordingFileSrcUrl = (inputZeroFileId: string) => {  // refer to recording.input[0].file._id
-	return speechGatewayApi.get(
+	return proxyAPI.get(
 		`/files/${inputZeroFileId}/download`
 	);
 };
 
 
 export const downloadOneTranscriptionZipped = (batchTranscribeId: string) => {
-	return speechGatewayApi.get(
+	return proxyAPI.get(
 		`/speech/${batchTranscribeId}/result`
 	);
 };
 
 export const getOneTranscriptInJson = (batchTranscribeId: string) => {
-	return speechGatewayApi.get(
+	return proxyAPI.get(
 		`/speech/${batchTranscribeId}/result/tojson`
 	);
 };
 
 export const submitOneJob = (file: FormData) => {
-	return speechGatewayApi.post(
+	return proxyAPI.post(
 		`/speech`,
 		file,
 		{

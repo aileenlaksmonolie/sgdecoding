@@ -1,11 +1,11 @@
 import axios from "axios";
 import { store } from "../state";
 
-const speechGatewayApi = axios.create({
-	baseURL: process.env.REACT_APP_SPEECH_GATEWAY,
+const proxyAPI = axios.create({
+	baseURL: process.env.REACT_APP_API,
 });
 
-speechGatewayApi.interceptors.request.use(
+proxyAPI.interceptors.request.use(
 	function(config){	
 		const { token } = store.getState().authReducer;
 		if(token){
@@ -31,4 +31,4 @@ const liveDecodeSocket = (accessToken: string, langModel: string) => {
 	// 	`&model=${langModel}`);
 };
 
-export { speechGatewayApi, liveDecodeSocket };
+export { proxyAPI, liveDecodeSocket };
