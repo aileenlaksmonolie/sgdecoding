@@ -215,13 +215,6 @@ const ModalUploadFile: React.FC = () => {
     }
   };
 
-<<<<<<< Updated upstream
-  // function timeout(delay: number) {
-  //   return new Promise((res) => setTimeout(res, delay));
-  // }
-
-=======
->>>>>>> Stashed changes
   const uploadFile = async () => {
     setCancelDisabled(true);
     setUploadDisabled(true);

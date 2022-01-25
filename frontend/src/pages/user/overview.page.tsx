@@ -4,13 +4,9 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts';
 import { Button, Card, Container, Grid, Header, Icon, Image, Statistic } from 'semantic-ui-react';
-import { getLastLogin, getStatistics } from '../../api/auth-api';
+import { getStatistics } from '../../api/auth-api';
 import { RootState } from '../../state/reducers';
 import styles from './overview.page.module.scss';
-<<<<<<< Updated upstream
-=======
-import { getStatistics } from '../../api/auth-api';
->>>>>>> Stashed changes
 
 const OverviewPage: React.FC = () => {
 
