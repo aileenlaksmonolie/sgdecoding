@@ -20,7 +20,7 @@ speechGatewayApi.interceptors.request.use(
 
 const liveDecodeSocket = (accessToken: string, langModel: string) => {
 
-	return new WebSocket(`ws://localhost:8080/client/ws/speech?` +
+	return new WebSocket(`${process.env.REACT_APP_LIVE_WSS}?` +
 		`content-type=audio/x-raw,+layout=(string)interleaved,+rate=(int)16000,+format=(string)S16LE,+channels=(int)1` +
 		`&accessToken=${accessToken}` + 
 		`&model=${langModel}`);
@@ -32,5 +32,3 @@ const liveDecodeSocket = (accessToken: string, langModel: string) => {
 };
 
 export { speechGatewayApi, liveDecodeSocket };
-
-

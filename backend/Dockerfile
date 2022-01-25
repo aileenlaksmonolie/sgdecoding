@@ -12,8 +12,6 @@ RUN npm install --quiet
 
 EXPOSE 2000
 
-CMD ["node", "server.js"]
-
 COPY . .
 
-
+CMD ["node", "server.js"]

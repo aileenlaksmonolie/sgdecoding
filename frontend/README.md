@@ -6,7 +6,8 @@
 - Create two files: `.env.development.local` and `.env.production.local`
 
 ```text
-REACT_APP_SPEECH_GATEWAY="https://gateway.speechlab.sg"
+REACT_APP_API="https://"
+REACT_APP_API_LIVE_WSS="wss://"
 ```
 
 **2. Install all dependencies first**
