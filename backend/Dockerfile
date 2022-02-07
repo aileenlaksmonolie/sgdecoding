@@ -1,16 +1,17 @@
 FROM node:16-alpine3.14 
 
-LABEL version="1.0"
-LABEL description=""
+LABEL version="1.1"
+LABEL description="viva la vida"
 LABEL maintainer=["htan116@e.ntu.edu.sg"]
 
 WORKDIR /usr/src/app/server
-
+ENV PATH /app/node_modules/.bin:$PATH
+COPY package-lock.json .
 COPY package.json .
 
-RUN npm install --quiet
+RUN npm ci
 
-EXPOSE 2000
+# EXPOSE 2000
 
 COPY . .
 

@@ -1,22 +1,44 @@
 version: '3.7'
 
 services:
+  # network_mode: "host"  
   backend:
     # env_file:
     #     "./backend/backend.env"
     build:
       context: ./backend
       dockerfile: ./Dockerfile
-    image: "sg_decoding_backend"
-    ports:
-      - "2000:2000"
+    image: "sgdecode_backend"
+    # ports:
+    #   - "2000:2000"
+    networks:
+      - sgdecodenet
     
   frontend:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
-    image: "sg_decoding_frontend"
-    ports:
-      - "80:80"
+    image: "sgdecode_frontend"
+    # ports:
+    #   - "80:80"
     links:
       - "backend:be"
+    networks:
+      - sgdecodenet
+  
+  revproxy:
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+    build:
+      context: ./reverse_proxy
+      dockerfile: ./Dockerfile
+    image: "sgdecode_revproxy"
+    networks: 
+      - sgdecodenet
+    ports: 
+      - "80:80"
+
+networks:
+  sgdecodenet:

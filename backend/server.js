@@ -81,7 +81,7 @@ app.listen(2000, () => {
   console.log("Server started on port 2000");
 });
 
-app.post("/api/add_user", async (request, response) => {
+app.post("/add_user", async (request, response) => {
   const user = new User(request.body);
   try {
     await user.save();
@@ -91,7 +91,7 @@ app.post("/api/add_user", async (request, response) => {
   }
 });
 
-app.get("/api/users", async (request, response) => {
+app.get("/users", async (request, response) => {
   const users = await User.find({});
   try {
     response.send(users);
@@ -100,7 +100,7 @@ app.get("/api/users", async (request, response) => {
   }
 });
 
-app.post("/api/auth/register", async (req, res) => {
+app.post("/auth/register", async (req, res) => {
   let newUser = req.body;
   await axios
     .post(
@@ -127,7 +127,7 @@ app.post("/api/auth/register", async (req, res) => {
   //res.json(apiResponse.data)
 });
 
-app.post("/api/auth/login", async (req, res) => {
+app.post("/auth/login", async (req, res) => {
   let userCreds = req.body;
   console.log("Email: " + userCreds.email);
   console.log("PW: " + userCreds.password);
@@ -153,7 +153,7 @@ app.post("/api/auth/login", async (req, res) => {
     });
 });
 
-app.post("/api/auth/change-password", async (req, res) => {
+app.post("/auth/change-password", async (req, res) => {
   let newPasswordRequest = req.body;
   await axios
     .post(
@@ -173,7 +173,7 @@ app.post("/api/auth/change-password", async (req, res) => {
     });
 });
 
-app.post("/api/auth/forgot-password", async (req, res) => {
+app.post("/auth/forgot-password", async (req, res) => {
   let email = req.body;
   await axios
     .post("https://gateway.speechlab.sg/auth/forgot-password", email, {
@@ -191,7 +191,7 @@ app.post("/api/auth/forgot-password", async (req, res) => {
     });
 });
 
-app.post("/api/auth/reset-password", async (req, res) => {
+app.post("/auth/reset-password", async (req, res) => {
   let newPasswordRequest = req.body;
   await axios
     .post(
@@ -211,7 +211,7 @@ app.post("/api/auth/reset-password", async (req, res) => {
     });
 });
 
-app.post("/api/users/change-name", async (req, res) => {
+app.post("/users/change-name", async (req, res) => {
   //need to re-login for changed name to reflect
   let newNameRequest = req.body;
   await axios
@@ -236,7 +236,7 @@ app.post("/api/users/change-name", async (req, res) => {
     });
 });
 
-app.post("/api/speech/", upload.single("file"), async (req, res) => {
+app.post("/speech/", upload.single("file"), async (req, res) => {
   const form = new FormData();
   const fileDateStr = new Date().toISOString().slice(0, 10) + ".wav";
   form.append("file", req.file.buffer, fileDateStr);
@@ -272,7 +272,7 @@ app.post("/api/speech/", upload.single("file"), async (req, res) => {
     });
 });
 
-app.get("/api/speech/history", async (req, res) => {
+app.get("/speech/history", async (req, res) => {
   //speech history
   let email = req.body;
   await axios
@@ -298,7 +298,7 @@ app.get("/api/speech/history", async (req, res) => {
     });
 });
 
-app.post("/api/speech/result", async (req, res) => {
+app.post("/speech/result", async (req, res) => {
   //get transcription
   await axios
     .get(
@@ -320,7 +320,7 @@ app.post("/api/speech/result", async (req, res) => {
     });
 });
 
-app.post("/api/users/statistics", async (req, res) => {
+app.post("/users/statistics", async (req, res) => {
   const userID = req.body.userID;
   const currentStat = await Statistics.findById(userID);
   if (currentStat !== null && currentStat.updated) {
@@ -485,7 +485,7 @@ async function setUpdatedFalse(userID) {
   }
 }
 
-app.get("/api/speech/:id/result/tojson", async (req, res) => {
+app.get("/speech/:id/result/tojson", async (req, res) => {
   console.log("[DEBUG] received id: " + req.params.id);
 
   // Download to temporary folder
@@ -613,7 +613,7 @@ app.get("/api/speech/:id/result/tojson", async (req, res) => {
     });
 });
 
-app.get("/api/files/:id/download", async (req, res) => {
+app.get("/files/:id/download", async (req, res) => {
   const { id } = req.params;
 
   await axios
