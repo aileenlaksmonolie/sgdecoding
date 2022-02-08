@@ -17,6 +17,7 @@ const OfflineTranscribePage: React.FC = () => {
 					on the length of audio file.
 				</p>
 			</Container>
+
 			{/* <Card fluid>
 				<Card.Description textAlign="center">
 					<Container text>
