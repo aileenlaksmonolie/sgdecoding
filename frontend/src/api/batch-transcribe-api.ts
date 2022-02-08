@@ -5,7 +5,7 @@ import { proxyAPI } from "./api";
 
 export const getOneUserSpeechHistory = (email: string) => {
 	return proxyAPI.get(
-		`/api/speech/history`,
+		`/speech/history`,
 		{
 			data: {
 				email
@@ -16,26 +16,26 @@ export const getOneUserSpeechHistory = (email: string) => {
 
 export const getOneAudioRecordingFileSrcUrl = (inputZeroFileId: string) => {  // refer to recording.input[0].file._id
 	return proxyAPI.get(
-		`/api/files/${inputZeroFileId}/download`
+		`/files/${inputZeroFileId}/download`
 	);
 };
 
 
 export const downloadOneTranscriptionZipped = (batchTranscribeId: string) => {
 	return proxyAPI.get(
-		`/api/speech/${batchTranscribeId}/result`
+		`/speech/${batchTranscribeId}/result`
 	);
 };
 
 export const getOneTranscriptInJson = (batchTranscribeId: string) => {
 	return proxyAPI.get(
-		`/api/speech/${batchTranscribeId}/result/tojson`
+		`/speech/${batchTranscribeId}/result/tojson`
 	);
 };
 
 export const submitOneJob = (file: FormData) => {
 	return proxyAPI.post(
-		`/api/speech`,
+		`/speech`,
 		file,
 		{
 			headers:
