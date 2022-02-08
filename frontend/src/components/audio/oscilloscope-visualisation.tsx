@@ -36,7 +36,7 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 		canvasCtx!.fillRect(0, 0, width, height);
 		canvasCtx!.lineWidth = 3;
 		if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
-			canvasCtx!.strokeStyle = 'rgb(197, 25, 209)';
+			canvasCtx!.strokeStyle = 'rgb(138, 45, 209)';
 		} else {
 			canvasCtx!.strokeStyle = 'rgb(22, 95, 204)';
 		}

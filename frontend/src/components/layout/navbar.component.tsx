@@ -40,8 +40,8 @@ const NavBar: React.FC = () => {
 					icon='caret down'>
 					<Dropdown.Menu>
 						<Dropdown.Item as={Link} to='profile'>Profile</Dropdown.Item>
-						<Dropdown.Item as={Link} to='changename'>Change Name</Dropdown.Item>
-						<Dropdown.Item as={Link} to='changepassword'>Change Password</Dropdown.Item>
+						{/* <Dropdown.Item as={Link} to='changename'>Change Name</Dropdown.Item>
+						<Dropdown.Item as={Link} to='changepassword'>Change Password</Dropdown.Item> */}
 						<Dropdown.Item onClick={() => logout("We hope to see you again soon!")}>Log Out</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>

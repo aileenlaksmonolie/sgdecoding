@@ -29,7 +29,7 @@ export interface Transcription {
 
 const LiveDecodePage: React.FC = () => {
 	/* Declarations */
-	const IS_DEBUGGING: boolean = false;
+	const IS_DEBUGGING: boolean = true;
 
 	const [recorder, setRecorder] = useState<MyRecorder>({
 		isMicAccessGiven: false,
