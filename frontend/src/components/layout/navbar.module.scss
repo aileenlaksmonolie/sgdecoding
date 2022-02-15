@@ -27,3 +27,22 @@
 #logo::before{
 	background: none !important;
 }
+
+
+@media screen and (max-width: 480px) {
+	#menuContainer {
+		justify-content: space-between;
+	}
+	#logo{
+		margin-left: 0px !important;
+
+		img{
+			width: 10em;
+		}
+	}
+
+	#profileDropdown{
+		font-size:0.7em;
+		margin-left: 0px !important;
+	}
+}

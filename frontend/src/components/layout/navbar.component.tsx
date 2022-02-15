@@ -43,7 +43,7 @@ const NavBar: React.FC = () => {
 				onClick={handleItemClick}
 			/> */}
 
-			<Menu.Menu position='right'>
+			<Menu.Menu position='right' id={styles.profileDropdown}>
 				<Dropdown
 					trigger={(<span><Icon name='user' />{name}</span>)}
 					inline
