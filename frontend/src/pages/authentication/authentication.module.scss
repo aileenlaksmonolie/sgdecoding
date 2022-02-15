@@ -1,17 +1,23 @@
 #authContainer {
 	height: 100vh;
+	// max-height: 900px;
 	display: flex;
 	flex-direction: column;
+	justify-content: space-between;
+	margin: 0 auto;
+	overflow-y: overlay;
+	overflow-x: hidden;
 
 	#authContainerGrid {
-		// position: relative;
-		// top: 10%;
-		margin: auto;
+		position: relative;
+		top: 10%;
+		// margin: auto;
 	}
 
 	#authCard {
 		width: 400px;
 		padding: 20px;
+		box-shadow: 0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5;
 
 		.cardHeader {
 			text-align: left;
@@ -61,7 +67,7 @@
 			flex-wrap: wrap;
 			justify-content: space-between;
 			column-gap: 12px;
-			border: 1px solid #ccc;
+			// border: 1px solid #ccc;
 			border-radius: 8px 8px 0px 0px;
 			padding: 16px 24px;
 			box-shadow: 0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5;
@@ -74,16 +80,16 @@
 				margin-bottom: 2px;
 			}
 
-			a{
+			a {
 				margin: auto;
 			}
 
-			img{
+			img {
 				filter: grayscale(100%);
 				transition: filter 0.3s linear 0s;
 			}
 
-			img:hover{
+			img:hover {
 				filter: grayscale(0%);
 			}
 		}
@@ -93,4 +99,36 @@
 #forgotPasswordLink {
 	display: inline-block;
 	margin-top: 8px;
+}
+
+@media screen and (max-width: 480px) {
+	#authContainer {
+		width: 360px;
+
+		#authCard {
+			box-shadow: none;
+		}
+
+		#ackContainer {
+			#acknow {
+				box-shadow: none;
+				width: 100%;
+				padding: 16px 12px;
+				a{
+					width: 20%;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-height: 800px){
+	#authContainer{
+		min-height: 750px;
+		max-height: 100vh;
+
+		#authContainerGrid {
+			top: 5%;
+		}
+	}
 }
