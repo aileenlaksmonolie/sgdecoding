@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+import { bindActionCreators } from "redux";
 import { Container, Icon, Image, Menu, Sidebar } from "semantic-ui-react";
+import { useWindowSize } from "../../helpers/window-resize-hook";
+import { actionCreators } from "../../state";
+import { RootState } from "../../state/reducers";
 import styles from './left-nav-bar.module.scss';
 
 interface Props {
@@ -8,9 +13,30 @@ interface Props {
 }
 
 const LeftNavBar: React.FC<Props> = ({ children }) => {
-	const [visible, setVisible] = React.useState(true);
+	const { IS_OPEN } = useSelector((state: RootState) => state.navbarReducer);
+
+	const [visible, setVisible] = useState(true);
 
 	const { pathname } = useLocation();
+
+	const dispatch = useDispatch();
+	const { toggleSidebar } = bindActionCreators(actionCreators, dispatch);
+	const [width, height] = useWindowSize();
+
+	/**
+	 * Open the sidebar if screen resized to > 1200, else hide the sidebar
+	 */
+	useEffect(() => {
+		if((width < 1200 && IS_OPEN) || (width >= 1200 && !IS_OPEN))
+			toggleSidebar();
+	}, [width, height]);
+
+	/**
+	 * Display/hide the sidebar when toggled
+	 */
+	useEffect(() => {
+		setVisible(IS_OPEN);
+	}, [IS_OPEN]);
 
 	return (
 		// TODO Add Hamburger button
@@ -18,7 +44,7 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 		<Sidebar.Pushable id={styles.sidebarContainer}>
 			<Sidebar
 				as={Menu}
-				animation='overlay'
+				animation='push'
 				icon='labeled'
 				// onHide={() => setVisible(false)}
 				vertical

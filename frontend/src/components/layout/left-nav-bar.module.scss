@@ -4,6 +4,7 @@
 	#sidebar {
 		width: 256px;
 		position: sticky;
+		float: left;
 
 		a {
 			text-align: left;
@@ -59,10 +60,12 @@
 	}
 
 	#pusherContainer {
-		width: calc(100% - 256px);
+		// width: calc(100% - 256px);
 		min-height: calc(100% + 224px);
 		// left: 256px;
-		float: right;
+		// float: right;
 		padding-top: 64px;
+		overflow-x: visible;
+		overflow-y: visible;
 	}
 }

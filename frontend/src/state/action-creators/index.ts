@@ -1,20 +1,28 @@
 import { Dispatch } from "redux";
-import { TestType } from "../types/index";
+import { NavbarChangeTypes } from "../types/index";
 
-export const addToStoreTest = (num: number) => {
+// export const addToStoreTest = (num: number) => {
+// 	return (dispatch: Dispatch) => {
+// 		dispatch({
+// 			type: TestType.ADD,
+// 			payload: num
+// 		});
+// 	};
+// };
+
+// export const subToStoreTest = (num: number) => {
+// 	return (dispatch: Dispatch) => {
+// 		dispatch({
+// 			type: TestType.MINUS,
+// 			payload: num
+// 		});
+// 	};
+// };
+
+export const toggleSidebar = () => {
 	return (dispatch: Dispatch) => {
 		dispatch({
-			type: TestType.ADD,
-			payload: num
-		});
-	};
-};
-
-export const subToStoreTest = (num: number) => {
-	return (dispatch: Dispatch) => {
-		dispatch({
-			type: TestType.MINUS,
-			payload: num
+			type: NavbarChangeTypes.TOGGLE_SIDEBAR
 		});
 	};
 };

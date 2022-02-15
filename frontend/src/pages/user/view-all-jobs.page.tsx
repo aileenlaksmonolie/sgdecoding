@@ -397,7 +397,7 @@ const ViewAllJobs: React.FC = () => {
 	};
 
 	return (
-		<Container id={styles.viewAllJobsContainer}>
+		<div id={styles.viewAllJobsContainer}>
 
 			<div id={styles.headerContainer}>
 				<Header as="h2">View Previous Transcription Jobs</Header>
@@ -578,7 +578,7 @@ const ViewAllJobs: React.FC = () => {
 				totalPages={noOfPages}
 				activePage={currentPage}
 			/>
-		</Container>
+		</div>
 	);
 };
 

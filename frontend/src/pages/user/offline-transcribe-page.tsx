@@ -8,7 +8,7 @@ const OfflineTranscribePage: React.FC = () => {
 
 	// template
 	return (
-		<Container id={styles.offlineTranscribePg}>
+		<div id={styles.offlineTranscribePg}>
 			<Container text textAlign="center" id={styles.headerContainer}>
 				<Header as="h1">Offline Transcribe</Header>
 				<p>
@@ -34,7 +34,7 @@ const OfflineTranscribePage: React.FC = () => {
 			{/* </Card> */}
 
 
-		</Container>
+		</div>
 	);
 };
 

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts';
-import { Button, Card, Container, Grid, Header, Icon, Image, Statistic } from 'semantic-ui-react';
+import { Button, Card, Grid, Header, Icon, Image, Statistic } from 'semantic-ui-react';
 import { getStatistics } from '../../api/auth-api';
 import { RootState } from '../../state/reducers';
 import styles from './overview.page.module.scss';
@@ -73,7 +73,7 @@ const OverviewPage: React.FC = () => {
 	const currentTime: number = Number(moment(new Date().getTime()).format("HH"));
 	const lastLoginTime = moment(lastLogin).format("ddd D MMM YYYY, h:mma");
 
-	return (<Container>
+	return (<div>
 		<section id={styles.welcomeSection}>
 			<Header as="h1">
 				{
@@ -203,7 +203,7 @@ const OverviewPage: React.FC = () => {
 
 		{/* <span>Logged In Successfully</span>
 		<button onClick={logout}>Logout</button> */}
-	</Container>);
+	</div>);
 };
 
 export default OverviewPage;
