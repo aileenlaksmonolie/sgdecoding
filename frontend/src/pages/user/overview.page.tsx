@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts';
-import { Button, Card, Grid, Header, Icon, Image, Statistic } from 'semantic-ui-react';
+import { Button, Card, Header, Icon, Image, Statistic } from 'semantic-ui-react';
 import { getStatistics } from '../../api/auth-api';
 import { RootState } from '../../state/reducers';
 import styles from './overview.page.module.scss';
@@ -91,30 +91,36 @@ const OverviewPage: React.FC = () => {
 			</Header>
 
 			<Card fluid id={styles.welcomeCard}>
-				<Card.Content>
-					<Grid columns={2} padded>
-						<Grid.Column id={styles.welcomeTextWrapper}>
-							<Card.Header as="h3">
-								Welcome Back to SG Decoding!
-							</Card.Header>
-							<p>You last logged in on {lastLoginTime}. Click on any of the following when you are ready to start transcribing with us.</p>
-							<Button as={Link} to="/livetranscribe" primary>Live Transcribe</Button>
-							<Button as={Link} to="/offlinetranscribe" color="orange">Offline Transcribe</Button>
-						</Grid.Column>
+				<Card.Content id={styles.welcomeCardContent}>
+					{/* <Grid columns={2} padded>
+						<Grid.Column id={styles.welcomeTextWrapper}> */}
+							<div id={styles.welcomeTextWrapper}>
+								<Card.Header as="h3">
+									Welcome Back to SG Decoding!
+								</Card.Header>
+								<p>You last logged in on {lastLoginTime}. Click on any of the following when you are ready to start transcribing with us.</p>
+								<div id={styles.welcomeBtnContainer}>
+									<Button as={Link} to="/livetranscribe" primary id={styles.liveTransBtn}>Live Transcribe</Button>
+									<Button as={Link} to="/offlinetranscribe" color="orange">Offline Transcribe</Button>
+								</div>
+							</div>
+						{/* </Grid.Column> */}
 
-						<Grid.Column>
-							<Image src="/images/HeaderImg_male.svg" alt="header image male" />
-						</Grid.Column>
-					</Grid>
+						{/* <Grid.Column> */}
+							{/* <div> */}
+								<Image src="/images/HeaderImg_male.svg" alt="header image male" />
+							{/* </div> */}
+						{/* </Grid.Column> */}
+					{/* </Grid> */}
 				</Card.Content>
 			</Card>
 		</section>
 
 		<section id={styles.overviewSection}>
 			<Header as="h2">Overview</Header>
-			<Card.Group itemsPerRow={4} id={styles.overviewCardGroup}>
+			<Card.Group id={styles.overviewCardGroup}>
 				{/* First Card: */}
-				<Card>
+				<Card className={styles.overviewCard}>
 					<Card.Content className={styles.overviewCardContent}>
 						<Icon.Group size='huge' className={styles.purpIcon}>
 							<Icon size='big' name='circle' />
@@ -127,7 +133,7 @@ const OverviewPage: React.FC = () => {
 					</Card.Content>
 				</Card>
 				{/* Second Card:  */}
-				<Card>
+				<Card className={styles.overviewCard}>
 					<Card.Content className={styles.overviewCardContent}>
 						<Icon.Group size='huge' className={styles.blueIcon}>
 							<Icon size='big' name='circle' />
@@ -140,7 +146,7 @@ const OverviewPage: React.FC = () => {
 					</Card.Content>
 				</Card>
 				{/* Third Card:  */}
-				<Card>
+				<Card className={styles.overviewCard}>
 					<Card.Content className={styles.overviewCardContent}>
 						<Icon.Group size='huge' className={styles.redIcon}>
 							<Icon size='big' name='circle' />
