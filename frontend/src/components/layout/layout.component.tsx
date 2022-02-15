@@ -15,7 +15,7 @@ const Layout: React.FC<Props> = ({ children }) => {
 			<NavBar />
 			<LeftNavBar> 
 				{/* TOREFACTOR  */}
-				<main> 
+				<main id={classes.main}> 
 					{children}
 				</main>
 			</LeftNavBar>

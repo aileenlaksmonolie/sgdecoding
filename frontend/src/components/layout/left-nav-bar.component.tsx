@@ -44,7 +44,7 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 		<Sidebar.Pushable id={styles.sidebarContainer}>
 			<Sidebar
 				as={Menu}
-				animation='push'
+				animation='overlay'
 				icon='labeled'
 				// onHide={() => setVisible(false)}
 				vertical
@@ -120,7 +120,7 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 			</Sidebar>
 
 			<Sidebar.Pusher id={styles.pusherContainer}>
-				<Container>
+				<Container id={styles.mainContentContainer}>
 					{children}
 				</Container>
 			</Sidebar.Pusher>

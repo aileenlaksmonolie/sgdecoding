@@ -1,5 +1,7 @@
 #sidebarContainer {
 	height: calc(100vh - 60px);
+	display: flex;
+
 
 	#sidebar {
 		width: 256px;
@@ -60,12 +62,32 @@
 	}
 
 	#pusherContainer {
-		// width: calc(100% - 256px);
+    width: calc(100% - 256px);
+    position: relative;
+    // left: 256px;
 		min-height: calc(100% + 224px);
-		// left: 256px;
 		// float: right;
 		padding-top: 64px;
 		overflow-x: visible;
 		overflow-y: visible;
+	}
+
+	#mainContentContainer{
+		// margin-left: 120px;
+	}
+}
+
+@media screen and (max-width: 1200px){
+	#sidebarContainer{
+
+		#sidebar{
+
+		}
+
+		#pusherContainer{
+			position: absolute;
+			top: 0px;
+			width: 100%;
+		}
 	}
 }
