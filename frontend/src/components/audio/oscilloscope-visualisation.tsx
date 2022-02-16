@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useWindowSize } from "../../helpers/window-resize-hook";
 import { MyRecorder, RecordingStates } from "../../pages/user/live-decode.page";
 
 
@@ -14,11 +15,13 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 	var analyser = audioContext!.createAnalyser();
 	var dataArray = useRef(new Uint8Array());
 
-	const containerRef = useRef<HTMLDivElement>(null);
-	const canvasRef = useRef<HTMLCanvasElement>(null!);
+	// const containerRef = useRef<HTMLDivElement>(null);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [canvasCtx, setCanvasCtx] = useState<CanvasRenderingContext2D | null>();
 	const [width, setWidth] = useState(0);
 	const [height, setHeight] = useState(0);
+	const [winWidth, winHeight] = useWindowSize();
+
 
 	const draw = useCallback(() => {
 		if (canvasRef.current)
@@ -34,7 +37,7 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 		}
 
 		canvasCtx!.fillRect(0, 0, width, height);
-		canvasCtx!.lineWidth = 3;
+		canvasCtx!.lineWidth = 2;
 		if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
 			canvasCtx!.strokeStyle = 'rgb(138, 45, 209)';
 		} else {
@@ -62,13 +65,23 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isRecording, height, width, canvasCtx]);
 
+
 	useEffect(() => {
-		setWidth(containerRef.current!.clientWidth);
-		setHeight(containerRef.current!.clientHeight);
-	}, []);
+		// console.log("[DEBUG] running useffect");
+		// window.addEventListener('resize', handleResize, false);
+		if (canvasRef.current != null) {
+			// set the pixels drawn to match the space allocated
+			canvasRef.current.height = canvasRef.current.clientHeight;
+			canvasRef.current.width = canvasRef.current.clientWidth;
+			setWidth(canvasRef.current.width);
+			setHeight(canvasRef.current.height);
+		}
+
+	}, [winWidth, winHeight]);
 
 	useEffect(() => {
 		if (width !== 0 && height !== 0) {
+			// console.log("main useEffect");
 			// console.log(canvasRef.current);
 			// console.log(canvasRef.current?.width);
 
@@ -91,7 +104,7 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 			distortion.connect(gainNode);
 			gainNode.connect(audioContext.destination);
 
-			setCanvasCtx(canvasRef.current.getContext("2d"));
+			setCanvasCtx(canvasRef.current!.getContext("2d"));
 			if (canvasCtx) {
 				canvasCtx!.clearRect(0, 0, width, height);
 				draw();
@@ -106,26 +119,22 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 
 
 	return (
-		<div
-			style={{
-				width: '100%',
-				height: '100%',
-				minHeight: '200px'
-			}}
-			ref={containerRef}>
-			{
-				width !== 0
-					?
-					<canvas
-						ref={canvasRef as React.MutableRefObject<HTMLCanvasElement | null>}
-						width={width}
-						height={height}
-						style={{ boxShadow: '0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5' }}
-					></canvas>
-					:
-					<p>Loading...</p>
-			}
-		</div>
+
+		// {
+		// 	 	width !== 0
+		// 	 		?
+
+		// <div style={{ width: '100%', height: '100%' }} ref={containerRef}>
+			<canvas
+				ref={canvasRef as React.MutableRefObject<HTMLCanvasElement | null>}
+				// width={width}
+				// height={height}
+				style={{ width: '100%', height: '100%', maxHeight: '200px', boxShadow: '0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5' }}
+			></canvas>
+		// </div>
+		// 	  		:
+		// 	  		<p>Loading...</p>
+		// 	}
 	);
 };
 
