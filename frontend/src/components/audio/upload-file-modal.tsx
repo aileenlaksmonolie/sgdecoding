@@ -1,19 +1,15 @@
 import React, { useState } from "react";
 import { useSelector } from 'react-redux';
-import { RootState } from '../../state/reducers';
 import {
 	Button,
 	Checkbox,
 	Dropdown,
-	DropdownProps,
-	Form,
-	Grid,
+	DropdownProps, Grid,
 	GridColumn,
-	Icon,
-	Modal,
-	Progress
+	Icon, Progress
 } from "semantic-ui-react";
 import { submitOneJob } from "../../api/batch-transcribe-api";
+import { RootState } from '../../state/reducers';
 
 
 const languageOptions = [
@@ -95,23 +91,24 @@ const ModalUploadFile: React.FC = () => {
     setUploadArray([]);
     setProgressBar([]);
   };
-  function exampleReducer(state: any, action: any) {
-      switch (action.type) {
-        case "close":
-          clearState();
-          return { open: false };
-        case "open":
-          return { open: true, size: action.size };
-        default:
-          throw new Error("Unsupported action...");
-      }
-    }
+
+  // function exampleReducer(state: any, action: any) {
+  //     switch (action.type) {
+  //       case "close":
+  //         clearState();
+  //         return { open: false };
+  //       case "open":
+  //         return { open: true, size: action.size };
+  //       default:
+  //         throw new Error("Unsupported action...");
+  //     }
+  //   }
   
-  const [state, dispatch] = React.useReducer(exampleReducer, {
-    open: false,
-    size: undefined,
-  });
-  const { open, size } = state;
+  // const [state, dispatch] = React.useReducer(exampleReducer, {
+  //   open: false,
+  //   size: undefined,
+  // });
+  // const { open, size } = state;
 
   const createProgressBar = async (
     uploadPercent: number,
@@ -261,16 +258,16 @@ const ModalUploadFile: React.FC = () => {
 
   return (
     <div>
-      <Button onClick={() => dispatch({ type: "open", size: "large" })}>
+      {/* <Button onClick={() => dispatch({ type: "open", size: "large" })}>
         Upload Files
-      </Button>
-      <Modal
+      </Button> */}
+      {/* <Modal
         as={Form}
         size={size}
         open={open}
-        // onClose={() => dispatch({ type: "close" })}
-      >
-        <Modal.Header>Upload Audio Files</Modal.Header>
+      > */}
+        { /* onClose={() => dispatch({ type: "close" })} */}
+        {/* <Modal.Header>Upload Audio Files</Modal.Header> */}
         {/* <Modal.Content scrolling> */}
         <Grid padded textAlign="center" container>
           <Grid.Row columns={6}>
@@ -384,14 +381,14 @@ const ModalUploadFile: React.FC = () => {
         <input type="file" id="file" hidden onChange={fileChange} />
         <input type="file" id="file" hidden />
         {/* </Modal.Content> */}
-        <Modal.Actions>
-          <Button
+        {/* <Modal.Actions> */}
+          {/* <Button
             disabled={cancelDisabled}
             negative={uploadAttempt? false: true}
             onClick={() => dispatch({ type: "close" })}
           >
             {uploadAttempt? "Ok": "Cancel"}
-          </Button>
+          </Button> */}
           {/* <Button positive onClick={() =>
             dispatch({ type: "close" })}>
             Upload
@@ -399,11 +396,11 @@ const ModalUploadFile: React.FC = () => {
           <Button disabled={uploadDisabled} positive onClick={uploadFile}>
             Upload
           </Button>
-        </Modal.Actions>
+        {/* </Modal.Actions> */}
         {/* <Dimmer active>
       <Loader />
     </Dimmer> */}
-      </Modal>
+      {/* </Modal> */}
     </div>
   );
 };

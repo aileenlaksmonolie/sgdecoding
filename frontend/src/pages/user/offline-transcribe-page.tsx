@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Header } from "semantic-ui-react";
+import ModalUploadFile from "../../components/audio/upload-file-modal";
 import styles from './offline-transcribe-page.module.scss';
 
 
@@ -17,6 +18,9 @@ const OfflineTranscribePage: React.FC = () => {
 					on the length of audio file.
 				</p>
 			</Container>
+
+			<ModalUploadFile></ModalUploadFile>
+
 
 			{/* <Card fluid>
 				<Card.Description textAlign="center">
