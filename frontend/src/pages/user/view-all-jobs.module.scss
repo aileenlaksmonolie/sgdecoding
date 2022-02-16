@@ -1,24 +1,25 @@
 #viewAllJobsContainer {
-	#headerContainer{
+	#headerContainer {
 		display: block;
 
-		h2{
+		h2 {
 			display: inline-block;
 			clear: both;
 		}
 
-		#search{
+		#search {
 			display: block;
 			float: right;
 		}
 	}
 
-	#filterContainer{
+	#filterContainer {
 		clear: both;
 	}
 
 	#listPaginator {
 		float: right;
+		margin-bottom: 80px;
 	}
 
 	.historyList {
@@ -28,13 +29,13 @@
 		border-radius: 8px;
 		box-shadow: 0px 2px 2px rgb(0 0 0 / 25%);
 
-		#notFoundContainer{
+		#notFoundContainer {
 			color: rgb(148, 148, 148);
 			display: flex;
 			align-items: center;
 			flex-direction: column;
 
-			p{
+			p {
 				margin-top: 24px;
 			}
 		}
@@ -86,10 +87,136 @@
 		display: inline-block;
 		margin-left: 16px;
 	}
-
 }
 
 // Have to be placed outside as it is rendered separetely
 #dateFilterPopup {
 	width: 200px;
+}
+
+@media screen and (max-width: 992px) {
+	#viewAllJobsContainer {
+		.historyItemIcon {
+			i:nth-child(1) {
+				font-size: 1.3em;
+			}
+
+			i:nth-child(2) {
+				font-size: 0.55em;
+			}
+		}
+
+		.historyItemContent {
+			max-width: 45%;
+			margin-left: 12px;
+
+			p {
+				font-size: 0.8em;
+			}
+			p:nth-child(2) {
+				font-size: 0.7em;
+				overflow-x: auto;
+				display: inline-block;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+	#viewAllJobsContainer {
+		.historyList {
+			padding: 16px;
+		}
+
+		.historyItemBtns button {
+			font-size: 0.7em;
+		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+	#viewAllJobsContainer {
+		.historyItemContent {
+			max-width: 35%;
+		}
+	}
+}
+
+@media screen and (max-width: 518px) {
+	#viewAllJobsContainer {
+		.historyItemContent {
+			max-width: 55%;
+		}
+
+		.historyItemBtns {
+			display: flex;
+			flex-direction: column;
+			row-gap: 8px;
+		}
+	}
+}
+
+@media screen and (max-width: 425px) {
+	#viewAllJobsContainer {
+		#headerContainer{
+			text-align: center;
+			margin-bottom: 30px;
+
+			h2{
+				display: block;
+				margin-bottom: 20px;
+			}
+
+			#search{
+				display: block;
+				float: none;
+
+			}
+		}
+
+		.historyItemContent {
+			margin-top:12px;
+			max-width: 45%;
+		}
+
+		.historyItemBtns {
+			margin-top: 8px;
+			margin-bottom: 12px;
+		}
+
+		#listPaginator {
+			font-size: 0.9em;
+
+			a{
+				display: inline-block;
+				padding: 0.7em 0.85em;
+				min-width: 2.85em;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 360px) {
+	#viewAllJobsContainer {
+		.historyItemContent {
+			max-width: 70%;
+			text-align: center;
+		}
+
+		.historyItemBtns {
+			display: block;
+			margin-bottom: 16px;
+		}
+
+		#listPaginator {
+			// float: none;
+			font-size: 0.8em;
+
+			a{
+				display: inline-block;
+				padding: 0.6em 0.7em;
+				min-width: 2.75em;
+			}
+		}
+	}
 }
