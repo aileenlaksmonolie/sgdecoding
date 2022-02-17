@@ -72,9 +72,6 @@
 		overflow-y: visible;
 	}
 
-	#mainContentContainer{
-		// margin-left: 120px;
-	}
 }
 
 @media screen and (max-width: 1200px){
@@ -89,5 +86,13 @@
 			top: 0px;
 			width: 100%;
 		}
+	}
+}
+
+@media screen and (min-width: 1200px) and (max-width: 1400px){
+	#sidebarContainer #pusherContainer #mainContentContainer{
+		// margin-left: 120px;
+		padding-left: 64px;
+		padding-right: 64px;
 	}
 }
