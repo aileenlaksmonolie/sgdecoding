@@ -15,7 +15,7 @@ interface Props {
 const LeftNavBar: React.FC<Props> = ({ children }) => {
 	const { IS_OPEN } = useSelector((state: RootState) => state.navbarReducer);
 
-	const [visible, setVisible] = useState(true);
+	const [visible, setVisible] = useState(false);
 
 	const { pathname } = useLocation();
 
