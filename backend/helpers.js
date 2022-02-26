@@ -35,4 +35,15 @@ const ParseSRT_JSON = function () {
 	}
 }();
 
-module.exports = { ParseSRT_JSON };
+const Statistics = require("./models/statistics.model");
+async function setUpdatedFalse(userID) {
+  try {
+    const update = { updated: false };
+    await Statistics.findByIdAndUpdate(userID, update);
+  } catch(err) {
+    console.log("set update to false failed");
+    return err;
+  }
+}
+
+module.exports = { ParseSRT_JSON, setUpdatedFalse };
