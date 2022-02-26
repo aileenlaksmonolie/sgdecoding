@@ -64,11 +64,11 @@ proxy.on("close", function (res, socket, head) {
 
 // Mongoose (MongoDB) Database
 mongoose.connect(
-  //"mongodb+srv://terry:node1234@cluster0.m84iv.mongodb.net/SG_Decoding?retryWrites=true&w=majority"
+  "mongodb+srv://terry:node1234@cluster0.m84iv.mongodb.net/SG_Decoding?retryWrites=true&w=majority"
   //"mongodb://localhost:27017/SG_Decoding?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false"
   //"mongodb://localhost:27017/SG_Decoding"
-  //"mongodb://mongo:27017/SG_Decoding"
-  process.env.DB_CONNECTION_STRING
+  // "mongodb://mongo:27017/SG_Decoding"
+  // process.env.DB_CONNECTION_STRING
 );
 const db = mongoose.connection;
 
@@ -81,6 +81,8 @@ db.once("open", function () {
 app.use(cors());
 app.use(express.json());
 app.use(compression());
+
+app.use(require('./routes'));
 
 app.listen(2000, () => {
   console.log("Server started on port 2000");
@@ -105,116 +107,116 @@ app.get("/users", async (request, response) => {
   }
 });
 
-app.post("/auth/register", async (req, res) => {
-  let newUser = req.body;
-  await axios
-    .post(
-      "https://gateway.speechlab.sg/auth/register",
-      { name: newUser.name, email: newUser.email, password: newUser.password },
-      { responseType: "json" }
-    )
-    .then(async function (gatewayResponse) {
-      console.log("register success");
-      console.log(gatewayResponse.status);
-      await User.create({
-        _id: gatewayResponse.data._id,
-        email: gatewayResponse.data.email,
-        role: gatewayResponse.data.role,
-        last_login: gatewayResponse.data.createdAt,
-      });
-      res.status(gatewayResponse.status).json(gatewayResponse.data);
-    })
-    .catch(function (error) {
-      console.log("register failed");
-      console.log(error);
-      res.status(error.response.data.statusCode).json(error.response.data);
-    });
-  //res.json(apiResponse.data)
-});
+// app.post("/auth/register", async (req, res) => {
+//   let newUser = req.body;
+//   await axios
+//     .post(
+//       "https://gateway.speechlab.sg/auth/register",
+//       { name: newUser.name, email: newUser.email, password: newUser.password },
+//       { responseType: "json" }
+//     )
+//     .then(async function (gatewayResponse) {
+//       console.log("register success");
+//       console.log(gatewayResponse.status);
+//       await User.create({
+//         _id: gatewayResponse.data._id,
+//         email: gatewayResponse.data.email,
+//         role: gatewayResponse.data.role,
+//         last_login: gatewayResponse.data.createdAt,
+//       });
+//       res.status(gatewayResponse.status).json(gatewayResponse.data);
+//     })
+//     .catch(function (error) {
+//       console.log("register failed");
+//       console.log(error);
+//       res.status(error.response.data.statusCode).json(error.response.data);
+//     });
+//   //res.json(apiResponse.data)
+// });
 
-app.post("/auth/login", async (req, res) => {
-  let userCreds = req.body;
-  console.log("Email: " + userCreds.email);
-  console.log("PW: " + userCreds.password);
-  await axios
-    .post(
-      "https://gateway.speechlab.sg/auth/login",
-      { email: userCreds.email, password: userCreds.password },
-      { responseType: "json" }
-    )
-    .then(async (response) => {
-      console.log("Login Success");
-      const userLastLogin = await getLoginAndUpdate(userCreds.email);
-      res.status(response.status).json(
-        {
-          accessToken: response.data.accessToken,
-          lastLogin: userLastLogin
-        });
-    })
-    .catch((error) => {
-      console.log("Login Failed");
-      console.log(error.response.status);
-      res.status(error.response.status).json(error.response.data);
-    });
-});
+// app.post("/auth/login", async (req, res) => {
+//   let userCreds = req.body;
+//   console.log("Email: " + userCreds.email);
+//   console.log("PW: " + userCreds.password);
+//   await axios
+//     .post(
+//       "https://gateway.speechlab.sg/auth/login",
+//       { email: userCreds.email, password: userCreds.password },
+//       { responseType: "json" }
+//     )
+//     .then(async (response) => {
+//       console.log("Login Success");
+//       const userLastLogin = await getLoginAndUpdate(userCreds.email);
+//       res.status(response.status).json(
+//         {
+//           accessToken: response.data.accessToken,
+//           lastLogin: userLastLogin
+//         });
+//     })
+//     .catch((error) => {
+//       console.log("Login Failed");
+//       console.log(error.response.status);
+//       res.status(error.response.status).json(error.response.data);
+//     });
+// });
 
-app.post("/auth/change-password", async (req, res) => {
-  let newPasswordRequest = req.body;
-  await axios
-    .post(
-      "https://gateway.speechlab.sg/auth/change-password",
-      newPasswordRequest,
-      { responseType: "json" }
-    )
-    .then((response) => {
-      console.log("change pw success");
-      console.log(response.status);
-      res.status(response.status).json(response.data);
-    })
-    .catch((error) => {
-      console.log("change pw failed");
-      console.log(error.response.status);
-      res.status(error.response.status).json(error.response.data);
-    });
-});
+// app.post("/auth/change-password", async (req, res) => {
+//   let newPasswordRequest = req.body;
+//   await axios
+//     .post(
+//       "https://gateway.speechlab.sg/auth/change-password",
+//       newPasswordRequest,
+//       { responseType: "json" }
+//     )
+//     .then((response) => {
+//       console.log("change pw success");
+//       console.log(response.status);
+//       res.status(response.status).json(response.data);
+//     })
+//     .catch((error) => {
+//       console.log("change pw failed");
+//       console.log(error.response.status);
+//       res.status(error.response.status).json(error.response.data);
+//     });
+// });
 
-app.post("/auth/forgot-password", async (req, res) => {
-  let email = req.body;
-  await axios
-    .post("https://gateway.speechlab.sg/auth/forgot-password", email, {
-      responseType: "json",
-    })
-    .then((response) => {
-      console.log("forgot pw success");
-      console.log(response.status);
-      res.status(response.status).json(response.data);
-    })
-    .catch((error) => {
-      console.log("forget pw failed");
-      console.log(error.response.status);
-      res.status(error.response.status).json(error.response.data);
-    });
-});
+// app.post("/auth/forgot-password", async (req, res) => {
+//   let email = req.body;
+//   await axios
+//     .post("https://gateway.speechlab.sg/auth/forgot-password", email, {
+//       responseType: "json",
+//     })
+//     .then((response) => {
+//       console.log("forgot pw success");
+//       console.log(response.status);
+//       res.status(response.status).json(response.data);
+//     })
+//     .catch((error) => {
+//       console.log("forget pw failed");
+//       console.log(error.response.status);
+//       res.status(error.response.status).json(error.response.data);
+//     });
+// });
 
-app.post("/auth/reset-password", async (req, res) => {
-  let newPasswordRequest = req.body;
-  await axios
-    .post(
-      "https://gateway.speechlab.sg/auth/reset-password",
-      newPasswordRequest,
-      { responseType: "json" }
-    )
-    .then((response) => {
-      console.log("reset pw success");
-      console.log(response.status);
-      res.status(response.status).json(response.data);
-    })
-    .catch((error) => {
-      console.log("reset pw failed");
-      console.log(error.response.status);
-      res.status(error.response.status).json(error.response.data);
-    });
-});
+// app.post("/auth/reset-password", async (req, res) => {
+//   let newPasswordRequest = req.body;
+//   await axios
+//     .post(
+//       "https://gateway.speechlab.sg/auth/reset-password",
+//       newPasswordRequest,
+//       { responseType: "json" }
+//     )
+//     .then((response) => {
+//       console.log("reset pw success");
+//       console.log(response.status);
+//       res.status(response.status).json(response.data);
+//     })
+//     .catch((error) => {
+//       console.log("reset pw failed");
+//       console.log(error.response.status);
+//       res.status(error.response.status).json(error.response.data);
+//     });
+// });
 
 app.post("/users/change-name", async (req, res) => {
   //need to re-login for changed name to reflect
@@ -450,19 +452,19 @@ app.post("/users/statistics", async (req, res) => {
   }
 });
 
-async function getLoginAndUpdate(userEmail) {
-  try {
-    const filter = { email: userEmail };
-    const update = { last_login: new Date() };
-    const user = await User.findOneAndUpdate(filter, update);
-    console.log("last login updated");
-    return user.last_login; // previous value before update
-  } 
-  catch(err) {
-    console.log("last login update failed");
-    return err;
-  }
-}
+// async function getLoginAndUpdate(userEmail) {
+//   try {
+//     const filter = { email: userEmail };
+//     const update = { last_login: new Date() };
+//     const user = await User.findOneAndUpdate(filter, update);
+//     console.log("last login updated");
+//     return user.last_login; // previous value before update
+//   } 
+//   catch(err) {
+//     console.log("last login update failed");
+//     return err;
+//   }
+// }
 
 async function getStats(userID) {
   try {
