@@ -53,7 +53,7 @@ const LiveDecodeBtns: React.FC<Props> = (
 		
 	*/
 	const onStartClick = () => {
-		// console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING);
+		console.log("[DEBUG] Are you in Debug mode: " + IS_DEBUGGING);
 		if (!IS_DEBUGGING) {
 			webSocketConn?.close();
 			const conn = liveDecodeSocket(token, selectedLangModel);

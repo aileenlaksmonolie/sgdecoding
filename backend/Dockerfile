@@ -11,7 +11,7 @@ COPY package.json .
 
 RUN npm ci
 
-# EXPOSE 2000
+EXPOSE 2000 8080
 
 COPY . .
 

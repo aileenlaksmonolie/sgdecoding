@@ -9,20 +9,34 @@ services:
       context: ./backend
       dockerfile: ./Dockerfile
     image: "sgdecode_backend"
-    # ports:
-    #   - "2000:2000"
+    ports:
+      - "2000:2000"
+      - "8080:8080"
     networks:
       - sgdecodenet
-    
+    # links:
+    #   - mongo
+    depends_on: 
+      - mongo
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:  
+      - mongo:/data/db
+    networks:
+      - sgdecodenet
+
   frontend:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
     image: "sgdecode_frontend"
-    # ports:
-    #   - "80:80"
-    links:
-      - "backend:be"
+    ports:
+      - "3000:3000"
+    # links:
+    #   - "backend:be"
     networks:
       - sgdecodenet
   
@@ -42,3 +56,6 @@ services:
 
 networks:
   sgdecodenet:
+    driver: bridge
+volumes:
+  mongo: 

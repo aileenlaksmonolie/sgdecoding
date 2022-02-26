@@ -16,6 +16,7 @@ const User = require("./models/user.model");
 const Statistics = require("./models/statistics.model");
 const httpProxy = require("http-proxy");
 const jwt_decode = require("jwt-decode");
+require('dotenv').config();
 
 // Live Transcribe Proxy
 var liveJobOpen = false;
@@ -63,7 +64,11 @@ proxy.on("close", function (res, socket, head) {
 
 // Mongoose (MongoDB) Database
 mongoose.connect(
-  "mongodb+srv://terry:node1234@cluster0.m84iv.mongodb.net/SG_Decoding?retryWrites=true&w=majority"
+  //"mongodb+srv://terry:node1234@cluster0.m84iv.mongodb.net/SG_Decoding?retryWrites=true&w=majority"
+  //"mongodb://localhost:27017/SG_Decoding?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false"
+  //"mongodb://localhost:27017/SG_Decoding"
+  //"mongodb://mongo:27017/SG_Decoding"
+  process.env.DB_CONNECTION_STRING
 );
 const db = mongoose.connection;
 
