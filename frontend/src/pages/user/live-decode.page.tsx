@@ -198,17 +198,17 @@ const LiveDecodePage: React.FC = () => {
 		return <Container></Container>;
 	if (recorder.isMicAccessGiven === false)
 		return (
-			<Container textAlign="center">
+			<div style={{textAlign: 'center'}}>
 				<NoMicAccess errorMsg={recorder.errorMsg ? recorder.errorMsg : ''} />
-			</Container>
+			</div>
 		);
 	else
 		return (
-			<Container id={styles.livePgContainer} textAlign="center">
-				<Container id={styles.headerContainer}>
+			<div id={styles.livePgContainer}>
+				<div id={styles.headerContainer}>
 					<Header as="h1">Live Transcribe</Header>
 					<p>Live decoding transcribes your speech into text as you speak into the microphone. Click the start button to begin decoding!</p>
-				</Container>
+				</div>
 				<Card
 					// color={recorder.isRecording === RecordingStates.IN_PROGRESS ? "green" : "purple"}
 					fluid
@@ -324,7 +324,7 @@ const LiveDecodePage: React.FC = () => {
 						</Grid>
 					</Card.Content>
 				</Card>
-			</Container >
+			</div>
 		);
 };
 

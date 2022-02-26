@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useWindowSize } from "../../helpers/window-resize-hook";
 import { MyRecorder, RecordingStates } from "../../pages/user/live-decode.page";
 
 interface Props {
@@ -11,8 +12,9 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 	if (audioContext === null || stream === null)
 		throw new Error("AudioContext or stream not found, unable to visualise.");
 
-	const containerRef = useRef<HTMLDivElement>(null);
-	const canvasRef = useRef<HTMLCanvasElement>(null!);
+	// const containerRef = useRef<HTMLDivElement>(null);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const [winWidth, winHeight] = useWindowSize();
 
 	var analyser = audioContext!.createAnalyser();
 
@@ -26,7 +28,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 	const draw = useCallback(() => {
 		// console.log("drawing...");
-		if(canvasRef.current) // Stop Recursive Call when component unmounts
+		if (canvasRef.current) // Stop Recursive Call when component unmounts
 			requestAnimationFrame(draw);
 
 		var bufferLength: number = analyser.frequencyBinCount;
@@ -34,11 +36,11 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 		if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
 			canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
-		}else{
+		} else {
 			canvasCtx!.fillStyle = 'rgb(252, 255, 252)';
 		}
 		canvasCtx!.fillRect(0, 0, width, height);
-		var barWidth = ((width - (bufferLength-1)) / bufferLength);
+		var barWidth = ((width - (bufferLength - 1)) / bufferLength);
 		var barHeight;
 		var x = 0;
 
@@ -62,9 +64,14 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 
 	useEffect(() => {
-		setWidth(containerRef.current!.clientWidth);
-		setHeight(containerRef.current!.clientHeight);
-	}, []);
+		if (canvasRef.current != null) {
+			// set the pixels drawn to match the space allocated
+			canvasRef.current.height = canvasRef.current.clientHeight;
+			canvasRef.current.width = canvasRef.current.clientWidth;
+			setWidth(canvasRef.current.width);
+			setHeight(canvasRef.current.height);
+		}
+	}, [winWidth, winHeight]);
 
 
 	useEffect(() => {
@@ -92,7 +99,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 			gainNode.connect(audioContext.destination);
 
 			// console.log(canvasRef.current)
-			setCanvasCtx(canvasRef.current.getContext("2d"));
+			setCanvasCtx(canvasRef.current!.getContext("2d"));
 			if (canvasCtx) {
 				canvasCtx.clearRect(0, 0, width, height);
 				draw();
@@ -106,26 +113,26 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 	}, [stream, audioContext, draw, width, height, canvasCtx]); // Do not add analyser
 
 	return (
-		<div
-			style={{
-				width: '100%',
-				height: '100%',
-				minHeight: '200px'
-			}}
-			ref={containerRef}>
-			{
-				width !== 0
-					?
-					<canvas
-						ref={canvasRef as React.MutableRefObject<HTMLCanvasElement | null>}
-						width={width}
-						height={height}
-						style={{ boxShadow: '0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5' }}
-					></canvas>
-					:
-					<p>Loading...</p>
-			}
-		</div>
+		// <div
+		// 	style={{
+		// 		width: '100%',
+		// 		height: '100%',
+		// 		minHeight: '200px'
+		// 	}}
+		// 	ref={containerRef}>
+		// 	{
+		// 		width !== 0
+		// 			?
+		<canvas
+			ref={canvasRef as React.MutableRefObject<HTMLCanvasElement | null>}
+			// width={width}
+			// height={height}
+			style={{ width: '100%', height: '100%', maxHeight: '200px', boxShadow: '0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5' }}
+		></canvas>
+		// 			:
+		// 			<p>Loading...</p>
+		// 	}
+		// </div>
 	);
 };
 

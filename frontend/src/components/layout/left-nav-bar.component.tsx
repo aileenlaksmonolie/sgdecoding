@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import { Container, Icon, Image, Menu, Sidebar } from "semantic-ui-react";
+import { bindActionCreators } from "redux";
+import { Container, Icon, Image, Menu, Ref, Sidebar } from "semantic-ui-react";
+import { useWindowSize } from "../../helpers/window-resize-hook";
+import { actionCreators } from "../../state";
+import { RootState } from "../../state/reducers";
 import styles from './left-nav-bar.module.scss';
 
 interface Props {
@@ -8,9 +13,37 @@ interface Props {
 }
 
 const LeftNavBar: React.FC<Props> = ({ children }) => {
-	const [visible, setVisible] = React.useState(true);
+	const { IS_OPEN } = useSelector((state: RootState) => state.navbarReducer);
+
+	const [visible, setVisible] = useState(false);
 
 	const { pathname } = useLocation();
+
+	const dispatch = useDispatch();
+	const { toggleSidebar } = bindActionCreators(actionCreators, dispatch);
+	const [width, height] = useWindowSize();
+	const closeableRef = useRef(null!);
+
+	const onMenuItemClick = () => {
+		if(width < 1200){
+			setVisible(false);
+		}
+	};
+
+	/**
+	 * Open the sidebar if screen resized to > 1200, else hide the sidebar
+	 */
+	useEffect(() => {
+		if ((width < 1200 && IS_OPEN) || (width >= 1200 && !IS_OPEN))
+			toggleSidebar();
+	}, [width, height]);
+
+	/**
+	 * Display/hide the sidebar when toggled
+	 */
+	useEffect(() => {
+		setVisible(IS_OPEN);
+	}, [IS_OPEN]);
 
 	return (
 		// TODO Add Hamburger button
@@ -20,16 +53,17 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 				as={Menu}
 				animation='overlay'
 				icon='labeled'
-				// onHide={() => setVisible(false)}
+				onHide={() => setVisible(false)}
 				vertical
 				visible={visible}
-				// width='wide'
+				target={closeableRef}
 				id={styles.sidebar}
 			>
 				<Menu.Item
 					as={Link}
 					to="/"
 					active={pathname === '/'}
+					onClick={onMenuItemClick}
 					className={pathname === '/' ? styles.active : ''}
 				>
 					<Icon name='home' />
@@ -39,6 +73,7 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 				<Menu.Item
 					as={Link}
 					to="/viewalljobs"
+					onClick={onMenuItemClick}
 					active={pathname === '/viewalljobs'}
 					className={pathname === '/viewalljobs' ? styles.active : ''}
 				>
@@ -49,6 +84,7 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 				<Menu.Item
 					as={Link}
 					to="/livetranscribe"
+					onClick={onMenuItemClick}
 					active={pathname === '/livetranscribe'}
 					className={pathname === '/livetranscribe' ? styles.active : ''}
 				>
@@ -59,6 +95,7 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 				<Menu.Item
 					as={Link}
 					to="/offlinetranscribe"
+					onClick={onMenuItemClick}
 					active={pathname === '/offlinetranscribe'}
 					className={pathname === '/offlinetranscribe' ? styles.active : ''}
 				>
@@ -93,8 +130,11 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 				</Menu.Item>
 			</Sidebar>
 
-			<Sidebar.Pusher id={styles.pusherContainer}>
-				<Container>
+			<Ref innerRef={closeableRef}>
+				<div id={styles.closeableArea}></div>
+			</Ref>
+			<Sidebar.Pusher id={styles.pusherContainer} dimmed={width < 1200 ? visible : undefined}>
+				<Container id={styles.mainContentContainer}>
 					{children}
 				</Container>
 			</Sidebar.Pusher>

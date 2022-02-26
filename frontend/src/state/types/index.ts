@@ -4,6 +4,10 @@ export enum TestType{
 	MINUS = "minus"
 }
 
+export enum NavbarChangeTypes{
+	TOGGLE_SIDEBAR = 'togglesidebar'
+}
+
 export enum AuthTypes {
 	RMB_ME = 'rmbMe',
 	LOGIN_SUCCESS = 'loginSuccess',

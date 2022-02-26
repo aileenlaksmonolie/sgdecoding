@@ -249,7 +249,7 @@ const ViewAllJobs: React.FC = () => {
 			let startIdx = (ITEMS_PER_PAGE * (currentPage - 1));
 			let endIdx = ((currentPage * ITEMS_PER_PAGE));
 			setItemsToDisplay(history.slice(startIdx, endIdx));
-			
+
 		}
 	}, [history, totalHistory]); // history, totalHistory
 
@@ -305,7 +305,7 @@ const ViewAllJobs: React.FC = () => {
 		console.log("filter start index: " + startIdx);
 		console.log("filter end index: " + endIdx);
 		setItemsToDisplay(filteredItems.slice(startIdx, endIdx));
-		
+
 		//setItemsToDisplay(filteredItems.slice(0, ITEMS_PER_PAGE));
 		setNoOfPages(Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -326,26 +326,26 @@ const ViewAllJobs: React.FC = () => {
 				}
 				if (key === "type" && checkTypeExists(currentParams[key]))
 					setFilters(filters => ({ ...filters, type: currentParams[key] }));
-				
-				if (key === "duration" && checkLengthExists(currentParams[key])) 
+
+				if (key === "duration" && checkLengthExists(currentParams[key]))
 					setFilters(filters => ({ ...filters, duration: currentParams[key] }));
-				
+
 				if (key === "startdate")
 					setFilters(filters => ({ ...filters, startDate: currentParams[key] }));
-				
-				if (key === "enddate") 
+
+				if (key === "enddate")
 					setFilters(filters => ({ ...filters, endDate: currentParams[key] }));
 				if (key === "page") {
 					const pageNum = Number(currentParams[key]);
-					console.log("search param page number:"+ pageNum);
+					console.log("search param page number:" + pageNum);
 					setCurrentPage(pageNum);
 					// let startIdx = (ITEMS_PER_PAGE * (pageNum - 1));
 					// let endIdx = ((pageNum * ITEMS_PER_PAGE));
 					// setItemsToDisplay(filteredHistory.slice(startIdx, endIdx));
 				}
-				
-				if(key === "search")
-					setFilters(filters => ({...filters, searchStr: currentParams[key]}));
+
+				if (key === "search")
+					setFilters(filters => ({ ...filters, searchStr: currentParams[key] }));
 
 			}
 		} //history, filteredHistory, itemsToDisplay, totalHistory, filters
@@ -397,7 +397,7 @@ const ViewAllJobs: React.FC = () => {
 	};
 
 	return (
-		<Container id={styles.viewAllJobsContainer}>
+		<div id={styles.viewAllJobsContainer}>
 
 			<div id={styles.headerContainer}>
 				<Header as="h2">View Previous Transcription Jobs</Header>
@@ -413,9 +413,8 @@ const ViewAllJobs: React.FC = () => {
 			</div>
 
 			{/* Filters */}
-			<Grid columns={8} id={styles.filterContainer}>
-				<Grid.Column></Grid.Column>
-				<Grid.Column width={3}>
+			<Grid columns={4} doubling id={styles.filterContainer}>
+				<Grid.Column>
 					<Dropdown
 						placeholder='Filter Live/Offline'
 						fluid
@@ -425,7 +424,7 @@ const ViewAllJobs: React.FC = () => {
 						onChange={handleTypeFilterChange}
 					/>
 				</Grid.Column>
-				<Grid.Column width={3}>
+				<Grid.Column>
 					<Dropdown
 						placeholder='Filter Language'
 						fluid
@@ -437,7 +436,7 @@ const ViewAllJobs: React.FC = () => {
 						onChange={handleLangFilterChange}
 					/>
 				</Grid.Column>
-				<Grid.Column width={3}>
+				<Grid.Column>
 					<Dropdown
 						placeholder='Filter Length'
 						fluid
@@ -447,7 +446,7 @@ const ViewAllJobs: React.FC = () => {
 						onChange={handleLengthFilterChange}
 					/>
 				</Grid.Column>
-				<Grid.Column width={3}>
+				<Grid.Column>
 					<Popup
 						id={styles.dateFilterPopup}
 						trigger={
@@ -464,9 +463,7 @@ const ViewAllJobs: React.FC = () => {
 						on="click"
 						onOpen={handlePopupOpen}
 					>
-						<Form
-							noValidate
-						>
+						<Form noValidate>
 							<Form.Field >
 								<Form.Input
 									fluid
@@ -492,7 +489,6 @@ const ViewAllJobs: React.FC = () => {
 						</Form>
 					</Popup>
 				</Grid.Column>
-				<Grid.Column></Grid.Column>
 			</Grid>
 
 			{/* List of Transcription Jobs  */}
@@ -502,26 +498,14 @@ const ViewAllJobs: React.FC = () => {
 					isLoading === false && itemsToDisplay.length > 0
 						?
 						itemsToDisplay.map(h => (
-							<List.Item
-								key={h._id}
-								className={styles.historyItem}
-							>
-								<List.Content floated='right' className={styles.historyItemBtns}>
-									<Button
-										color="blue"
-										onClick={(e) => handleViewBtnClick(e, h._id)}
-									>
-										View
-									</Button>
-									<DownloadTranscriptButton
-										isDisabled={h.type === 'live' || h.input[0].status === 'error'}
-										transcriptHistory={h}
-									/>
-									<Button color="red" disabled>Delete</Button>
-								</List.Content>
+							<List.Item key={h._id} className={styles.historyItem}>
+								{/* There are different states of the Icons */}
 								{
 									renderIcon(h)
 								}
+
+
+								{/* Description of List Item */}
 								<List.Content className={styles.historyItemContent}>
 									<List.Header as='p'>
 										{/* {h.type === 'live' ? "Live Transcribe on " : "File Upload on "}
@@ -548,6 +532,19 @@ const ViewAllJobs: React.FC = () => {
 										</span>
 									</List.Description>
 								</List.Content>
+
+
+								{/* Action Buttons */}
+								<List.Content floated='right' className={styles.historyItemBtns}>
+									<Button color="blue" onClick={(e) => handleViewBtnClick(e, h._id)}>
+										View
+									</Button>
+									<DownloadTranscriptButton
+										isDisabled={h.type === 'live' || h.input[0].status === 'error'}
+										transcriptHistory={h}
+									/>
+									<Button color="red" disabled>Delete</Button>
+								</List.Content>
 							</List.Item>
 						))
 						:
@@ -573,12 +570,15 @@ const ViewAllJobs: React.FC = () => {
 				ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
 				firstItem={{ content: <Icon name='angle double left' />, icon: true }}
 				lastItem={{ content: <Icon name='angle double right' />, icon: true }}
-				prevItem={{ content: <Icon name='angle left' />, icon: true }}
-				nextItem={{ content: <Icon name='angle right' />, icon: true }}
+				// prevItem={{ content: <Icon name='angle left' />, icon: true }}
+				// nextItem={{ content: <Icon name='angle right' />, icon: true }}
+				prevItem={null}
+				nextItem={null}
 				totalPages={noOfPages}
 				activePage={currentPage}
+				siblingRange={1}
 			/>
-		</Container>
+		</div>
 	);
 };
 
