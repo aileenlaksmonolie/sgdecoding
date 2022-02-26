@@ -68,27 +68,29 @@ async function getsTranscriptionJobHistory(req, res, next) {
 }
 
 
-// function getTranscriptionResult(req, res, next) {
-// 	//get transcription
-// 	await axios
-// 		.get(
-// 			"https://gateway.speechlab.sg/speech/60b7560c9dda32002d4a360b/result",
-// 			{
-// 				headers: {
-// 					Authorization: `Bearer ${newNameRequest.token}`,
-// 				},
-// 			},
-// 			{ responseType: "json" }
-// 		)
-// 		.then((response) => {
-// 			// console.log(response);
-// 			//res.status(response.status).json(response.data)
-// 		})
-// 		.catch((error) => {
-// 			console.log(error);
-// 			//res.status(error.response.status).json(error.response.data)
-// 		});
-// }
+async function getTranscriptionResult(req, res, next) {
+	//get transcription
+  console.log("[DEBUG] received id: " + req.params.id);
+
+	await axios
+		.get(
+			`https://gateway.speechlab.sg/speech/${req.params.id}/result`,
+			{
+				headers: {
+					Authorization: `${req.headers.authorization}`,
+				},
+			},
+			{ responseType: "json" }
+		)
+		.then((response) => {
+			// console.log(response);
+			res.status(response.status).json(response.data)
+		})
+		.catch((error) => {
+			console.log(error);
+			res.status(error.response.status).json(error.response.data)
+		});
+}
 
 
 async function getTranscriptionInJson(req, res, next) {
@@ -223,5 +225,5 @@ module.exports = {
 	uploadFile,
 	getsTranscriptionJobHistory,
 	getTranscriptionInJson,
-	// getTranscriptionResult
+	getTranscriptionResult
 }

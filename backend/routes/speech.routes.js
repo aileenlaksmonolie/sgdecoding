@@ -12,7 +12,7 @@ const { uploadFile,
 
 router.post('/', upload.single("file"), uploadFile);
 router.get('/history', getsTranscriptionJobHistory);
-// router.post('/result', getTranscriptionResult);
+router.get('/:id/result', getTranscriptionResult);
 router.get('/:id/result/tojson', getTranscriptionInJson);
 
 module.exports = router;
