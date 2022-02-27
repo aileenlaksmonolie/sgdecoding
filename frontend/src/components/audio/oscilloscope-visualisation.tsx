@@ -39,10 +39,12 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 
 		canvasCtx!.fillRect(0, 0, width, height);
 		canvasCtx!.lineWidth = 10;
-		if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
+		if (isRecording === RecordingStates.NOT_STARTED) {
 			canvasCtx!.strokeStyle = 'rgba(138, 45, 209, 0.2)';
-		} else {
-			canvasCtx!.strokeStyle = 'rgba(22, 95, 204, 0.2)';
+		} else if(isRecording === RecordingStates.STOPPED) {
+			canvasCtx!.strokeStyle = 'rgba(54, 189, 38, 0.2)';
+		}else{
+			canvasCtx!.strokeStyle = 'rgba(198, 35, 38, 0.2)';
 		}
 
 		if (canvasRef.current) {

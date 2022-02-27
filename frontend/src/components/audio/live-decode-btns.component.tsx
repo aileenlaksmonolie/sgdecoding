@@ -188,13 +188,17 @@ const LiveDecodeBtns: React.FC<Props> = (
 							// 	content={`Stop (${("0" + Math.floor((time / 3600) % 3600)).slice(-1)}:${("0" + Math.floor((time / 60) % 60)).slice(-2)}:${("0" + Math.floor(time % 60)).slice(-2)})`
 							// 	}
 							// />
-							<Icon.Group size='big' id={styles.stopBtn}>
+							<Icon.Group size='big' id={styles.stopBtn} onClick={onStopClick}>
 								<Icon size='huge' name='circle' />
-								<Icon name='stop'  />
+								<Icon name='stop' />
 								<span>{`${("0" + Math.floor((time / 3600) % 3600)).slice(-1)}:${("0" + Math.floor((time / 60) % 60)).slice(-2)}:${("0" + Math.floor(time % 60)).slice(-2)}`}</span>
 							</Icon.Group>
 							:
-							<Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Reset" />
+							// <Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Reset" />
+							<Icon.Group size='big' id={styles.redoBtn} onClick={onRedoClick}>
+								<Icon size='huge' name='circle outline' color="red" />
+								<Icon name='redo'  />
+							</Icon.Group>
 				}
 			</Grid.Row>
 			<Grid.Row style={{ marginTop: '12px' }}>
@@ -203,8 +207,8 @@ const LiveDecodeBtns: React.FC<Props> = (
 						?
 						<Button
 							disabled={recorder.isRecording !== RecordingStates.STOPPED}
-							fluid
-							color="green"
+							// fluid
+							color="orange"
 							onClick={onDownloadClick}
 							icon="cloud download"
 							content="Download"

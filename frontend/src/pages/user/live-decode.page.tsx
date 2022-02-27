@@ -73,6 +73,7 @@ const LiveDecodePage: React.FC = () => {
 	const [allRecordedChunks, setAllRecordedChunks] = useState<Float32Array[]>([]);
 
 	const [isLoading, setIsLoading] = useState(true);
+	const [showChangeVizOverlay, setShowChangeVizOverlay] = useState(false);
 	const [selectedViz, setSelectedViz] = useState("Oscilloscope");
 	const [selectedLangModel, setSelectedLangModel] = useState<string>("eng_closetalk");
 
@@ -154,10 +155,16 @@ const LiveDecodePage: React.FC = () => {
 		}
 	};
 
+	const onVizCogClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: ButtonProps) => {
+		setShowChangeVizOverlay(!showChangeVizOverlay);
+		console.log(showChangeVizOverlay);
+	};
+
 	const onChangeVizBtnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: ButtonProps) => {
 		console.log(data);
 		if (data.children)
 			setSelectedViz(data.children.toString());
+		setShowChangeVizOverlay(false);
 	};
 
 	useEffect(() => {
@@ -234,6 +241,7 @@ const LiveDecodePage: React.FC = () => {
 					fluid
 					id={styles.livePgCard}
 				>
+					{/* Top Label saying "Ready to Record"/"Recording"/"Stopped" */}
 					{
 						recorder.isRecording === RecordingStates.NOT_STARTED
 							?
@@ -244,19 +252,45 @@ const LiveDecodePage: React.FC = () => {
 							:
 							recorder.isRecording === RecordingStates.IN_PROGRESS
 								?
-								<Label id={styles.inProgressState} className={`${styles.recordingStateLbl} green`}>
+								<Label id={styles.inProgressState} className={styles.recordingStateLbl}>
 									<Icon loading name="stop circle" />
 									<span>Recording</span>
 									<span></span>
 								</Label>
 								:
-								<Label id={styles.finishedState} className={`${styles.recordingStateLbl} red`}>
+								<Label id={styles.finishedState} className={`${styles.recordingStateLbl} green`}>
 									<Icon name="stop circle outline" />
 									<span>Finished</span>
 									<span></span>
 								</Label>
 					}
 					<Card.Content>
+						{
+							showChangeVizOverlay
+								?
+								<Icon name='close' id={styles.vizCogClose} size="large" onClick={onVizCogClick} />
+								:
+								<Icon name='cog' id={styles.vizCog} size="large" onClick={onVizCogClick} />
+						}
+						<div id={styles.changeVizBtns} className={showChangeVizOverlay ? styles.showVizOverlay : styles.hideVizOverlay}>						<Button.Group inverted size="large">
+							<Button
+								onClick={onChangeVizBtnClick}
+								primary={selectedViz === 'Frequency Bars'}
+							>
+								Frequency Bars
+							</Button>
+
+							<Button.Or />
+
+							<Button
+								primary={selectedViz === 'Oscilloscope'}
+								onClick={onChangeVizBtnClick}
+							>
+								Oscilloscope
+							</Button>
+						</Button.Group>
+						</div>
+
 						<Grid padded>
 							<Grid.Row id={styles.selLangModelContainer}>
 								<label style={{ lineHeight: '38px', marginRight: '12px' }}>
@@ -307,25 +341,6 @@ const LiveDecodePage: React.FC = () => {
 											<VizFreqBars recorder={recorder} />
 									}
 
-									<div id={styles.changeVizBtns}>
-										<Button.Group inverted size="large">
-											<Button
-												onClick={onChangeVizBtnClick}
-												primary={selectedViz === 'Frequency Bars'}
-											>
-												Frequency Bars
-											</Button>
-
-											<Button.Or />
-
-											<Button
-												primary={selectedViz === 'Oscilloscope'}
-												onClick={onChangeVizBtnClick}
-											>
-												Oscilloscope
-											</Button>
-										</Button.Group>
-									</div>
 								</div>
 								{/* </Grid.Column> */}
 							</Grid.Row>

@@ -5,13 +5,62 @@
 		margin-bottom: 64px;
 	}
 
-	#livePgCard{
+	#livePgCard {
 		min-height: 500px;
 
-		#selLangModelContainer{
+		#selLangModelContainer {
 			justify-content: center;
 		}
+
+		#changeVizBtns{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: absolute;
+			top: 39px;
+			left: 0px;
+			height: calc(100% - 39px);
+			width: 100%;
+			background-color: rgba(0, 0, 0, 0.5);
+			margin: auto 0;
+			transition: opacity 0.5s ease-in;
+			z-index: -1;
+		}
+
+		#changeVizBtns.hideVizOverlay {
+			// display: none;
+			opacity: 0;
+			// height: 0px;
+		}
+
+		#changeVizBtns.showVizOverlay{
+			z-index: 2;
+			opacity: 1;
+		}
+
+		#vizCog, #vizCogClose{
+			// float: right;	
+			position: absolute;
+			right: 16px;
+			cursor: pointer;
+			z-index: 3;
+		}
+		
+		#vizCogClose{
+			color: rgb(242, 242, 242);
+		}
+
+		#vizCog{
+			color: #444;
+		}
 	}
+
+	// #livePgCard:hover {
+	// 	#changeVizBtns {
+	// 		// display: block;
+	// 		opacity: 100%;
+	// 	}
+	// }
 
 	.recordingStateLbl {
 		height: 40px;
@@ -40,6 +89,8 @@
 		&#inProgressState {
 			text-align: left;
 			padding-left: 44%;
+			background-color: #ff4438;
+			color: white;
 
 			span:nth-child(2)::after {
 				content: "";
@@ -71,16 +122,16 @@
 		}
 	}
 
-	#transcriptArea{
+	#transcriptArea {
 		min-height: 30vh;
 		text-align: start;
 		font-size: 110%;
 		font-style: italic;
 		color: rgb(48, 48, 48);
-		font-weight:600;
+		font-weight: 600;
 		margin-top: 20px;
 		padding-left: 1.5em;
-		padding-right:1.5em;
+		padding-right: 1.5em;
 	}
 
 	#visualisationContainer {
@@ -90,28 +141,5 @@
 		padding-right: 1.5em;
 		position: absolute;
 		bottom: 0%;
-
-		#changeVizBtns {
-			// display: none;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			position: absolute;
-			top: 0px;
-			height: 100%;
-			width: calc(100% - 28px);
-			opacity: 0%;
-			background-color: rgba(0, 0, 0, 0.5);
-			margin: auto 0;
-			transition: opacity 0.5s ease-in;
-		}
 	}
-
-	#visualisationContainer:hover {
-		#changeVizBtns {
-			// display: block;
-			opacity: 100%;
-		}
-	}
-	
 }

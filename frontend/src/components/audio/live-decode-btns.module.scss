@@ -1,14 +1,4 @@
 
-
-// #langModelDropdown{
-// 	margin-bottom: 24px;
-
-// 	label{
-// 		display: block;
-// 		text-align: left;
-// 	}
-// }
-
 #recordBtnContainer{
 	cursor: pointer; // Fake a button
 
@@ -54,6 +44,24 @@
 			color: white;
 		}
 	}
+
+	#redoBtn{
+		font-size: 1.9em;
+		margin-bottom: 16px;
+
+		i:nth-child(1){
+			// background-color: #F0712C;
+			-webkit-text-fill-color: transparent;
+			border-radius: 80px;
+			border: 6px solid #21BA45;
+			// box-shadow: 0px 0px 20px rgba(93, 247, 93, 0.7);
+			animation: redoGlowAnim 1.5s infinite alternate;
+		}
+		i:nth-child(2){
+			color: #21BA45;
+			left: 49%;
+		}
+	}
 }
 
 @keyframes recordGlowAnim{
@@ -71,5 +79,13 @@
 	}
 	to {
 		box-shadow: 0 0 4px 4px #fd8989;
+	}
+}
+
+@keyframes redoGlowAnim{
+	from{
+		box-shadow: 0 0 6px -6px #71bf83;
+	}to{
+		box-shadow: 0 0 6px 6px #77c489;
 	}
 }
