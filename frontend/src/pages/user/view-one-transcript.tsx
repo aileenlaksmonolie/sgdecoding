@@ -255,7 +255,6 @@ const ViewOneTranscript: React.FC = () => {
 
 	useEffect(() => {
 		// console.log(selectedTranscriptHistory);
-
 		if (selectedTranscriptHistory?._id)
 			getSelectedTranscriptionText(selectedTranscriptHistory._id);
 
@@ -267,9 +266,9 @@ const ViewOneTranscript: React.FC = () => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	useEffect(() => {
-		console.log(selectedTranscriptionText);
-	}, [selectedTranscriptionText]);
+	// useEffect(() => {
+	// 	console.log(selectedTranscriptionText);
+	// }, [selectedTranscriptionText]);
 
 	useEffect(() => {
 		console.log(`isPlaying: ${isPlaying} | isLoading: ${isLoadingAudio} | ${audioRef.current.src}`);
@@ -331,11 +330,7 @@ const ViewOneTranscript: React.FC = () => {
 							{
 								selectedTranscriptionText.map((v, i, a) => {
 										return <span key={v.startTime.toString()}>
-											{/* <code style={{ fontSize: '0.8em' }}>{v.startTime} | {audioRef.current.currentTime} | {trackProgress} </code> */}
-											<span
-												// className={trackProgress > v.startTime && trackProgress < v.endTime ? styles.isPlayingThis : ''}
-												className={audioRef.current.currentTime >= v.startTime ? styles.isPlayingThis : ''}
-											>
+											<span className={audioRef.current.currentTime >= v.startTime ? styles.isPlayingThis : ''}>
 												{v.text}
 											</span>
 											&nbsp;

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Layout from "../../components/layout/layout.component";
-import NotFoundPage from "../authentication/not-found.page";
+import NotFoundPage from "../not-found.page";
 import ChangeNamePage from './change-name.page';
 import ChangePasswordPage from "./change-password.page";
 import LiveDecodePage from "./live-decode.page";

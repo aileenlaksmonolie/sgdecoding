@@ -72,8 +72,6 @@ const LiveDecodeBtns: React.FC<Props> = (
 					console.log("[DEBUG] Successfully connected to the server");
 					recorder.audioWorklet!.port.postMessage({ isRecording: RecordingStates.IN_PROGRESS });
 					setRecorder({ ...recorder, isRecording: RecordingStates.IN_PROGRESS });
-
-
 				}
 			};
 

@@ -95,9 +95,7 @@ async function getTranscriptionResult(req, res, next) {
 
 async function getTranscriptionInJson(req, res, next) {
   console.log("[DEBUG] received id: " + req.params.id);
-
   // Download to temporary folder
-  // TODO delete the zipped folder after done
   const reqFileStr =
     "_temp/" +
     new Date().toLocaleTimeString().replaceAll(":", "_").slice(0, -3);
@@ -135,9 +133,7 @@ async function getTranscriptionInJson(req, res, next) {
             if (err) throw err;
 
             zipfile.readEntry();
-
             let srtFileName = "";
-
             zipfile.on("entry", (entry) => {
               // console.log(`[DEBUG] reading file: ${entry.fileName} `);
 
@@ -188,7 +184,6 @@ async function getTranscriptionInJson(req, res, next) {
 
             zipfile.on("close", (d) => {
               console.log("[DEBUG] Closing Zip File");
-
               let testStr = fs
                 .readFileSync(`${reqFileStr}/${srtFileName}.srt`)
                 .toString();
@@ -201,10 +196,8 @@ async function getTranscriptionInJson(req, res, next) {
                       t.startTime === value.startTime && t.text === value.text
                   ) === index
               );
-              // console.log(testRes);
 
               fs.rmSync(`${reqFileStr}/`, { recursive: true, force: true });
-              // fs.rmdirSync(`${reqFileStr}`, {recursive: true, force: true}); // works
               fs.rmSync(`${reqFileStr}.zip`, { recursive: true, force: true });
 
               console.log("[DEBUG] Sending Response OK");

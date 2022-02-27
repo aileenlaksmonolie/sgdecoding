@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import ProtectedRoute from './components/authentication/protected.route';
 import AuthenticationModule from './pages/authentication/authentication.module';
-import NotFoundPage from './pages/authentication/not-found.page';
+import NotFoundPage from './pages/not-found.page';
 import UserModule from './pages/user/user.module';
 
 

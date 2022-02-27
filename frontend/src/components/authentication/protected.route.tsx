@@ -18,17 +18,17 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
 	const { clearLogoutMsg } = bindActionCreators(actionCreators, dispatch);
 
   if(isLoggedIn) {
-		console.info("[DEBUG] ProtectedRoute: User is logged in, navigating to protected route");
+		// console.info("[DEBUG] ProtectedRoute: User is logged in, navigating to protected route");
 		return children;
   }
 
-	let logoutPath = '/auth/login';
+	let loginPath = '/auth/login';
 	
 	if(logoutMsg){
-		logoutPath += '?logoutMsg=' + logoutMsg;
+		loginPath += '?logoutMsg=' + logoutMsg;
 		clearLogoutMsg();
 	}
 
-	console.info("[DEBUG] ProtectedRoute: User is NOT logged in, going to /login");
-  return <Navigate to={logoutPath} />;
+	// console.info("[DEBUG] ProtectedRoute: User is NOT logged in, going to /login");
+  return <Navigate to={loginPath} />;
 };

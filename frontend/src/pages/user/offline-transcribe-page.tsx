@@ -120,7 +120,7 @@ const OfflineTranscribePage: React.FC = () => {
 		setProgressBar(progressArray);
 	};
 
-	const fileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		let selectedFile = e.target.files![0];
 		let newUpload = {
 			file: selectedFile,
@@ -377,18 +377,18 @@ const OfflineTranscribePage: React.FC = () => {
 						id={styles.chooseFileBtn}
 						primary
 					>
-						<Button.Content visible>Choose a File</Button.Content>
+						<Button.Content visible>ADD MORE FILES</Button.Content>
 						<Button.Content hidden>
 							<Icon name="file" />
 						</Button.Content>
 					</Button>
-					<input type="file" id="file" hidden onChange={fileChange} />
+					<input type="file" id="file" hidden onChange={onFileChange} />
 					<input type="file" id="file" hidden />
 				</Card.Content>
 
 				<Card.Content>
 					<Button disabled={uploadDisabled} positive onClick={uploadFile} id={styles.uploadaBtn}>
-						Upload
+						UPLOAD
 					</Button>
 				</Card.Content>
 
