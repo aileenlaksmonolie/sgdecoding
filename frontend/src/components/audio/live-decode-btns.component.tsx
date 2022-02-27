@@ -197,7 +197,7 @@ const LiveDecodeBtns: React.FC<Props> = (
 							// <Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Reset" />
 							<Icon.Group size='big' id={styles.redoBtn} onClick={onRedoClick}>
 								<Icon size='huge' name='circle outline' color="red" />
-								<Icon name='redo'  />
+								<Icon name='redo' />
 							</Icon.Group>
 				}
 			</Grid.Row>
@@ -205,14 +205,25 @@ const LiveDecodeBtns: React.FC<Props> = (
 				{
 					recorder.isRecording === RecordingStates.STOPPED
 						?
-						<Button
-							disabled={recorder.isRecording !== RecordingStates.STOPPED}
-							// fluid
-							color="orange"
-							onClick={onDownloadClick}
-							icon="cloud download"
-							content="Download"
-						/>
+						<div>
+							<Button
+								disabled={recorder.isRecording !== RecordingStates.STOPPED}
+								// fluid
+								color="orange"
+								onClick={onDownloadClick}
+								icon="cloud download"
+								content="Download Recorded Audio"
+								style={{marginRight: '12px'}}
+							/>
+							<Button
+								disabled={recorder.isRecording !== RecordingStates.STOPPED}
+								// fluid
+								color="teal"
+								onClick={onDownloadClick}
+								icon="download"
+								content="Download Transcript (txt)"
+							/>
+						</div>
 						:
 						null
 				}

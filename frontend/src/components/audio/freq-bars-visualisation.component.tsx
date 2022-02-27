@@ -34,11 +34,12 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		var bufferLength: number = analyser.frequencyBinCount;
 		analyser.getByteFrequencyData(dataArray.current);
 
-		if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
-			canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
-		} else {
-			canvasCtx!.fillStyle = 'rgb(252, 255, 252)';
-		}
+		canvasCtx!.fillStyle = 'rgba(255,255,255,1)';
+		// if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
+		// 	canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
+		// } else {
+		// 	canvasCtx!.fillStyle = 'rgb(252, 255, 252)';
+		// }
 		canvasCtx!.fillRect(0, 0, width, height);
 		var barWidth = ((width - (bufferLength - 1)) / bufferLength);
 		var barHeight;
@@ -47,11 +48,14 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		for (var i = 0; i < bufferLength; i++) {
 			barHeight = dataArray.current[i];
 
-			if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
-				canvasCtx!.fillStyle = 'rgb(' + (barHeight + 50) + ',50,150)';
+			if (isRecording === RecordingStates.NOT_STARTED) {
+				canvasCtx!.fillStyle = 'rgba(' + (barHeight + 50) + ',50,150, 0.2)';
 				canvasCtx!.fillRect(x, height - barHeight / 2, barWidth, barHeight / 2);
-			} else {
-				canvasCtx!.fillStyle = 'rgb(60,' + (barHeight + 60) + ',145)';
+			} else if(isRecording === RecordingStates.STOPPED){
+				canvasCtx!.fillStyle = 'rgba(60,' + (barHeight + 60) + ',48, 0.2)';
+				canvasCtx!.fillRect(x, height - barHeight / 2, barWidth, barHeight / 2);
+			}else{
+				canvasCtx!.fillStyle = 'rgba(' + (barHeight + 60) + ',60,48, 0.2)';
 				canvasCtx!.fillRect(x, height - barHeight / 2, barWidth, barHeight / 2);
 			}
 
@@ -127,7 +131,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 			ref={canvasRef as React.MutableRefObject<HTMLCanvasElement | null>}
 			// width={width}
 			// height={height}
-			style={{ width: '100%', height: '100%', maxHeight: '200px', boxShadow: '0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5' }}
+			style={{ width: '100%', height: '100%', maxHeight: '200px' }}
 		></canvas>
 		// 			:
 		// 			<p>Loading...</p>

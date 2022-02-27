@@ -41,7 +41,7 @@ const languageOptions = [
 
 const LiveDecodePage: React.FC = () => {
 	/* Declarations */
-	const IS_DEBUGGING: boolean = true;
+	const IS_DEBUGGING: boolean = false;
 
 	const [recorder, setRecorder] = useState<MyRecorder>({
 		isMicAccessGiven: false,
@@ -310,7 +310,7 @@ const LiveDecodePage: React.FC = () => {
 								/>
 							</Grid.Row>
 
-							<Grid.Row>
+							<Grid.Row style={{zIndex: '2'}}>
 								{/* <Grid.Column> */}
 								{/* <Segment
 										padded
