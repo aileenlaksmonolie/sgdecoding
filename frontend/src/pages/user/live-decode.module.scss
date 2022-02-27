@@ -5,13 +5,22 @@
 		margin-bottom: 64px;
 	}
 
+	#livePgCard{
+		min-height: 500px;
+
+		#selLangModelContainer{
+			justify-content: center;
+		}
+	}
+
 	.recordingStateLbl {
 		height: 40px;
-		width: 200px;
+		width: 100%;
 		line-height: 20px;
-		box-shadow: 0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5;
-		position: relative;
-		top: -32px;
+		border: 1px solid #d4d4d5;
+		// box-shadow: 0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5;
+		// position: relative;
+		// top: -32px;
 		text-align: center;
 
 		& > i {
@@ -22,13 +31,15 @@
 		}
 
 		&#readyToRecordState {
-			background: linear-gradient(130.06deg, #ff176b 11.6%, #3093cb 92.36%);
+			// background: linear-gradient(211deg, #ff176b 4.64%, #3093cb 94.36%);
+			// background:rgb(5, 196, 193);
+			background: #277cfa;
 			color: white;
 		}
 
 		&#inProgressState {
 			text-align: left;
-			padding-left: 44px;
+			padding-left: 44%;
 
 			span:nth-child(2)::after {
 				content: "";
@@ -60,8 +71,25 @@
 		}
 	}
 
+	#transcriptArea{
+		min-height: 30vh;
+		text-align: start;
+		font-size: 110%;
+		font-style: italic;
+		color: rgb(48, 48, 48);
+		font-weight:600;
+		margin-top: 20px;
+		padding-left: 1.5em;
+		padding-right:1.5em;
+	}
+
 	#visualisationContainer {
 		width: 100%;
+		// z-index: -1;
+		padding-left: 1.5em;
+		padding-right: 1.5em;
+		position: absolute;
+		bottom: 0%;
 
 		#changeVizBtns {
 			// display: none;
@@ -85,4 +113,5 @@
 			opacity: 100%;
 		}
 	}
+	
 }

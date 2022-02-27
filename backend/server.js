@@ -56,11 +56,11 @@ proxy.on("close", function (res, socket, head) {
 
 // Mongoose (MongoDB) Database
 mongoose.connect(
-  // "mongodb+srv://terry:node1234@cluster0.m84iv.mongodb.net/SG_Decoding?retryWrites=true&w=majority"
+  "mongodb+srv://terry:node1234@cluster0.m84iv.mongodb.net/SG_Decoding?retryWrites=true&w=majority"
   //"mongodb://localhost:27017/SG_Decoding?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false"
   //"mongodb://localhost:27017/SG_Decoding"
   // "mongodb://mongo:27017/SG_Decoding"
-  process.env.DB_CONNECTION_STRING
+  // process.env.DB_CONNECTION_STRING
 );
 const db = mongoose.connection;
 

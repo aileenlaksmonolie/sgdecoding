@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, Container, Dropdown, DropdownProps, Grid } from "semantic-ui-react";
+import { Button, Container, Grid, Icon } from "semantic-ui-react";
 import { liveDecodeSocket } from "../../api/api";
 import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
@@ -19,26 +19,15 @@ interface Props {
 	recorder: MyRecorder,
 	setRecorder: React.Dispatch<React.SetStateAction<MyRecorder>>,
 	webSocketRef: React.MutableRefObject<WebSocket | undefined>,
-	allRecordedChunks: Float32Array[]
+	allRecordedChunks: Float32Array[],
+	selectedLangModel: string
 }
 
 
 const LiveDecodeBtns: React.FC<Props> = (
-	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks }
+	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks, selectedLangModel }
 ) => {
 	/* */
-	const languageOptions = [
-		{ key: 'eng_closetalk', text: 'English Closetalk', value: 'eng_closetalk' },
-		{ key: 'eng_telephony', text: 'English Telephony', value: 'eng_telephony' },
-		{ key: 'mandarin_closetalk', text: 'Mandarin Closetalk', value: 'mandarin_closetalk' },
-		{ key: 'mandarin_telephony', text: 'Mandarin Telephony', value: 'mandarin_telephony' },
-		{ key: 'malay_closetalk', text: 'Malay Closetalk', value: 'malay_closetalk' },
-		{ key: 'engmalay_closetalk', text: 'English-Malay Closetalk', value: 'engmalay_closetalk' },
-		{ key: 'cs_closetalk', text: 'Code Switch Closetalk', value: 'cs_closetalk' },
-		{ key: 'cs_telephony', text: 'Code Switch Telephony', value: 'cs_telephony' },
-	];
-	const [selectedLangModel, setSelectedLangModel] = useState<string>("eng_closetalk");
-
 
 	const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
 
@@ -157,13 +146,6 @@ const LiveDecodeBtns: React.FC<Props> = (
 		}
 	};
 
-	const onSelLanguageModelChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
-		const { value } = data;
-		console.log("[DEBUG] changed lang model: " + value);
-		if (value && value !== '') {
-			setSelectedLangModel(value as string);
-		}
-	};
 
 	/* */
 	useEffect(() => {
@@ -186,35 +168,31 @@ const LiveDecodeBtns: React.FC<Props> = (
 	}, [recorder.isRecording]);
 
 	return (
-		<Container id={styles.btnsArrayContainer}>
-			<Grid.Row id={styles.langModelDropdown}>
-				<label><strong>Select Language Model: </strong></label>
-				<Dropdown
-					scrolling
-					labeled
-					placeholder='Language Model'
-					fluid
-					selection
-					defaultValue={"eng_closetalk"}
-					options={languageOptions}
-					onChange={onSelLanguageModelChange}
-					disabled={recorder.isRecording === RecordingStates.IN_PROGRESS
-						|| recorder.isRecording === RecordingStates.STOPPED}
-				/>
-			</Grid.Row>
+		<Container id={styles.recordBtnContainer}>
+			{/* <Grid.Row id={styles.langModelDropdown}>
+			</Grid.Row> */}
 			<Grid.Row>
 				{
 					recorder.isRecording === RecordingStates.NOT_STARTED
 						?
-						<Button icon="circle" fluid primary onClick={onStartClick} content="Start" />
+						// <Button icon="circle" fluid primary onClick={onStartClick} content="Start" />
+						<Icon.Group size='big' id={styles.recordBtn} onClick={onStartClick}>
+							<Icon size='huge' name='circle' />
+							<Icon name='microphone' size="large" />
+						</Icon.Group>
 						:
 						recorder.isRecording === RecordingStates.IN_PROGRESS
 							?
-							<Button
-								icon="stop" fluid secondary onClick={onStopClick}
-								content={`Stop (${("0" + Math.floor((time / 3600) % 3600)).slice(-1)}:${("0" + Math.floor((time / 60) % 60)).slice(-2)}:${("0" + Math.floor(time % 60)).slice(-2)})`
-								}
-							/>
+							// <Button
+							// 	icon="stop" fluid secondary onClick={onStopClick}
+							// 	content={`Stop (${("0" + Math.floor((time / 3600) % 3600)).slice(-1)}:${("0" + Math.floor((time / 60) % 60)).slice(-2)}:${("0" + Math.floor(time % 60)).slice(-2)})`
+							// 	}
+							// />
+							<Icon.Group size='big' id={styles.stopBtn}>
+								<Icon size='huge' name='circle' />
+								<Icon name='stop'  />
+								<span>{`${("0" + Math.floor((time / 3600) % 3600)).slice(-1)}:${("0" + Math.floor((time / 60) % 60)).slice(-2)}:${("0" + Math.floor(time % 60)).slice(-2)}`}</span>
+							</Icon.Group>
 							:
 							<Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Reset" />
 				}

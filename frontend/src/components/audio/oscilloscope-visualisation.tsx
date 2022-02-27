@@ -30,18 +30,19 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 		var bufferLength = analyser.frequencyBinCount;
 		analyser.getByteTimeDomainData(dataArray.current);
 
-		if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
-			canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
-		} else {
-			canvasCtx!.fillStyle = 'rgb(252, 255, 252)';
-		}
+		canvasCtx!.fillStyle = 'rgba(255,255,255,1)';
+		// if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
+		// 	canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
+		// } else {
+		// 	canvasCtx!.fillStyle = 'rgb(252, 255, 252)';
+		// }
 
 		canvasCtx!.fillRect(0, 0, width, height);
-		canvasCtx!.lineWidth = 2;
+		canvasCtx!.lineWidth = 10;
 		if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
-			canvasCtx!.strokeStyle = 'rgb(138, 45, 209)';
+			canvasCtx!.strokeStyle = 'rgba(138, 45, 209, 0.2)';
 		} else {
-			canvasCtx!.strokeStyle = 'rgb(22, 95, 204)';
+			canvasCtx!.strokeStyle = 'rgba(22, 95, 204, 0.2)';
 		}
 
 		if (canvasRef.current) {
@@ -129,7 +130,8 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 				ref={canvasRef as React.MutableRefObject<HTMLCanvasElement | null>}
 				// width={width}
 				// height={height}
-				style={{ width: '100%', height: '100%', maxHeight: '200px', boxShadow: '0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5' }}
+				// style={{ width: '100%', height: '100%', maxHeight: '200px', boxShadow: '0px 1px 3px 0px #d4d4d5, 0px 0px 0px 1px #d4d4d5' }}
+				style={{ width: '100%', height: '100%', maxHeight: '200px' }}
 			></canvas>
 		// </div>
 		// 	  		:

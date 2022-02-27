@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
-import { Button, ButtonProps, Card, Container, Grid, Header, Icon, Label, Segment } from "semantic-ui-react";
+import { Button, ButtonProps, Card, Container, Dropdown, DropdownProps, Grid, Header, Icon, Label } from "semantic-ui-react";
 import VizFreqBars from "../../components/audio/freq-bars-visualisation.component";
 import LiveDecodeBtns from "../../components/audio/live-decode-btns.component";
 import NoMicAccess from "../../components/audio/no-mic-access.component";
@@ -27,9 +27,21 @@ export interface Transcription {
 	nonFinal: String
 }
 
+const languageOptions = [
+	{ key: 'eng_closetalk', text: 'English Closetalk', value: 'eng_closetalk' },
+	{ key: 'eng_telephony', text: 'English Telephony', value: 'eng_telephony' },
+	{ key: 'mandarin_closetalk', text: 'Mandarin Closetalk', value: 'mandarin_closetalk' },
+	{ key: 'mandarin_telephony', text: 'Mandarin Telephony', value: 'mandarin_telephony' },
+	{ key: 'malay_closetalk', text: 'Malay Closetalk', value: 'malay_closetalk' },
+	{ key: 'engmalay_closetalk', text: 'English-Malay Closetalk', value: 'engmalay_closetalk' },
+	{ key: 'cs_closetalk', text: 'Code Switch Closetalk', value: 'cs_closetalk' },
+	{ key: 'cs_telephony', text: 'Code Switch Telephony', value: 'cs_telephony' },
+];
+
+
 const LiveDecodePage: React.FC = () => {
 	/* Declarations */
-	const IS_DEBUGGING: boolean = false;
+	const IS_DEBUGGING: boolean = true;
 
 	const [recorder, setRecorder] = useState<MyRecorder>({
 		isMicAccessGiven: false,
@@ -62,7 +74,7 @@ const LiveDecodePage: React.FC = () => {
 
 	const [isLoading, setIsLoading] = useState(true);
 	const [selectedViz, setSelectedViz] = useState("Oscilloscope");
-
+	const [selectedLangModel, setSelectedLangModel] = useState<string>("eng_closetalk");
 
 	const reqMicrophoneAccess = async (): Promise<MediaStream> => {
 		const stream = await navigator.mediaDevices.getUserMedia({
@@ -134,9 +146,17 @@ const LiveDecodePage: React.FC = () => {
 			e.returnValue = "";
 	};
 
+	const onSelLanguageModelChange = (e: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+		const { value } = data;
+		console.log("[DEBUG] changed lang model: " + value);
+		if (value && value !== '') {
+			setSelectedLangModel(value as string);
+		}
+	};
+
 	const onChangeVizBtnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: ButtonProps) => {
 		console.log(data);
-		if(data.children)
+		if (data.children)
 			setSelectedViz(data.children.toString());
 	};
 
@@ -198,7 +218,7 @@ const LiveDecodePage: React.FC = () => {
 		return <Container></Container>;
 	if (recorder.isMicAccessGiven === false)
 		return (
-			<div style={{textAlign: 'center'}}>
+			<div style={{ textAlign: 'center' }}>
 				<NoMicAccess errorMsg={recorder.errorMsg ? recorder.errorMsg : ''} />
 			</div>
 		);
@@ -212,110 +232,117 @@ const LiveDecodePage: React.FC = () => {
 				<Card
 					// color={recorder.isRecording === RecordingStates.IN_PROGRESS ? "green" : "purple"}
 					fluid
+					id={styles.livePgCard}
 				>
-					<Card.Content>
-						{
-							recorder.isRecording === RecordingStates.NOT_STARTED
+					{
+						recorder.isRecording === RecordingStates.NOT_STARTED
+							?
+							<Label id={styles.readyToRecordState} className={styles.recordingStateLbl}>
+								<Icon name="info circle" />
+								Ready to Record
+							</Label>
+							:
+							recorder.isRecording === RecordingStates.IN_PROGRESS
 								?
-								<Label id={styles.readyToRecordState} className={styles.recordingStateLbl}>
-									<Icon name="info circle" />
-									Ready to Record
+								<Label id={styles.inProgressState} className={`${styles.recordingStateLbl} green`}>
+									<Icon loading name="stop circle" />
+									<span>Recording</span>
+									<span></span>
 								</Label>
 								:
-								recorder.isRecording === RecordingStates.IN_PROGRESS
-									?
-									<Label id={styles.inProgressState} className={`${styles.recordingStateLbl} green`}>
-										<Icon loading name="stop circle" />
-										<span>Recording</span>
-										<span></span>
-									</Label>
-									:
-									<Label id={styles.finishedState} className={`${styles.recordingStateLbl} red`}>
-										<Icon name="stop circle outline" />
-										<span>Finished</span>
-										<span></span>
-									</Label>
-
-
-						}
+								<Label id={styles.finishedState} className={`${styles.recordingStateLbl} red`}>
+									<Icon name="stop circle outline" />
+									<span>Finished</span>
+									<span></span>
+								</Label>
+					}
+					<Card.Content>
 						<Grid padded>
+							<Grid.Row id={styles.selLangModelContainer}>
+								<label style={{ lineHeight: '38px', marginRight: '12px' }}>
+									<strong>Select Language Model: </strong>
+								</label>
+								<Dropdown
+									scrolling
+									labeled
+									placeholder='Language Model'
+									// fluid
+									selection
+									defaultValue={"eng_closetalk"}
+									options={languageOptions}
+									onChange={onSelLanguageModelChange}
+									disabled={recorder.isRecording === RecordingStates.IN_PROGRESS
+										|| recorder.isRecording === RecordingStates.STOPPED}
+								/>
+							</Grid.Row>
+
 							<Grid.Row>
-								<Grid.Column width={4}>
-									<LiveDecodeBtns
-										// key={transcription.final.length}
-										IS_DEBUGGING={IS_DEBUGGING}
-										recorder={recorder}
-										setRecorder={setRecorder}
-										transcription={transcription}
-										setTranscription={setTranscription}
-										webSocketRef={webSocketConnRef}
-										allRecordedChunks={allRecordedChunks}
-									/>
-								</Grid.Column>
-								<Grid.Column width={12}>
-									<div id={styles.visualisationContainer}>
-										{/* {
-											recorder.isMicAccessGiven && recorder.audioContext && recorder.stream ?
-												<VizOscilloscope recorder={recorder} /> :
-												// <p style={{height: '200px', border: '1px solid gray'}}>Test</p> :
-												// <VizFreqBars recorder={recorder} /> :
-												<p>Loading Stream....</p>
-										} */}
-										{
-											selectedViz === 'Oscilloscope'
+								{/* <Grid.Column> */}
+								{/* <Segment
+										padded
+										color={recorder.isRecording === RecordingStates.IN_PROGRESS ? "green" : "purple"}
+										style={{ minHeight: '200px', textAlign: 'left', background: '#fdfdfd' }}
+									> */}
+								<Container id={styles.transcriptArea}>
+									{
+										recorder.isRecording === RecordingStates.NOT_STARTED
+											?
+											"Press \"Start\" to begin..."
+											:
+											transcription.final.join(" ").toString() + transcription.nonFinal.toString()
+									}
+								</Container>
+								{/* </Segment> */}
+								{/* </Grid.Column> */}
+							</Grid.Row>
+
+							<Grid.Row>
+								{/* <Grid.Column width={16}> */}
+								<div id={styles.visualisationContainer}>
+									{
+										selectedViz === 'Oscilloscope'
 											?
 											<VizOscilloscope recorder={recorder} />
 											:
 											<VizFreqBars recorder={recorder} />
-										}
-										
-										<div id={styles.changeVizBtns}>
-											<Button.Group inverted size="large">
-												<Button
-													onClick={onChangeVizBtnClick}
-													primary={selectedViz === 'Frequency Bars'}
-												>
-													Frequency Bars
-												</Button>
+									}
 
-												<Button.Or />
+									<div id={styles.changeVizBtns}>
+										<Button.Group inverted size="large">
+											<Button
+												onClick={onChangeVizBtnClick}
+												primary={selectedViz === 'Frequency Bars'}
+											>
+												Frequency Bars
+											</Button>
 
-												<Button
-													primary={selectedViz === 'Oscilloscope'}
-													onClick={onChangeVizBtnClick}
-												>
-													Oscilloscope
-												</Button>
-											</Button.Group>
-										</div>
+											<Button.Or />
+
+											<Button
+												primary={selectedViz === 'Oscilloscope'}
+												onClick={onChangeVizBtnClick}
+											>
+												Oscilloscope
+											</Button>
+										</Button.Group>
 									</div>
-								</Grid.Column>
+								</div>
+								{/* </Grid.Column> */}
+							</Grid.Row>
+							<Grid.Row id={styles.startBtn}>
+								<LiveDecodeBtns
+									// key={transcription.final.length}
+									IS_DEBUGGING={IS_DEBUGGING}
+									recorder={recorder}
+									setRecorder={setRecorder}
+									transcription={transcription}
+									setTranscription={setTranscription}
+									webSocketRef={webSocketConnRef}
+									allRecordedChunks={allRecordedChunks}
+									selectedLangModel={selectedLangModel}
+								/>
 							</Grid.Row>
 
-							<Grid.Row>
-								<Grid.Column>
-									{/* <TextArea
-										placeholder='Press "Start" to begin ...'
-										rows={8}
-										style={{ minHeight: '200px', minWidth: '100%', padding: '16px' }}
-										disabled
-										value={transcription.final.join(" ").toString() + transcription.nonFinal.toString()}
-									/> */}
-									<Segment
-										padded
-										color={recorder.isRecording === RecordingStates.IN_PROGRESS ? "green" : "purple"}
-										style={{ minHeight: '200px', textAlign: 'left', background: '#fdfdfd' }}
-									>
-										{
-											recorder.isRecording === RecordingStates.NOT_STARTED
-												?
-												"Press \"Start\" to begin..."
-												:
-												transcription.final.join(" ").toString() + transcription.nonFinal.toString()
-										}
-									</Segment>
-								</Grid.Column>
-							</Grid.Row>
 							{/* Debug */}
 							{/* <Grid.Row> */}
 							{/* {showDownload.show && <a href={showDownload.url} download="audio.wav">Download Test</a>} */}
