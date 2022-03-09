@@ -116,7 +116,10 @@ const RegisterPage: React.FC = () => {
 				onSubmit={handleSubmit(onSubmit)}
 				// {...regMessage.isError ? 'error' : 'positive' }
 				error={regMessage.isShown && regMessage.isError}
-				noValidate>
+				noValidate
+				role="form"
+				aria-label="Register Form"
+				>
 				<Message
 					hidden={regMessage.isShown === false}
 					error={regMessage.isError === true}
@@ -134,6 +137,8 @@ const RegisterPage: React.FC = () => {
 						onChange={onInputChange}
 						onBlur={onInputBlur}
 						error={errors.name ? { content: errors.name.message } : false}
+						role="text"
+						aria-label="Full Name Input"
 					/>
 				</Form.Field>
 				<Form.Field>
@@ -146,6 +151,8 @@ const RegisterPage: React.FC = () => {
 						onChange={onInputChange}
 						onBlur={onInputBlur}
 						error={errors.email ? { content: errors.email.message } : false}
+						role="text"
+						aria-label="Email Input"
 					/>
 				</Form.Field>
 				<Form.Field>
@@ -158,6 +165,8 @@ const RegisterPage: React.FC = () => {
 						onChange={onInputChange}
 						onBlur={onInputBlur}
 						error={errors.password ? { content: errors.password.message } : false}
+						role="text"
+						aria-label="Password Input"
 					/>
 				</Form.Field>
 				<Form.Field>
@@ -170,6 +179,8 @@ const RegisterPage: React.FC = () => {
 						onChange={onInputChange}
 						onBlur={onInputBlur}
 						error={errors.passwordCfm ? { content: errors.passwordCfm.message } : false}
+						role="text"
+						aria-label="Confirm Password Input"
 					/>
 				</Form.Field>
 				<Button
@@ -180,6 +191,8 @@ const RegisterPage: React.FC = () => {
 					loading={isLoading}
 					type='submit'
 					content='Register'
+					role='button'
+					aria-label='Register Button'
 					/>
 
 				<Button

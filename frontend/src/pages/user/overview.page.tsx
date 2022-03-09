@@ -117,7 +117,7 @@ const OverviewPage: React.FC = () => {
 		</section>
 
 		<section id={styles.overviewSection}>
-			<Header as="h2">Overview</Header>
+			<Header as="h2" role="heading">Overview</Header>
 			<Card.Group id={styles.overviewCardGroup}>
 				{/* First Card: */}
 				<Card className={styles.overviewCard}>

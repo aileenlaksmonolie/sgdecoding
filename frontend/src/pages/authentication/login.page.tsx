@@ -28,7 +28,7 @@ const LoginPage: React.FC = () => {
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [searchParams, setSearchParams] = useSearchParams();
 	const logoutMsg = searchParams.get('logoutMsg');
-	console.log(logoutMsg);
+	// console.log(logoutMsg);
 
 	const dispatch = useDispatch();
 	const { login } = bindActionCreators(actionCreators, dispatch);
@@ -58,7 +58,7 @@ const LoginPage: React.FC = () => {
 
 		if (isLoggedIn)
 			navigate('/');
-	}, [isLoggedIn, navigate, register]);
+	}, [navigate, register]);
 
 
 	/* Event Handlers */
@@ -79,17 +79,20 @@ const LoginPage: React.FC = () => {
 	const onSubmit = async (data: { email: string, password: string, rmbMe: undefined | boolean }) => {
 		// console.log("[DEBUG] LoginCard rmbMe: " + data.rmbMe)
 		setIsLoading(true);
-		console.log('email ' + data.email);
-		const userCreds: UserLoginModel = {
-			email: data.email,
-			password: data.password,
-			rmbMe: data.rmbMe === undefined ? false : true
-		};
-		try {
-			await login(userCreds);
-		} catch (err) {
-			// console.log("[DEBUG] Error logging in!")
-			setShowError(true);
+		// console.log('email ' + data.email);
+		if (data.email && data.password) {
+			const userCreds: UserLoginModel = {
+				email: data.email,
+				password: data.password,
+				rmbMe: data.rmbMe === undefined ? false : true
+			};
+			try {
+				await login(userCreds);
+				navigate('/');
+			} catch (err) {
+				console.log("[DEBUG] Error logging in!");
+				setShowError(true);
+			}
 		}
 		setIsLoading(false);
 
@@ -107,12 +110,15 @@ const LoginPage: React.FC = () => {
 				positive
 				header="You are Logged Out!"
 				content={logoutMsg}
-				hidden={logoutMsg === null} 
+				hidden={logoutMsg === null}
 			/>
 			<Form
 				onSubmit={handleSubmit(onSubmit)}
 				error={showError}
-				noValidate>
+				noValidate
+				role="form"
+				aria-label="Login Form"
+			>
 				<Message
 					error
 					header='Login Unsuccessful'
@@ -129,6 +135,8 @@ const LoginPage: React.FC = () => {
 						onChange={onInputChange}
 						onBlur={onInputBlur}
 						error={errors.email ? { content: errors.email.message } : false}
+						role="text"
+						aria-label="Email Input"
 					/>
 				</Form.Field>
 				<Form.Field>
@@ -137,12 +145,15 @@ const LoginPage: React.FC = () => {
 						label="Password"
 						name="password"
 						type='password'
-						placeholder='Password'
+						placeholder='Enter your password'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
 						error={errors.password ? { content: errors.password.message } : false}
+						role="text"
+						aria-label="Password Input"
 					/>
 				</Form.Field>
+
 				<Form.Field>
 					<Checkbox
 						name="rmbMe"
@@ -158,7 +169,10 @@ const LoginPage: React.FC = () => {
 					icon={isLoading ? "spinner" : undefined}
 					loading={isLoading}
 					content="Login"
-					type='submit' />
+					type='submit'
+					role='button'
+					aria-label='Login Button'
+				/>
 			</Form>
 			<Link
 				to='/auth/forgotpassword'

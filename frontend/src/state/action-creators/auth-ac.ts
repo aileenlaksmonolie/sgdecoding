@@ -9,7 +9,6 @@ import { UserChangeName } from './../../models/user-authentication.model';
 
 export const login = (userCreds: UserLoginModel) => {
 	return async (dispatch: Dispatch) => {
-
 		if (userCreds.rmbMe) {
 			let rmbMe: AuthAction = {
 				type: AuthTypes.RMB_ME,
@@ -18,27 +17,22 @@ export const login = (userCreds: UserLoginModel) => {
 			dispatch(rmbMe);
 		}
 
-		await loginOneUser(userCreds)
-			.then(({ data }) => {
-				let loginSuccess: AuthAction = {
-					type: AuthTypes.LOGIN_SUCCESS,
-					token: data.accessToken,
-					lastLogin: data.lastLogin
-				};
-				dispatch(loginSuccess);
+		try {
+			const { data } = await loginOneUser(userCreds);
+			// console.log("Login successfully");
+			let loginSuccess: AuthAction = {
+				type: AuthTypes.LOGIN_SUCCESS,
+				token: data.accessToken,
+				lastLogin: data.lastLogin
+			};
+			dispatch(loginSuccess);
 
-				return Promise.resolve();
-			}).catch((error) => {
-				console.log('test');
-				console.error(error);
-
-				// let loginFail: AuthAction = {
-				// 	type: AuthTypes.LOGIN_FAIL
-				// };
-
-				// dispatch(loginFail);
-				return Promise.reject();
-			});
+			return Promise.resolve();
+		} catch (error) {
+			// console.log('test');
+			// console.error(error);
+			return Promise.reject();
+		}
 	};
 };
 
@@ -51,7 +45,7 @@ export const changeName = (newNameRequest: UserChangeName) => {
 		await sendChangeNameRequest(newNameRequest)
 			.then((res) => {
 				console.log(res);
-					let changeNameSuccess: AuthAction = {
+				let changeNameSuccess: AuthAction = {
 					type: AuthTypes.SET_NEW_NAME,
 					newName: newNameRequest.newName
 				};

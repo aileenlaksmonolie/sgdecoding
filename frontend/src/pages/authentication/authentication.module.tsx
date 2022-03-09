@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Routes } from "react-router-dom";
 import { Card, Grid, Image } from 'semantic-ui-react';
+import NotFoundPage from '../not-found.page';
 import styles from './authentication.module.scss';
 import ForgotPwdPage from './forgot-pwd.page';
 import LoginPage from './login.page';
@@ -18,6 +19,7 @@ const AuthenticationModule: React.FC = () => {
 						<Route path='register' element={<RegisterPage />} />
 						<Route path='forgotpassword' element={<ForgotPwdPage />} />
 						<Route path='resetpassword' element={<ResetPasswordPage />} />
+						<Route path='*' element={<NotFoundPage />}></Route>
 					</Routes>
 				</Card>
 			</Grid>

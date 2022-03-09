@@ -32,17 +32,6 @@ const NavBar: React.FC = () => {
 				<Image src='/images/Main_logo.svg' alt='main logo' width="274" />
 			</Menu.Item>
 
-			{/* <Menu.Item
-				name='home'
-				active={activeItem === 'home'}
-				onClick={handleItemClick}
-			/>
-			<Menu.Item
-				name='messages'
-				active={activeItem === 'messages'}
-				onClick={handleItemClick}
-			/> */}
-
 			<Menu.Menu position='right' id={styles.profileDropdown}>
 				<Dropdown
 					trigger={(<span><Icon name='user' />{name}</span>)}

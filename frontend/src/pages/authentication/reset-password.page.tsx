@@ -113,7 +113,10 @@ const ResetPasswordPage: React.FC = () => {
 				onSubmit={handleSubmit(onSubmit)}
 				// {...formMessage.isError ? 'error' : 'positive' }
 				error={formMessage.isShown && formMessage.isError}
-				noValidate>
+				noValidate
+				role="form"
+				aria-label="Reset Password Form"
+				>
 				<Message
 					hidden={formMessage.isShown === false}
 					error={formMessage.isError === true}
@@ -131,6 +134,8 @@ const ResetPasswordPage: React.FC = () => {
 						onChange={onInputChange}
 						onBlur={onInputBlur}
 						error={errors.email ? { content: errors.email.message } : false}
+						role="text"
+						aria-label="Email Input"
 					/>
 				</Form.Field>
 				<Form.Field>
@@ -143,6 +148,8 @@ const ResetPasswordPage: React.FC = () => {
 						onChange={onInputChange}
 						onBlur={onInputBlur}
 						error={errors.code ? { content: errors.code.message } : false}
+						role="text"
+						aria-label="Code Input"
 					/>
 				</Form.Field>
 				<Form.Field>
@@ -156,6 +163,8 @@ const ResetPasswordPage: React.FC = () => {
 						onBlur={onInputBlur}
 						// disabled={isDisabled}
 						error={errors.password ? { content: errors.password.message } : false}
+						role="text"
+						aria-label="Password Input"
 					/>
 				</Form.Field>
 				<Form.Field>
@@ -169,20 +178,23 @@ const ResetPasswordPage: React.FC = () => {
 						onBlur={onInputBlur}
 						// disabled={isDisabled}
 						error={errors.passwordCfm ? { content: errors.passwordCfm.message } : false}
+						role="text"
+						aria-label="Confirm Password Input"
 					/>
 				</Form.Field>
 				
 				<Button
-					className={classes.registerBtn}
-					fluid
+					className={classes.mainActionBtn}
 					primary
-					type='submit'>
+					type='submit'
+					role='button'
+					aria-label='Reset Password Button'
+					>
 					Reset My Password
 				</Button>
 
 				<Button
 					className={classes.goBackBtn}
-					fluid
 					basic
 					onClick={() => navigate('/auth/login')}>
 					Go Back

@@ -2,6 +2,7 @@ import { NewUserRegistration, UserChangeName, UserChangePassword, UserLoginModel
 import { proxyAPI } from './api';
 
 export const loginOneUser = (userCreds: UserLoginModel) => {
+	// console.log("auth-api login() called")
 	return proxyAPI.post(
 		`/auth/login`, 
 		{ email: userCreds.email, password: userCreds.password }

@@ -65,7 +65,10 @@ const ForgotPwdPage: React.FC = () => {
 			</Container>
 			<Form
 				onSubmit={handleSubmit(onSubmit)}
-				noValidate>
+				noValidate
+				role="form"
+				aria-label="Forgot Password Form"
+				>
 				<Message
 					hidden={showMsg === false}
 					positive
@@ -82,6 +85,8 @@ const ForgotPwdPage: React.FC = () => {
 						onChange={onInputChange}
 						onBlur={onInputBlur}
 						error={errors.email ? { content: errors.email.message } : false}
+						role="text"
+						aria-label="Email Input"
 					/>
 				</Form.Field>
 				<Button
@@ -92,6 +97,8 @@ const ForgotPwdPage: React.FC = () => {
 					loading={isLoading}
 					type='submit'
 					content='Recover My Account'
+					role='button'
+					aria-label='Submit Form Button'
 					/>
 
 				<Button
