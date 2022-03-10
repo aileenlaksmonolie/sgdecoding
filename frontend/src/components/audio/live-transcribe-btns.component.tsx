@@ -4,9 +4,9 @@ import { Button, Container, Grid, Icon } from "semantic-ui-react";
 import { liveDecodeSocket } from "../../api/api";
 import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
-import { MyRecorder, RecordingStates, Transcription } from "../../pages/user/live-decode.page";
+import { MyRecorder, RecordingStates, Transcription } from "../../pages/user/live-transcribe.page";
 import { RootState } from "../../state/reducers";
-import styles from './live-decode-btns.module.scss';
+import styles from './live-transcribe-btns.module.scss';
 
 interface Props {
 	// worker: AudioWorkletNode,

@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
 import { Button, ButtonProps, Card, Container, Dropdown, DropdownProps, Grid, Header, Icon, Label } from "semantic-ui-react";
 import VizFreqBars from "../../components/audio/freq-bars-visualisation.component";
-import LiveDecodeBtns from "../../components/audio/live-decode-btns.component";
+import LiveDecodeBtns from "../../components/audio/live-transcribe-btns.component";
 import NoMicAccess from "../../components/audio/no-mic-access.component";
 import VizOscilloscope from "../../components/audio/oscilloscope-visualisation";
-import styles from './live-decode.module.scss';
+import styles from './live-transcribe.module.scss';
 
 export enum RecordingStates {
 	NOT_STARTED = "notstarted",

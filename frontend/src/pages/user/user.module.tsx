@@ -4,7 +4,7 @@ import Layout from "../../components/layout/layout.component";
 import NotFoundPage from "../not-found.page";
 import ChangeNamePage from './change-name.page';
 import ChangePasswordPage from "./change-password.page";
-import LiveDecodePage from "./live-decode.page";
+import LiveDecodePage from "./live-transcribe.page";
 import OfflineTranscribePage from "./offline-transcribe-page";
 import OverviewPage from "./overview.page";
 import ProfilePage from "./profile.page";

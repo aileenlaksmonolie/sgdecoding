@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useWindowSize } from "../../helpers/window-resize-hook";
-import { MyRecorder, RecordingStates } from "../../pages/user/live-decode.page";
+import { MyRecorder, RecordingStates } from "../../pages/user/live-transcribe.page";
 
 
 interface Props {
