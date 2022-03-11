@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Routes } from "react-router-dom";
 import { Card, Grid, Image } from 'semantic-ui-react';
+import ParticlesBackground from '../../components/layout/particles-background.component';
 import NotFoundPage from '../not-found.page';
 import styles from './authentication.module.scss';
 import ForgotPwdPage from './forgot-pwd.page';
@@ -12,6 +13,7 @@ const AuthenticationModule: React.FC = () => {
 
 	return (
 		<div id={styles.authContainer}>
+			<ParticlesBackground />
 			<Grid centered id={styles.authContainerGrid}>
 				<Card id={styles.authCard}>
 					<Routes>
