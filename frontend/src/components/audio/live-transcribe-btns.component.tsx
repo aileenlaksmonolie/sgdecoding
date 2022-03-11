@@ -8,11 +8,8 @@ import { MyRecorder, RecordingStates, Transcription } from "../../pages/user/liv
 import { RootState } from "../../state/reducers";
 import styles from './live-transcribe-btns.module.scss';
 
+// TODO use Redux Store for these props.
 interface Props {
-	// worker: AudioWorkletNode,
-	// onStartCb: Function,
-	// onStopCb: Function,
-	// webSocketConn: WebSocket
 	IS_DEBUGGING: boolean,
 	transcription: Transcription,
 	setTranscription: React.Dispatch<React.SetStateAction<Transcription>>,

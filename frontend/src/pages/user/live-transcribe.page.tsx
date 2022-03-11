@@ -93,7 +93,7 @@ const LiveDecodePage: React.FC = () => {
 		return stream;
 	};
 
-	const createAudioContext = (stream: MediaStream) => {
+	const createAudioContext = () => {
 		/* sampleRate property is not implemented in Firefox yet. Only Chrome. 
 					Have to downsample manually.
 					https://bugzilla.mozilla.org/show_bug.cgi?id=1674892
@@ -187,7 +187,7 @@ const LiveDecodePage: React.FC = () => {
 
 		reqMicrophoneAccess()
 			.then((stream) => {
-				const audioContext = createAudioContext(stream);
+				const audioContext = createAudioContext();
 				console.log(stream);
 				loadWorkletNode(audioContext, stream).then(
 					(audioWorklet) => {

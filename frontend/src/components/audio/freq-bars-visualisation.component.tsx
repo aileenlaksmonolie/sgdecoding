@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Icon } from "semantic-ui-react";
 import { useWindowSize } from "../../helpers/window-resize-hook";
 import { MyRecorder, RecordingStates } from "../../pages/user/live-transcribe.page";
 
@@ -8,18 +9,14 @@ interface Props {
 
 const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 	const { audioContext, stream, isRecording } = recorder;
+	const [mediaError, setMediaError] = useState(false);
 
-	if (audioContext === null || stream === null)
-		throw new Error("AudioContext or stream not found, unable to visualise.");
 
 	// const containerRef = useRef<HTMLDivElement>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [winWidth, winHeight] = useWindowSize();
 
-	var analyser = audioContext!.createAnalyser();
-
-	const [width, setWidth] = useState(0);
-	const [height, setHeight] = useState(0);
+	var analyser: AnalyserNode;
 
 	const [canvasCtx, setCanvasCtx] = useState<CanvasRenderingContext2D | null>();
 
@@ -40,30 +37,32 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		// } else {
 		// 	canvasCtx!.fillStyle = 'rgb(252, 255, 252)';
 		// }
-		canvasCtx!.fillRect(0, 0, width, height);
-		var barWidth = ((width - (bufferLength - 1)) / bufferLength);
-		var barHeight;
-		var x = 0;
+		if (canvasRef.current) {
+			canvasCtx!.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+			var barWidth = ((canvasRef.current.width - (bufferLength - 1)) / bufferLength);
+			var barHeight;
+			var x = 0;
 
-		for (var i = 0; i < bufferLength; i++) {
-			barHeight = dataArray.current[i];
+			for (var i = 0; i < bufferLength; i++) {
+				barHeight = dataArray.current[i];
 
-			if (isRecording === RecordingStates.NOT_STARTED) {
-				canvasCtx!.fillStyle = 'rgba(' + (barHeight + 50) + ',50,150, 0.2)';
-				canvasCtx!.fillRect(x, height - barHeight / 2, barWidth, barHeight / 2);
-			} else if(isRecording === RecordingStates.STOPPED){
-				canvasCtx!.fillStyle = 'rgba(60,' + (barHeight + 60) + ',48, 0.2)';
-				canvasCtx!.fillRect(x, height - barHeight / 2, barWidth, barHeight / 2);
-			}else{
-				canvasCtx!.fillStyle = 'rgba(' + (barHeight + 60) + ',60,48, 0.2)';
-				canvasCtx!.fillRect(x, height - barHeight / 2, barWidth, barHeight / 2);
+				if (isRecording === RecordingStates.NOT_STARTED) {
+					canvasCtx!.fillStyle = 'rgba(' + (barHeight + 50) + ',50,150, 0.2)';
+					canvasCtx!.fillRect(x, canvasRef.current.height - barHeight / 2, barWidth, barHeight / 2);
+				} else if (isRecording === RecordingStates.STOPPED) {
+					canvasCtx!.fillStyle = 'rgba(60,' + (barHeight + 60) + ',48, 0.2)';
+					canvasCtx!.fillRect(x, canvasRef.current.height - barHeight / 2, barWidth, barHeight / 2);
+				} else {
+					canvasCtx!.fillStyle = 'rgba(' + (barHeight + 60) + ',60,48, 0.2)';
+					canvasCtx!.fillRect(x, canvasRef.current.height - barHeight / 2, barWidth, barHeight / 2);
+				}
+
+				x += barWidth + 1;
 			}
-
-			x += barWidth + 1;
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isRecording, height, width, canvasCtx]); // Do not add analyser
+	}, [isRecording, canvasCtx]); // Do not add analyser
 
 
 
@@ -72,14 +71,13 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 			// set the pixels drawn to match the space allocated
 			canvasRef.current.height = canvasRef.current.clientHeight;
 			canvasRef.current.width = canvasRef.current.clientWidth;
-			setWidth(canvasRef.current.width);
-			setHeight(canvasRef.current.height);
 		}
 	}, [winWidth, winHeight]);
 
 
 	useEffect(() => {
-		if (width !== 0 && height !== 0) {
+		if (audioContext !== null && stream !== null) {
+			analyser = audioContext!.createAnalyser();
 			var source: MediaStreamAudioSourceNode;
 			var distortion: WaveShaperNode;
 			var gainNode: GainNode;
@@ -88,55 +86,54 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 			analyser.maxDecibels = -10;
 			analyser.smoothingTimeConstant = 0.9;
 
-			distortion = audioContext.createWaveShaper();
-			gainNode = audioContext.createGain();
+			distortion = audioContext!.createWaveShaper();
+			gainNode = audioContext!.createGain();
 			distortion.oversample = '4x';
 
 			analyser.fftSize = 128; // fft = fast fourier transform
 			dataArray.current = new Uint8Array(analyser.frequencyBinCount);
 
-			source = audioContext.createMediaStreamSource(stream);
-			source.connect(analyser);
-			analyser.connect(distortion);
-			gainNode.gain.value = 0;
-			distortion.connect(gainNode);
-			gainNode.connect(audioContext.destination);
 
-			// console.log(canvasRef.current)
-			setCanvasCtx(canvasRef.current!.getContext("2d"));
+			source = audioContext!.createMediaStreamSource(stream!);
+			if (source.channelCount >= 1) {
+				source.connect(analyser);
+				analyser.connect(distortion);
+				gainNode.gain.value = 0;
+				distortion.connect(gainNode);
+				gainNode.connect(audioContext!.destination);
+
+				// console.log(canvasRef.current)
+				setCanvasCtx(canvasRef.current!.getContext("2d"));
+			}
+
 			if (canvasCtx) {
-				canvasCtx.clearRect(0, 0, width, height);
+				canvasCtx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
 				draw();
 			}
+		} else {
+			setMediaError(true);
 		}
 
 		return () => {
-			console.log("freq-bars unmounted");
+			// console.log("freq-bars unmounted");
+			setCanvasCtx(null);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [stream, audioContext, draw, width, height, canvasCtx]); // Do not add analyser
+	}, [canvasRef.current]); // Do not add analyser
 
 	return (
-		// <div
-		// 	style={{
-		// 		width: '100%',
-		// 		height: '100%',
-		// 		minHeight: '200px'
-		// 	}}
-		// 	ref={containerRef}>
-		// 	{
-		// 		width !== 0
-		// 			?
-		<canvas
-			ref={canvasRef as React.MutableRefObject<HTMLCanvasElement | null>}
-			// width={width}
-			// height={height}
-			style={{ width: '100%', height: '100%', maxHeight: '200px' }}
-		></canvas>
-		// 			:
-		// 			<p>Loading...</p>
-		// 	}
-		// </div>
+		mediaError
+			?
+			<div style={{ color: '#777' }}>
+				<p><Icon name='warning sign'></Icon>Unable to load visualisation</p>
+			</div>
+			:
+			<canvas
+				ref={canvasRef as React.MutableRefObject<HTMLCanvasElement | null>}
+				style={{ width: '100%', height: '100%', maxHeight: '200px' }}
+				role="img"
+				aria-label="Frequency Bars Animation"
+			></canvas>
 	);
 };
 

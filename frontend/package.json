@@ -68,9 +68,11 @@
     "@semantic-ui-react/craco-less": "^1.2.3",
     "@types/audioworklet": "0.0.23",
     "@types/redux-mock-store": "^1.0.3",
+    "jest-canvas-mock": "^2.3.1",
     "msw": "^0.39.1",
     "react-scripts": "^4.0.3",
     "redux-mock-store": "^1.5.4",
-    "semantic-ui-less": "^2.4.1"
+    "semantic-ui-less": "^2.4.1",
+    "standardized-audio-context-mock": "^9.4.0"
   }
 }
