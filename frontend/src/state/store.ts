@@ -2,7 +2,7 @@ import { applyMiddleware, createStore } from "redux";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from 'redux-persist/lib/storage';
 import thunk from "redux-thunk";
-import reducers from "./reducers";
+import rootReducer from "./reducers";
 
 const persistConfig = {
 	key: 'root',
@@ -10,7 +10,7 @@ const persistConfig = {
 	whitelist: ['authReducer']
 };
 
-const persistedReducer = persistReducer(persistConfig, reducers);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = createStore(
     persistedReducer,

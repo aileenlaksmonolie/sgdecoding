@@ -16,15 +16,6 @@ interface DeleteTokenAction{
 	type: AuthTypes.DELETE_TOKEN,
 }
 
-interface SetLogoutMsgAction{
-	type: AuthTypes.SET_LOGOUT_MSG,
-	logoutMsg: string
-}
-
-interface DeleteLogoutMsgAction{
-	type: AuthTypes.DELETE_LOGOUT_MSG
-}
-
 interface ChangeNameSuccessAction{
 	type: AuthTypes.SET_NEW_NAME,
 	newName: string
@@ -32,5 +23,4 @@ interface ChangeNameSuccessAction{
 
 
 export type AuthAction = RememberMeAction | LoginSuccessAction 
-												| SetLogoutMsgAction | DeleteLogoutMsgAction 
 												| ChangeNameSuccessAction | DeleteTokenAction;
