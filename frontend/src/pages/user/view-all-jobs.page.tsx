@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import { Button, Container, Dropdown, DropdownProps, Form, Grid, Header, Icon, InputOnChangeData, List, Loader, Pagination, PaginationProps, Popup } from "semantic-ui-react";
 import DownloadTranscriptButton from "../../components/audio/download-transcript-btn";
@@ -33,8 +33,8 @@ const ViewAllJobs: React.FC = () => {
 	const [noOfPages, setNoOfPages] = useState(0);
 	const [itemsToDisplay, setItemsToDisplay] = useState<Array<LiveTranscriptionHistory | BatchTranscriptionHistory>>([]);
 	const [filteredHistory, setFilteredHistory] = useState<Array<LiveTranscriptionHistory | BatchTranscriptionHistory>>([]);
-
 	const [defDateVals, setDefDateVals] = useState<{ startDate: string, endDate: string }>(); // workaround, can't get setValue to work
+	const [displayWelcomeMsg, setDisplayWelcomeMsg] = useState(false);
 
 	const [filters, setFilters] = useState<TranscriptionHistoryFilter>({
 		type: '',
@@ -169,30 +169,33 @@ const ViewAllJobs: React.FC = () => {
 		console.log(getValues("startDate"));
 		console.log(getValues("endDate"));
 
-		if (filters.startDate === '' && filters.endDate === '') {
-			console.log("setting form default values");
-			let startDate = history[history.length - 1].createdAt.slice(0, 10);
-			let endDate = history[0].createdAt.slice(0, 10);
-			setFilters({ ...filters, startDate, endDate });
+		if (history != null) {
+			if (filters.startDate === '' && filters.endDate === '') {
+				let startDate = history[history.length - 1].createdAt.slice(0, 10);
+				let endDate = history[0].createdAt.slice(0, 10);
+				setFilters({ ...filters, startDate, endDate });
 
-			// Set the default start date and end date in filters
-			setDefDateVals({ startDate, endDate });
-			setValue("startDate", startDate);
-			setValue("endDate", endDate);
+				// Set the default start date and end date in filters
+				setDefDateVals({ startDate, endDate });
+				setValue("startDate", startDate);
+				setValue("endDate", endDate);
+			}
 		}
 	};
 
 	const handleViewBtnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
 		console.log(e);
 		console.log(id);
-		let clickedTranscriptHistory = history.find(h => h._id === id);
+		if (history != null) {
+			let clickedTranscriptHistory = history.find(h => h._id === id);
 
-		if (clickedTranscriptHistory) {
-			setSelectedTranscriptionHistory(clickedTranscriptHistory);
-			navigate(`/viewonetranscript?id=${id}`);
+			if (clickedTranscriptHistory) {
+				setSelectedTranscriptionHistory(clickedTranscriptHistory);
+				navigate(`/viewonetranscript?id=${id}`);
+			}
+
+			//TODO show a toast error
 		}
-
-		//TODO show a toast error
 
 	};
 
@@ -236,12 +239,16 @@ const ViewAllJobs: React.FC = () => {
 	useEffect(() => {
 		console.log("[DEBUG] Total Transcription History count: " + totalHistory);
 		console.log(history);
-		if (history.length > 0) {
+		if (history != null) {
 			setIsLoading(false);
-			setNoOfPages(Math.ceil(history.length / ITEMS_PER_PAGE));
-			let startIdx = (ITEMS_PER_PAGE * (currentPage - 1));
-			let endIdx = ((currentPage * ITEMS_PER_PAGE));
-			setItemsToDisplay(history.slice(startIdx, endIdx));
+			if (history.length > 0) {
+				setNoOfPages(Math.ceil(history.length / ITEMS_PER_PAGE));
+				let startIdx = (ITEMS_PER_PAGE * (currentPage - 1));
+				let endIdx = ((currentPage * ITEMS_PER_PAGE));
+				setItemsToDisplay(history.slice(startIdx, endIdx));
+			} else {
+				setDisplayWelcomeMsg(true);
+			}
 		}
 	}, [history, totalHistory, currentPage]); // history, totalHistory
 
@@ -251,55 +258,57 @@ const ViewAllJobs: React.FC = () => {
 	useEffect(() => {
 		console.log("[DEBUG] Filtering ... ...");
 		// console.log(history);
-		let searchStrLC = filters.searchStr.toLowerCase();
-		let filteredItems = history.filter((i) => {
-			let audioDuration = (i as LiveTranscriptionHistory).liveSessionDuration | i.input[0].file.duration;
-			if (filters.duration !== '') {
-				if (filters.duration === 'short' && (audioDuration > 180))
+		if (history != null) {
+			let searchStrLC = filters.searchStr.toLowerCase();
+			let filteredItems = history.filter((i) => {
+				let audioDuration = (i as LiveTranscriptionHistory).liveSessionDuration | i.input[0].file.duration;
+				if (filters.duration !== '') {
+					if (filters.duration === 'short' && (audioDuration > 180))
+						return false;
+					else if (filters.duration === 'medium' && (audioDuration < 180 || audioDuration > 600))
+						return false;
+					else if (filters.duration === 'long' && audioDuration < 600)
+						return false;
+				}
+
+				if (filters.type !== '' && i.type !== filters.type)
 					return false;
-				else if (filters.duration === 'medium' && (audioDuration < 180 || audioDuration > 600))
+
+				if (filters.lang.length !== 0 && !filters.lang.includes(i.lang))
 					return false;
-				else if (filters.duration === 'long' && audioDuration < 600)
-					return false;
-			}
 
-			if (filters.type !== '' && i.type !== filters.type)
-				return false;
+				if (filters.startDate !== '' && filters.endDate !== '') {
+					if (i.createdAt.slice(0, 10) < filters.startDate
+						|| i.createdAt.slice(0, 10) > filters.endDate)
+						return false;
+				}
 
-			if (filters.lang.length !== 0 && !filters.lang.includes(i.lang))
-				return false;
+				// console.log(i.title);
+				if (searchStrLC !== '') {
+					if (!i.title.toLowerCase().includes(searchStrLC)
+						&& !i.input[0].file.filename.toLowerCase().includes(searchStrLC)
+						&& !i.lang.toLowerCase().includes(searchStrLC)
+						&& !i.input[0].file.mimeType.toLowerCase().includes(searchStrLC)
+					)
+						return false;
+				}
 
-			if (filters.startDate !== '' && filters.endDate !== '') {
-				if (i.createdAt.slice(0, 10) < filters.startDate
-					|| i.createdAt.slice(0, 10) > filters.endDate)
-					return false;
-			}
+				return true;
+			});
+			console.log(filteredItems);
+			console.log("[DEBUG] filtered results length: " + filteredItems.length);
+			setFilteredHistory(filteredItems);
 
-			// console.log(i.title);
-			if (searchStrLC !== '') {
-				if (!i.title.toLowerCase().includes(searchStrLC)
-					&& !i.input[0].file.filename.toLowerCase().includes(searchStrLC)
-					&& !i.lang.toLowerCase().includes(searchStrLC)
-					&& !i.input[0].file.mimeType.toLowerCase().includes(searchStrLC)
-				)
-					return false;
-			}
+			let startIdx = (ITEMS_PER_PAGE * (currentPage - 1));
+			let endIdx = ((currentPage * ITEMS_PER_PAGE));
+			console.log("filter current page: " + currentPage);
+			console.log("filter start index: " + startIdx);
+			console.log("filter end index: " + endIdx);
+			setItemsToDisplay(filteredItems.slice(startIdx, endIdx));
 
-			return true;
-		});
-		console.log(filteredItems);
-		console.log("[DEBUG] filtered results length: " + filteredItems.length);
-		setFilteredHistory(filteredItems);
-
-		let startIdx = (ITEMS_PER_PAGE * (currentPage - 1));
-		let endIdx = ((currentPage * ITEMS_PER_PAGE));
-		console.log("filter current page: " + currentPage);
-		console.log("filter start index: " + startIdx);
-		console.log("filter end index: " + endIdx);
-		setItemsToDisplay(filteredItems.slice(startIdx, endIdx));
-
-		//setItemsToDisplay(filteredItems.slice(0, ITEMS_PER_PAGE));
-		setNoOfPages(Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
+			//setItemsToDisplay(filteredItems.slice(0, ITEMS_PER_PAGE));
+			setNoOfPages(Math.ceil(filteredItems.length / ITEMS_PER_PAGE));
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [filters, history, searchParams, currentPage]); // change in history should not trigger this
 
@@ -486,71 +495,83 @@ const ViewAllJobs: React.FC = () => {
 			{/* List of Transcription Jobs  */}
 			<List divided size="large" verticalAlign="middle" className={styles.historyList}>
 				{
+					//Still loading
+					isLoading &&
+					<Container textAlign="center">
+						<Loader active indeterminate inline='centered' />
+						<strong>Loading ... ...</strong>
+					</Container>
+				}
+				{
+					// Display Grid List Items 
+					(isLoading === false && itemsToDisplay.length > 0) &&
 					// TODO Componentise this!
-					isLoading === false && itemsToDisplay.length > 0
-						?
-						itemsToDisplay.map(h => (
-							<List.Item key={h._id} className={styles.historyItem}>
-								{/* There are different states of the Icons */}
-								{
-									renderIcon(h)
-								}
+					itemsToDisplay.map(h => (
+						<List.Item key={h._id} className={styles.historyItem}>
+							{/* There are different states of the Icons */}
+							{
+								renderIcon(h)
+							}
 
-
-								{/* Description of List Item */}
-								<List.Content className={styles.historyItemContent}>
-									<List.Header as='p'>
-										{/* {h.type === 'live' ? "Live Transcribe on " : "File Upload on "}
-									<Moment format="ddd D MMM YYYY, h:mma">{h.createdAt}</Moment>
-									{h.input[0].errorCode !== null ? ` (${h.input[0].errorCode})` : ''} */}
-										{h.title}
-									</List.Header>
-									<List.Description as='p'>
-										{h.lang.charAt(0).toUpperCase() + h.lang.slice(1)}
-										{
-											h.type === 'live'
-												?
-												" | " + moment.utc((h as LiveTranscriptionHistory).liveSessionDuration * 1000).format("H:mm:ss")
-												:
-												" | " + moment.utc(h.input[0].file.duration * 1000).format("H:mm:ss")
+							{/* Description of List Item */}
+							<List.Content className={styles.historyItemContent}>
+								<List.Header as='p'>
+									{h.title}
+								</List.Header>
+								<List.Description as='p'>
+									{h.lang.charAt(0).toUpperCase() + h.lang.slice(1)}
+									{
+										h.type === 'live'
+											?
+											" | " + moment.utc((h as LiveTranscriptionHistory).liveSessionDuration * 1000).format("H:mm:ss")
+											:
+											" | " + moment.utc(h.input[0].file.duration * 1000).format("H:mm:ss")
+									}
+									{" | " + h.sampling}
+									{" | " + h.input[0].file.mimeType + " | "}
+									<span title={h.input[0].file.originalName}>
+										{h.input[0].file.originalName.length > 15
+											? h.input[0].file.originalName.slice(0, 5) + '...' + h.input[0].file.originalName.slice(-10)
+											: h.input[0].file.originalName
 										}
-										{" | " + h.sampling}
-										{" | " + h.input[0].file.mimeType + " | "}
-										<span title={h.input[0].file.originalName}>
-											{h.input[0].file.originalName.length > 15
-												? h.input[0].file.originalName.slice(0, 5) + '...' + h.input[0].file.originalName.slice(-10)
-												: h.input[0].file.originalName
-											}
-										</span>
-									</List.Description>
-								</List.Content>
+									</span>
+								</List.Description>
+							</List.Content>
 
 
-								{/* Action Buttons */}
-								<List.Content floated='right' className={styles.historyItemBtns}>
-									<Button color="blue" onClick={(e) => handleViewBtnClick(e, h._id)}>
-										View
-									</Button>
-									<DownloadTranscriptButton
-										isDisabled={h.type === 'live' || h.input[0].status === 'error'}
-										transcriptHistory={h}
-									/>
-									<Button color="red" disabled>Delete</Button>
-								</List.Content>
-							</List.Item>
-						))
-						:
-						isLoading
-							?
-							<Container textAlign="center">
-								<Loader active indeterminate inline='centered' />
-								<strong>Loading ... ...</strong>
-							</Container>
-							:
-							<Container text textAlign="center" id={styles.notFoundContainer}>
-								<Icon name="question circle outline" size="huge" />
-								<p>Your Filtering/Search yielded no results, please try again!</p>
-							</Container>
+							{/* Action Buttons */}
+							<List.Content floated='right' className={styles.historyItemBtns}>
+								<Button color="blue" onClick={(e) => handleViewBtnClick(e, h._id)}>
+									View
+								</Button>
+								<DownloadTranscriptButton
+									isDisabled={h.type === 'live' || h.input[0].status === 'error'}
+									transcriptHistory={h}
+								/>
+								<Button color="red" disabled>Delete</Button>
+							</List.Content>
+						</List.Item>
+					))
+				}
+				{
+					//Not new user, show bad filter
+					(!isLoading && itemsToDisplay.length === 0 && !displayWelcomeMsg) &&
+					<Container text textAlign="center" id={styles.notFoundContainer}>
+						<Icon name="question circle outline" size="huge" />
+						<p>Your Filtering/Search yielded no results, please try again!</p>
+					</Container>
+				}
+				{
+					//New user, show welcome message					
+					(!isLoading && displayWelcomeMsg) &&
+					<Container text textAlign="center" id={styles.welcomeNewUserContainer}>
+						<Icon name="smile outline" color="grey" size="huge" />
+						<p>It seems like you are new to SG Decoding, click on the following to begin transcribing!</p>
+						<div id={styles.welcomeBtnContainer}>
+							<Button as={Link} to="/livetranscribe" primary id={styles.liveTransBtn}>Live Transcribe</Button>
+							<Button as={Link} to="/offlinetranscribe" color="orange">Offline Transcribe</Button>
+						</div>
+					</Container>
 				}
 			</List>
 

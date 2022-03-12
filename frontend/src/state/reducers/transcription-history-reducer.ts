@@ -4,14 +4,14 @@ import { TranscribedText } from './../../models/offline-transcribe-job.model';
 import { TranscriptionHistory } from './../../models/transcribe-history-response.model';
 
 interface TranscriptHistoryState{
-	history: TranscriptionHistory[],
+	history: TranscriptionHistory[] | null,
 	totalHistory: number,
 	selectedTranscriptHistory: TranscriptionHistory | undefined,
 	selectedTranscriptionText: TranscribedText[]
 }
 
 export const INITIAL_STATE: TranscriptHistoryState = {
-	history: [] as TranscriptionHistory[],
+	history: null,
 	totalHistory: 0,
 	selectedTranscriptHistory: undefined,
 	selectedTranscriptionText: []

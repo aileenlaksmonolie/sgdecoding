@@ -39,6 +39,24 @@
 				margin-top: 24px;
 			}
 		}
+
+		#welcomeNewUserContainer{
+			color: rgb(148, 148, 148);
+
+			p{
+				margin-top: 24px;
+			}
+
+			#welcomeBtnContainer {
+				display: flex;
+				justify-content: center;
+
+				#liveTransBtn {
+					margin-right: 20px;
+					// margin-bottom: 12px;
+				}
+			}
+		}
 	}
 
 	.historyItemBtns {

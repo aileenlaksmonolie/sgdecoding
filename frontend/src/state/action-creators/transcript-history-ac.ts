@@ -14,25 +14,30 @@ import { TranscriptionHistory } from './../../models/transcribe-history-response
 
 export const getLoggedInUserTranscriptionHistory = () => {
 	return async (dispatch: Dispatch) => {
+		console.log("[DEBUG] getting transcripting history....");
 		const { email } = store.getState().authReducer;
 
 		await getOneUserSpeechHistory(email).then(
 			(res: AxiosResponse<any>) => {
 				let transcriptionHistory: OneUserTranscriptionHistoryResponse = res.data;
 				transcriptionHistory.history = transcriptionHistory.history.map((h) => {
+					// map a new property out called "title" for displaying in View-All-Jobs and View-One-Job
 					let title = h.type === 'live' ? "Live Transcribe on " : "File Upload on ";
 					title += moment(h.createdAt).format("ddd D MMM YYYY, h:mma");
 					title += h.input[0].errorCode !== null ? ` (${h.input[0].errorCode})` : '';
 					h.title = title;
 					return h;
 				});
+
 				let action: MgtTranscriptHistoriesAction = {
 					type: UserTranscriptionTypes.SET_THIS_USER_HISTORY,
 					history: transcriptionHistory.history,
 					totalHistory: transcriptionHistory.totalHistory
 				};
 				dispatch(action);
+
 				return Promise.resolve();
+
 			}).catch((error) => {
 				console.error("[ERROR] Unable to get user transcription history");
 				console.error(error);
