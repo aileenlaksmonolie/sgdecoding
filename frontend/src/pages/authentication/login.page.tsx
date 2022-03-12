@@ -33,12 +33,6 @@ const LoginPage: React.FC = () => {
 	const dispatch = useDispatch();
 	const { login } = bindActionCreators(actionCreators, dispatch);
 
-	// console.log("[DEBUG] rmbMeEmail: " + rmbMeEmail)
-	if (rmbMeEmail !== '') {
-		//setValue('email', rmbMeEmail); //email does not change
-		setValue('rmbMe', true);
-	}
-
 	useEffect(() => {
 		register("email", {
 			required: 'Email field is empty!',
@@ -56,9 +50,15 @@ const LoginPage: React.FC = () => {
 		});
 		register('rmbMe');
 
-		if (isLoggedIn)
-			navigate('/');
-	}, [navigate, register, isLoggedIn]);
+		// console.log("[DEBUG] rmbMeEmail: " + rmbMeEmail)
+		if (rmbMeEmail !== '') {
+			//setValue('email', rmbMeEmail); //email does not change
+			setValue('rmbMe', true);
+		}
+
+		// if (isLoggedIn)
+		// 	navigate('/');
+	}, [register]);
 
 
 	/* Event Handlers */
@@ -88,13 +88,14 @@ const LoginPage: React.FC = () => {
 			};
 			try {
 				await login(userCreds);
+				setIsLoading(false);
 				navigate('/');
 			} catch (err) {
 				console.log("[DEBUG] Error logging in!");
+				setIsLoading(false);
 				setShowError(true);
 			}
 		}
-		setIsLoading(false);
 
 		// console.log("[DEBUG] Submitted, is user logged in? " + isLoggedIn)
 	};
@@ -110,7 +111,7 @@ const LoginPage: React.FC = () => {
 				positive
 				header="You are Logged Out!"
 				content={logoutMsg}
-				hidden={logoutMsg === null}
+				hidden={logoutMsg === null || showError}
 			/>
 			<Form
 				onSubmit={handleSubmit(onSubmit)}

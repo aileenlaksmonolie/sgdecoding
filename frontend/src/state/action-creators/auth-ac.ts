@@ -83,12 +83,5 @@ export const logout = (logoutMsg?: string) => {
 
 	return (dispatch: Dispatch) => {
 		dispatch({ type: AuthTypes.DELETE_TOKEN });
-		dispatch({ type: AuthTypes.SET_LOGOUT_MSG, logoutMsg });
-	};
-};
-
-export const clearLogoutMsg = () => {
-	return (dispatch: Dispatch) => {
-		dispatch({ type: AuthTypes.DELETE_LOGOUT_MSG });
 	};
 };

@@ -12,7 +12,7 @@ export const INITIAL_STATE = {
 	type: '',
 	sub: '',
 	email:'',
-	logoutMsg: '',
+	// logoutMsg: '',
 	lastLogin: new Date()
 };
 
@@ -31,11 +31,6 @@ const reducer = (state = INITIAL_STATE, action: AuthAction) => {
 			const { newName } = action;
 			return { ...state, name: newName };
 
-		case AuthTypes.SET_LOGOUT_MSG:
-			const { logoutMsg } = action;
-			return { ...state, logoutMsg };
-		case AuthTypes.DELETE_LOGOUT_MSG:
-			return { ...state, logoutMsg: ''};
 		case AuthTypes.DELETE_TOKEN:
 			return { ...state, token: ''};
 

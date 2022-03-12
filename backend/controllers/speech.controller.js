@@ -62,8 +62,10 @@ async function getsTranscriptionJobHistory(req, res, next) {
 			res.status(response.status).json(response.data);
 		})
 		.catch((error) => {
-			//console.log(error.response)
-			res.status(error.response.status).json(error.response.data);
+			console.log(error.response);
+			resStatus = error.response.status || 500;
+			resPayload = error.response.data || { message: "Something went terribly wrong!" }
+			res.status(resStatus).json(resPayload);
 		});
 }
 

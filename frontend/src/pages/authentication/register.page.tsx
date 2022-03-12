@@ -57,8 +57,8 @@ const RegisterPage: React.FC = () => {
 			validate: v => v === password.current || 'The passwords do not match'
 		});
 
-		if (isLoggedIn)
-			navigate('/');
+		// if (isLoggedIn)
+		// 	navigate('/');
 
 	}, [isLoggedIn, navigate, register]);
 
@@ -87,7 +87,7 @@ const RegisterPage: React.FC = () => {
 		registerOneUser(newUser)
 			.then((res: AxiosResponse<NewUserRegistrationResponse, any>) => {
 				console.log('Successful Registration');
-				let msg = res.data.email + ' is registered successfully. Please login to continue!';
+				let msg = res.data.user.email + ' is registered successfully. Please login to continue!';
 				setRegMessage({ isShown: true, isError: false, msg: msg });
 			})
 			.catch((err: AxiosError) => {

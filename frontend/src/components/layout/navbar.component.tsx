@@ -1,8 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { bindActionCreators } from "redux";
-import { Button, Dropdown, Icon, Image, Menu, MenuItemProps } from "semantic-ui-react";
+import { Button, Dropdown, DropdownItemProps, Icon, Image, Menu, MenuItemProps } from "semantic-ui-react";
 import { useWindowSize } from "../../helpers/window-resize-hook";
 import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
@@ -17,6 +17,12 @@ const NavBar: React.FC = () => {
 
 	const dispatch = useDispatch();
 	const { toggleSidebar, logout } = bindActionCreators(actionCreators, dispatch);
+	const navigate = useNavigate();
+
+	const onLogoutClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: DropdownItemProps) => {
+		logout("We hope to see you again soon!");
+		navigate('/auth/login?logoutMsg=' + "We hope to see you again soon!");
+	};
 
 	const onHamburgerClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, data: MenuItemProps) => {
 		console.log("[DEBUG] onHamburgerClick");
@@ -43,7 +49,7 @@ const NavBar: React.FC = () => {
 						<Dropdown.Item as={Link} to='profile'>Profile</Dropdown.Item>
 						{/* <Dropdown.Item as={Link} to='changename'>Change Name</Dropdown.Item>
 						<Dropdown.Item as={Link} to='changepassword'>Change Password</Dropdown.Item> */}
-						<Dropdown.Item onClick={() => logout("We hope to see you again soon!")}>Log Out</Dropdown.Item>
+						<Dropdown.Item onClick={onLogoutClick}>Log Out</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
 			</Menu.Menu>
