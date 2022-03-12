@@ -12,12 +12,12 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 	const { audioContext, stream, isRecording } = recorder;
 	const [mediaError, setMediaError] = useState(false);
 
-
-	var analyser: AnalyserNode; 
-	var dataArray = useRef(new Uint8Array());
-
-	// const containerRef = useRef<HTMLDivElement>(null);
+	//Because we are using a recursive draw()
+	const isRecordingRef = useRef(isRecording);
+	const analyserRef = useRef<AnalyserNode>(null!);
+	const dataArray = useRef(new Uint8Array());
 	const canvasRef = useRef<HTMLCanvasElement>(null);
+
 	const [canvasCtx, setCanvasCtx] = useState<CanvasRenderingContext2D | null>();
 	const [winWidth, winHeight] = useWindowSize();
 
@@ -27,25 +27,23 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 			requestAnimationFrame(draw);
 		}
 
-		var bufferLength = analyser.frequencyBinCount;
-		analyser.getByteTimeDomainData(dataArray.current);
+		var bufferLength = analyserRef.current.frequencyBinCount;
+		analyserRef.current.getByteTimeDomainData(dataArray.current);
 
 		canvasCtx!.fillStyle = 'rgba(255,255,255,1)';
-		// if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
-		// 	canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
-		// } else {
-		// 	canvasCtx!.fillStyle = 'rgb(252, 255, 252)';
-		// }
 
 		if (canvasRef.current) {
 			canvasCtx!.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 			canvasCtx!.lineWidth = 10;
-			if (isRecording === RecordingStates.NOT_STARTED) {
+			if (isRecordingRef.current === RecordingStates.NOT_STARTED) {
+				// console.log("[DEBUG] drawing recording not started");
 				canvasCtx!.strokeStyle = 'rgba(138, 45, 209, 0.2)';
-			} else if (isRecording === RecordingStates.STOPPED) {
+			} else if (isRecordingRef.current === RecordingStates.STOPPED) {
+				// console.log("[DEBUG] drawing recording stopped");
 				canvasCtx!.strokeStyle = 'rgba(54, 189, 38, 0.2)';
 			} else {
-				canvasCtx!.strokeStyle = 'rgba(198, 35, 38, 0.2)';
+				// console.log("Recording!");
+				canvasCtx!.strokeStyle = 'rgba(255, 0, 0, 0.2)';
 			}
 
 			canvasCtx!.beginPath();
@@ -65,8 +63,7 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 			canvasCtx!.lineTo(canvasRef.current.width, canvasRef.current.height / 2);
 			canvasCtx!.stroke();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isRecording, canvasCtx]);
+	}, [canvasCtx]);
 
 
 	useEffect(() => {
@@ -80,27 +77,28 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 	}, [winWidth, winHeight]);
 
 	useEffect(() => {
-		// console.log("main useEffect");
-		// console.log(canvasRef.current);
-		// console.log(canvasRef.current?.width);
+		isRecordingRef.current = isRecording;
+	}, [isRecording]);
+
+	useEffect(() => {
 		if (audioContext !== null && stream !== null) {
-			analyser = audioContext.createAnalyser();
-			analyser.minDecibels = -40;
-			analyser.maxDecibels = 0;
-			analyser.smoothingTimeConstant = 0.9;
+			analyserRef.current = audioContext.createAnalyser();
+			analyserRef.current.minDecibels = -40;
+			analyserRef.current.maxDecibels = 0;
+			analyserRef.current.smoothingTimeConstant = 0.9;
 			var source: MediaStreamAudioSourceNode;
 			var distortion = audioContext.createWaveShaper();
 			var gainNode = audioContext.createGain();
 			// var biquadFilter = audioContext.createBiquadFilter();
 			// var convolver = audioContext.createConvolver();
 
-			analyser.fftSize = 1024;
-			dataArray.current = new Uint8Array(analyser.frequencyBinCount);
+			analyserRef.current.fftSize = 1024;
+			dataArray.current = new Uint8Array(analyserRef.current.frequencyBinCount);
 
 			source = audioContext.createMediaStreamSource(stream);
 			if (source.channelCount >= 1) {
-				source.connect(analyser);
-				analyser.connect(distortion);
+				source.connect(analyserRef.current);
+				analyserRef.current.connect(distortion);
 				gainNode.gain.value = 0;
 				distortion.connect(gainNode);
 				gainNode.connect(audioContext.destination);
@@ -115,7 +113,7 @@ const VizOscilloscope: React.FC<Props> = ({ recorder }) => {
 				draw();
 			}
 		}
-		else{
+		else {
 			setMediaError(true);
 		}
 

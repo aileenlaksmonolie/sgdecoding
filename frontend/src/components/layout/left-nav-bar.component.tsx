@@ -36,7 +36,7 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 	useEffect(() => {
 		if ((width < 1200 && IS_OPEN) || (width >= 1200 && !IS_OPEN))
 			toggleSidebar();
-	}, [width, height]);
+	}, [width, height, IS_OPEN, toggleSidebar]);
 
 	/**
 	 * Display/hide the sidebar when toggled

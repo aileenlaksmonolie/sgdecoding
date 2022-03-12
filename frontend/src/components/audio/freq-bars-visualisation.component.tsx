@@ -14,13 +14,13 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 
 	// const containerRef = useRef<HTMLDivElement>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const [winWidth, winHeight] = useWindowSize();
-
-	var analyser: AnalyserNode;
+	const analyserRef = useRef<AnalyserNode>(null!);
+	const isRecordingRef = useRef(isRecording);
+	const dataArray = useRef(new Uint8Array());
 
 	const [canvasCtx, setCanvasCtx] = useState<CanvasRenderingContext2D | null>();
+	const [winWidth, winHeight] = useWindowSize();
 
-	var dataArray = useRef(new Uint8Array());
 
 
 	const draw = useCallback(() => {
@@ -28,15 +28,10 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		if (canvasRef.current) // Stop Recursive Call when component unmounts
 			requestAnimationFrame(draw);
 
-		var bufferLength: number = analyser.frequencyBinCount;
-		analyser.getByteFrequencyData(dataArray.current);
+		var bufferLength: number = analyserRef.current.frequencyBinCount;
+		analyserRef.current.getByteFrequencyData(dataArray.current);
 
 		canvasCtx!.fillStyle = 'rgba(255,255,255,1)';
-		// if (isRecording === RecordingStates.NOT_STARTED || isRecording === RecordingStates.STOPPED) {
-		// 	canvasCtx!.fillStyle = 'rgb(244, 244, 252)';
-		// } else {
-		// 	canvasCtx!.fillStyle = 'rgb(252, 255, 252)';
-		// }
 		if (canvasRef.current) {
 			canvasCtx!.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 			var barWidth = ((canvasRef.current.width - (bufferLength - 1)) / bufferLength);
@@ -46,10 +41,10 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 			for (var i = 0; i < bufferLength; i++) {
 				barHeight = dataArray.current[i];
 
-				if (isRecording === RecordingStates.NOT_STARTED) {
+				if (isRecordingRef.current === RecordingStates.NOT_STARTED) {
 					canvasCtx!.fillStyle = 'rgba(' + (barHeight + 50) + ',50,150, 0.2)';
 					canvasCtx!.fillRect(x, canvasRef.current.height - barHeight / 2, barWidth, barHeight / 2);
-				} else if (isRecording === RecordingStates.STOPPED) {
+				} else if (isRecordingRef.current === RecordingStates.STOPPED) {
 					canvasCtx!.fillStyle = 'rgba(60,' + (barHeight + 60) + ',48, 0.2)';
 					canvasCtx!.fillRect(x, canvasRef.current.height - barHeight / 2, barWidth, barHeight / 2);
 				} else {
@@ -62,7 +57,7 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isRecording, canvasCtx]); // Do not add analyser
+	}, [canvasCtx]); // Do not add analyser
 
 
 
@@ -74,30 +69,33 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		}
 	}, [winWidth, winHeight]);
 
+	useEffect(() => {
+		isRecordingRef.current = isRecording;
+	}, [isRecording]);
 
 	useEffect(() => {
 		if (audioContext !== null && stream !== null) {
-			analyser = audioContext!.createAnalyser();
+			analyserRef.current = audioContext!.createAnalyser();
 			var source: MediaStreamAudioSourceNode;
 			var distortion: WaveShaperNode;
 			var gainNode: GainNode;
 
-			analyser.minDecibels = -90;
-			analyser.maxDecibels = -10;
-			analyser.smoothingTimeConstant = 0.9;
+			analyserRef.current.minDecibels = -90;
+			analyserRef.current.maxDecibels = -10;
+			analyserRef.current.smoothingTimeConstant = 0.9;
 
 			distortion = audioContext!.createWaveShaper();
 			gainNode = audioContext!.createGain();
 			distortion.oversample = '4x';
 
-			analyser.fftSize = 128; // fft = fast fourier transform
-			dataArray.current = new Uint8Array(analyser.frequencyBinCount);
+			analyserRef.current.fftSize = 128; // fft = fast fourier transform
+			dataArray.current = new Uint8Array(analyserRef.current.frequencyBinCount);
 
 
 			source = audioContext!.createMediaStreamSource(stream!);
 			if (source.channelCount >= 1) {
-				source.connect(analyser);
-				analyser.connect(distortion);
+				source.connect(analyserRef.current);
+				analyserRef.current.connect(distortion);
 				gainNode.gain.value = 0;
 				distortion.connect(gainNode);
 				gainNode.connect(audioContext!.destination);

@@ -12,6 +12,7 @@ const NavBar: React.FC = () => {
 
 	const { name } = useSelector((state: RootState) => state.authReducer);
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [width, height] = useWindowSize();
 
 	const dispatch = useDispatch();

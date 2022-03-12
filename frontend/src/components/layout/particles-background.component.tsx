@@ -113,16 +113,6 @@ const ParticlesBackground: React.FC = () => {
 		retina_detect: true
 	};
 
-	const particlesInit = (main: any) => {
-		console.log(main);
-
-		// you can initialize the tsParticles instance (main) here, adding custom shapes or presets
-	};
-
-	const particlesLoaded = (container: any) => {
-		console.log(container);
-	};
-
 	return (
 		<div id={styles.particlesContainer}>
 			<Particles

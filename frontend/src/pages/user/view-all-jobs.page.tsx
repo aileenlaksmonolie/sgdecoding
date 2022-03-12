@@ -238,20 +238,12 @@ const ViewAllJobs: React.FC = () => {
 		console.log(history);
 		if (history.length > 0) {
 			setIsLoading(false);
-			//setNoOfPages(Math.ceil(totalHistory / ITEMS_PER_PAGE));
-			//let firstItems = history.slice(0, ITEMS_PER_PAGE);
-			//setFilteredHistory(history);
-			//setItemsToDisplay(firstItems);
-			// setFilters(filters => ({ ...filters, lang: langSplit as []}));
-
-			//setFilteredHistory(history => ({...filteredHistory, history}));
 			setNoOfPages(Math.ceil(history.length / ITEMS_PER_PAGE));
 			let startIdx = (ITEMS_PER_PAGE * (currentPage - 1));
 			let endIdx = ((currentPage * ITEMS_PER_PAGE));
 			setItemsToDisplay(history.slice(startIdx, endIdx));
-
 		}
-	}, [history, totalHistory]); // history, totalHistory
+	}, [history, totalHistory, currentPage]); // history, totalHistory
 
 	/**
 	 * Change the displayed transcription history as user changed the filters

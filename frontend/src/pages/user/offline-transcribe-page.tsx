@@ -76,13 +76,13 @@ const OfflineTranscribePage: React.FC = () => {
 		}>
 	>([]);
 
-	const clearState = () => {
-		setUploadDisabled(true);
-		// setCancelDisabled(false);
-		setOptionsDisabled(false);
-		setUploadArray([]);
-		setProgressBar([]);
-	};
+	// const clearState = () => {
+	// 	setUploadDisabled(true);
+	// 	// setCancelDisabled(false);
+	// 	setOptionsDisabled(false);
+	// 	setUploadArray([]);
+	// 	setProgressBar([]);
+	// };
 
 	const createProgressBar = async (
 		uploadPercent: number,

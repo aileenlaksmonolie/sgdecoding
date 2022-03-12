@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts';
@@ -14,23 +14,19 @@ const OverviewPage: React.FC = () => {
 	const [userStats, setUserStats] = useState(
 		{
 			transcriptionCount: 0,
-      		pendingCount: 0,
-      		minutesTranscribed: 0,
-      		monthlyLiveDurationMins: 0,
-      		monthlyBatchDurationMins: 0,
+			pendingCount: 0,
+			minutesTranscribed: 0,
+			monthlyLiveDurationMins: 0,
+			monthlyBatchDurationMins: 0,
 		}
 	);
 
-	useEffect(() => {
-		getUserData();
-	}, []);
-
-	async function getUserData() {
+	const getUserData = useCallback(async () => {
 		const statRes = await getStatistics(sub);
 		const statData = statRes.data;
 		console.log(statData);
 		setUserStats(
-			{ 
+			{
 				transcriptionCount: statData.transcriptionCount,
 				pendingCount: statData.pendingCount,
 				minutesTranscribed: statData.minutesTranscribed,
@@ -38,7 +34,12 @@ const OverviewPage: React.FC = () => {
 				monthlyBatchDurationMins: statData.monthlyBatchDurationMins,
 			}
 		);
-	}
+	}, [sub]);
+
+	useEffect(() => {
+		getUserData();
+	}, [getUserData]);
+
 
 	/* For Development */
 	const liveUsage = [
@@ -94,23 +95,23 @@ const OverviewPage: React.FC = () => {
 				<Card.Content id={styles.welcomeCardContent}>
 					{/* <Grid columns={2} padded>
 						<Grid.Column id={styles.welcomeTextWrapper}> */}
-							<div id={styles.welcomeTextWrapper}>
-								<Card.Header as="h3">
-									Welcome Back to SG Decoding!
-								</Card.Header>
-								<p>You last logged in on {lastLoginTime}. Click on any of the following when you are ready to start transcribing with us.</p>
-								<div id={styles.welcomeBtnContainer}>
-									<Button as={Link} to="/livetranscribe" primary id={styles.liveTransBtn}>Live Transcribe</Button>
-									<Button as={Link} to="/offlinetranscribe" color="orange">Offline Transcribe</Button>
-								</div>
-							</div>
-						{/* </Grid.Column> */}
+					<div id={styles.welcomeTextWrapper}>
+						<Card.Header as="h3">
+							Welcome Back to SG Decoding!
+						</Card.Header>
+						<p>You last logged in on {lastLoginTime}. Click on any of the following when you are ready to start transcribing with us.</p>
+						<div id={styles.welcomeBtnContainer}>
+							<Button as={Link} to="/livetranscribe" primary id={styles.liveTransBtn}>Live Transcribe</Button>
+							<Button as={Link} to="/offlinetranscribe" color="orange">Offline Transcribe</Button>
+						</div>
+					</div>
+					{/* </Grid.Column> */}
 
-						{/* <Grid.Column> */}
-							{/* <div> */}
-								<Image src="/images/HeaderImg_male.svg" alt="header image male" />
-							{/* </div> */}
-						{/* </Grid.Column> */}
+					{/* <Grid.Column> */}
+					{/* <div> */}
+					<Image src="/images/HeaderImg_male.svg" alt="header image male" />
+					{/* </div> */}
+					{/* </Grid.Column> */}
 					{/* </Grid> */}
 				</Card.Content>
 			</Card>

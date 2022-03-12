@@ -58,7 +58,7 @@ const LoginPage: React.FC = () => {
 
 		if (isLoggedIn)
 			navigate('/');
-	}, [navigate, register]);
+	}, [navigate, register, isLoggedIn]);
 
 
 	/* Event Handlers */
