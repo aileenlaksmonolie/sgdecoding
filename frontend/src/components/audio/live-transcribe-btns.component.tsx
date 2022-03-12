@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, Container, Grid, Icon } from "semantic-ui-react";
+import { Button, Container, Icon } from "semantic-ui-react";
 import { liveDecodeSocket } from "../../api/api";
 import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
@@ -166,7 +166,7 @@ const LiveDecodeBtns: React.FC<Props> = (
 		<Container id={styles.recordBtnContainer}>
 			{/* <Grid.Row id={styles.langModelDropdown}>
 			</Grid.Row> */}
-			<Grid.Row>
+			{/* <Grid.Row> */}
 				{
 					recorder.isRecording === RecordingStates.NOT_STARTED
 						?
@@ -195,8 +195,8 @@ const LiveDecodeBtns: React.FC<Props> = (
 								<Icon name='redo' />
 							</Icon.Group>
 				}
-			</Grid.Row>
-			<Grid.Row style={{ marginTop: '12px' }}>
+			{/* </Grid.Row> */}
+			{/* <Grid.Row style={{ marginTop: '12px' }}> */}
 				{
 					recorder.isRecording === RecordingStates.STOPPED
 						?
@@ -222,7 +222,7 @@ const LiveDecodeBtns: React.FC<Props> = (
 						:
 						null
 				}
-			</Grid.Row>
+			{/* </Grid.Row> */}
 
 			{/* <Grid.Row>
 				<Button className="blue">Test Button</Button>

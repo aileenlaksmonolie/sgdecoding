@@ -41,7 +41,7 @@ const languageOptions = [
 
 const LiveDecodePage: React.FC = () => {
 	/* Declarations */
-	const IS_DEBUGGING: boolean = false;
+	const IS_DEBUGGING: boolean = true;
 
 	const [recorder, setRecorder] = useState<MyRecorder>({
 		isMicAccessGiven: false,
@@ -346,7 +346,7 @@ const LiveDecodePage: React.FC = () => {
 								</div>
 								{/* </Grid.Column> */}
 							</Grid.Row>
-							<Grid.Row id={styles.startBtn}>
+							<Grid.Row id={styles.liveDecodeBtns}>
 								<LiveDecodeBtns
 									// key={transcription.final.length}
 									IS_DEBUGGING={IS_DEBUGGING}
