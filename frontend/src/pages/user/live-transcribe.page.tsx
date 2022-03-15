@@ -41,7 +41,7 @@ const languageOptions = [
 
 const LiveDecodePage: React.FC = () => {
 	/* Declarations */
-	const IS_DEBUGGING: boolean = true;
+	const IS_DEBUGGING: boolean = false;
 
 	const [recorder, setRecorder] = useState<MyRecorder>({
 		isMicAccessGiven: false,

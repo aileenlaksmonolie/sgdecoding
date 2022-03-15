@@ -242,6 +242,7 @@ const ViewAllJobs: React.FC = () => {
 		if (history != null) {
 			setIsLoading(false);
 			if (history.length > 0) {
+				setDisplayWelcomeMsg(false);
 				setNoOfPages(Math.ceil(history.length / ITEMS_PER_PAGE));
 				let startIdx = (ITEMS_PER_PAGE * (currentPage - 1));
 				let endIdx = ((currentPage * ITEMS_PER_PAGE));
