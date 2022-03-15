@@ -1,5 +1,6 @@
 //import { OfflineTranscribeJob } from '../models/OfflineTranscribeJob.model';
 
+import { CancelTokenSource } from "axios";
 import { proxyAPI } from "./api";
 
 
@@ -33,11 +34,13 @@ export const getOneTranscriptInJson = (batchTranscribeId: string) => {
 	);
 };
 
-export const submitOneJob = (file: FormData) => {
+export const submitOneJob = (file: FormData, cancelToken: CancelTokenSource) => {
+
 	return proxyAPI.post(
 		`/speech`,
-		file,
+			file,
 		{
+			cancelToken: cancelToken.token,
 			headers:
 			{
 				'Content-Type': 'multipart/form-data',

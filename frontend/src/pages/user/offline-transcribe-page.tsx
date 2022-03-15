@@ -1,10 +1,17 @@
+import axios, { CancelTokenSource } from "axios";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Button, Card, Checkbox, Container, Dropdown, DropdownProps, Grid, Header, Icon, Progress } from "semantic-ui-react";
+import { Button, ButtonProps, Card, Checkbox, Container, Dropdown, DropdownProps, Grid, Header, Icon, Progress } from "semantic-ui-react";
 import { submitOneJob } from "../../api/batch-transcribe-api";
 import { RootState } from "../../state/reducers";
 import styles from './offline-transcribe-page.module.scss';
 
+enum AudioFileUploadStates {
+	SELECTING_FILES = "selectngFiles",
+	SELECTED_FILES = "selectedFiles",
+	UPLOADING = "uploading",
+	UPLOAD_FINISHED = "uploadSuccess",
+}
 
 const OfflineTranscribePage: React.FC = () => {
 	const languageOptions = [
@@ -54,8 +61,7 @@ const OfflineTranscribePage: React.FC = () => {
 	];
 
 	const { sub } = useSelector((state: RootState) => state.authReducer);
-	const [uploadDisabled, setUploadDisabled] = useState(true);
-	const [optionsDisabled, setOptionsDisabled] = useState(false);
+	const [uploadState, setUploadState] = useState(AudioFileUploadStates.SELECTING_FILES);
 	const [uploadArray, setUploadArray] = useState<
 		Array<{
 			file: File;
@@ -64,6 +70,8 @@ const OfflineTranscribePage: React.FC = () => {
 			lang: string;
 			audioType: string;
 			audioTrack: string;
+			cancelToken: CancelTokenSource;
+			isUploadFinished: boolean
 		}>
 	>([]);
 	const [progressBar, setProgressBar] = useState<
@@ -129,10 +137,12 @@ const OfflineTranscribePage: React.FC = () => {
 			lang: "english",
 			audioType: "closetalk",
 			audioTrack: "multi",
+			cancelToken: axios.CancelToken.source(),
+			isUploadFinished: false
 		};
 		setUploadArray((prev) => [...prev, newUpload]);
 		createProgressBar(0, false, true, false, "");
-		setUploadDisabled(false);
+		setUploadState(AudioFileUploadStates.SELECTED_FILES);
 	};
 
 	const formatBytes = (bytes: number, decimals = 2) => {
@@ -155,6 +165,7 @@ const OfflineTranscribePage: React.FC = () => {
 		setUploadArray(array);
 		//console.log(uploadArray[i]);
 	};
+
 	const handleAudioChange = (i: number, data: DropdownProps) => {
 		var array = [...uploadArray];
 		let file = { ...array[i] };
@@ -162,6 +173,7 @@ const OfflineTranscribePage: React.FC = () => {
 		array[i] = file;
 		setUploadArray(array);
 	};
+
 	const handleChannelChange = (i: number) => {
 		var array = [...uploadArray];
 		let file = { ...array[i] };
@@ -182,11 +194,11 @@ const OfflineTranscribePage: React.FC = () => {
 		}
 	};
 
-	const uploadFile = async () => {
+	const handleUploadClick = async () => {
 		// setCancelDisabled(true);
-		setUploadDisabled(true);
-		setOptionsDisabled(true);
-		uploadArray.forEach(async (item, i) => {
+		setUploadState(AudioFileUploadStates.UPLOADING);
+
+		const uploadAll = await Promise.all(uploadArray.map(async (item, i) => {
 			const formData = new FormData();
 			formData.append("file", item.file);
 			formData.append("lang", item.lang);
@@ -202,29 +214,62 @@ const OfflineTranscribePage: React.FC = () => {
 			});
 			formData.append('userID', sub);
 
-			const res = submitOneJob(formData);
-			console.log((await res).data);
-			if ((await res).data === 201) {
-				handleProgressChange(i, {
-					uploadPercent: 100,
-					uploadIsActive: false,
-					uploadIsHidden: false,
-					uploadHasError: false,
-					uploadLabel: "Upload Successful!",
-				});
-			} else {
-				handleProgressChange(i, {
-					uploadPercent: 0,
-					uploadIsActive: false,
-					uploadIsHidden: false,
-					uploadHasError: true,
-					uploadLabel: "Upload Error",
-				});
-			}
-			// setUploadAttempt(true);
-			// setCancelDisabled(false);
+			return await submitOneJob(formData, item.cancelToken).then((res) => {
+				console.log(res.data);
+				if (res.data === 201) {
+					handleProgressChange(i, {
+						uploadPercent: 100,
+						uploadIsActive: false,
+						uploadIsHidden: false,
+						uploadHasError: false,
+						uploadLabel: "Upload Successful!",
+					});
+				} else {
+					console.log(res);
+					handleProgressChange(i, {
+						uploadPercent: 0,
+						uploadIsActive: false,
+						uploadIsHidden: false,
+						uploadHasError: true,
+						uploadLabel: "Upload Error: " + res.data.message,
+					});
+				}
+			});
+		})).catch((error) => {
+			console.log(error);
 		});
+	
+		console.log(uploadAll);
+		setUploadState(AudioFileUploadStates.UPLOAD_FINISHED);
 	};
+
+	const handleCancelUploadClick = async () => {
+		try {
+			console.log(uploadArray);
+			uploadArray.forEach((item, index) => {
+				if (progressBar[index].percent !== 100) {
+					item.cancelToken.cancel();
+
+					handleProgressChange(index, {
+						uploadPercent: 0,
+						uploadIsActive: false,
+						uploadIsHidden: false,
+						uploadHasError: true,
+						uploadLabel: "Upload Cancelled",
+					});
+				}
+			});
+
+			setUploadState(AudioFileUploadStates.UPLOAD_FINISHED);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const handleStartOverClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, data: ButtonProps) => {
+		window.location.reload();
+	};
+
 	// template
 	return (
 		<div id={styles.offlineTranscribePg}>
@@ -287,7 +332,7 @@ const OfflineTranscribePage: React.FC = () => {
 											selection
 											options={languageOptions}
 											value={item.lang}
-											disabled={optionsDisabled}
+											disabled={uploadState === AudioFileUploadStates.UPLOADING || uploadState === AudioFileUploadStates.UPLOAD_FINISHED}
 											onChange={(
 												e: React.SyntheticEvent<HTMLElement, Event>,
 												data: DropdownProps
@@ -301,7 +346,7 @@ const OfflineTranscribePage: React.FC = () => {
 											selection
 											options={audioOptions}
 											value={item.audioType}
-											disabled={optionsDisabled}
+											disabled={uploadState === AudioFileUploadStates.UPLOADING || uploadState === AudioFileUploadStates.UPLOAD_FINISHED}
 											onChange={(
 												e: React.SyntheticEvent<HTMLElement, Event>,
 												data: DropdownProps
@@ -310,27 +355,10 @@ const OfflineTranscribePage: React.FC = () => {
 									</Grid.Column>
 									<Grid.Column className={`${styles.mobileGridListItem} ${styles.channelControlBtn}`}>
 										<span className={styles.mobileGridListHeader}>Channel:</span>
-										{/* <Grid>
-											<Grid.Row columns={3}>
-												<GridColumn>Stereo</GridColumn>
-												<GridColumn>
-													<Checkbox
-														slider
-														disabled={optionsDisabled}
-														checked={item.audioTrack === "single" ? true : false}
-														onChange={(e: React.FormEvent<HTMLInputElement>) =>
-															handleChannelChange(i)
-														}
-													/>
-												</GridColumn>
-												<GridColumn>Mono</GridColumn>
-											</Grid.Row>
-										</Grid> */}
-										{/* <span>Stereo</span> */}
 										<div>
 											<Checkbox
 												slider
-												disabled={optionsDisabled}
+												disabled={uploadState === AudioFileUploadStates.UPLOADING || uploadState === AudioFileUploadStates.UPLOAD_FINISHED}
 												checked={item.audioTrack === "single"}
 												onChange={(e: React.FormEvent<HTMLInputElement>) =>
 													handleChannelChange(i)
@@ -343,17 +371,17 @@ const OfflineTranscribePage: React.FC = () => {
 										<span className={styles.mobileGridListHeader}>Remove file:</span>
 										<Button
 											icon="trash alternate outline"
-											disabled={optionsDisabled}
+											disabled={uploadState === AudioFileUploadStates.UPLOADING || uploadState === AudioFileUploadStates.UPLOAD_FINISHED}
 											onClick={() => removeFile(i)}
 										></Button>
 									</Grid.Column>
 									<Grid.Column width="16">
-										<div hidden={progressBar[i].isHidden}>
+										<div hidden={progressBar[i].isHidden} >
 											<Progress
 												percent={progressBar[i].percent}
-												size="medium"
+												size="small"
 												active={progressBar[i].isActive}
-												progress={"percent"}
+												// progress={"percent"}
 												color="green"
 												error={progressBar[i].hasError}
 												label={progressBar[i].label}
@@ -373,7 +401,7 @@ const OfflineTranscribePage: React.FC = () => {
 						type="button"
 						animated="fade"
 						attached="bottom"
-						disabled={optionsDisabled}
+						disabled={uploadState === AudioFileUploadStates.UPLOADING || uploadState === AudioFileUploadStates.UPLOAD_FINISHED}
 						id={styles.chooseFileBtn}
 						primary
 					>
@@ -387,9 +415,25 @@ const OfflineTranscribePage: React.FC = () => {
 				</Card.Content>
 
 				<Card.Content>
-					<Button disabled={uploadDisabled} positive onClick={uploadFile} id={styles.uploadaBtn}>
-						UPLOAD
-					</Button>
+					{
+						(uploadState === AudioFileUploadStates.SELECTING_FILES || uploadState === AudioFileUploadStates.SELECTED_FILES) &&
+						<Button
+							onClick={handleUploadClick}
+							disabled={uploadState === AudioFileUploadStates.SELECTING_FILES}
+							primary
+							id={styles.uploadBtn}
+						>
+							Upload
+						</Button>
+					}
+					{
+						uploadState === AudioFileUploadStates.UPLOADING &&
+						<Button onClick={handleCancelUploadClick} secondary id={styles.uploadBtn}>Cancel Upload</Button>
+					}
+					{
+						uploadState === AudioFileUploadStates.UPLOAD_FINISHED &&
+						<Button onClick={handleStartOverClick} color="green" id={styles.uploadBtn}>Start over</Button>
+					}
 				</Card.Content>
 
 			</Card>
