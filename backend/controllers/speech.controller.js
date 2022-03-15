@@ -11,8 +11,8 @@ async function uploadFile(req, res, next) {
 	form.append("lang", req.body.lang);
 	form.append("audioType", req.body.audioType);
 	form.append("audioTrack", req.body.audioTrack);
-	form.append("queue", "normal"); //normal, meadow9
-
+	form.append("queue", "trial"); //normal, meadow9
+	// console.log(req.headers.authorization);
 	await axios
 		.post(
 			"https://gateway.speechlab.sg/speech",
@@ -20,7 +20,7 @@ async function uploadFile(req, res, next) {
 			{
 				headers: {
 					...form.getHeaders(),
-					//Authorization: `${req.headers.authorization}`,
+					Authorization: `${req.headers.authorization}`,
 					//'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRsdnVAbnR1LmVkdS5zZyIsInJvbGUiOiJ1c2VyIiwibmFtZSI6Ikx5IFZUIiwidHlwZSI6Im5vcm1hbCIsImlhdCI6MTY0MTg2NTc0MiwibmJmIjoxNjQxODY1NzQyLCJleHAiOjE2NDQ0NTc3NDIsImlzcyI6Imh0dHBzOi8vZ2F0ZXdheS5zcGVlY2hsYWIuc2ciLCJzdWIiOiI1ZjM0Y2ExOGJkZDg4ZDAwMjlmMWQ3N2UifQ.qJnlfP779Kwl0k9y9oLZqJjL-PMxfqO6diGkPLyCHkgj-JrEKRDaUdo-gbfSrtPe25XyZqf9vqk4KLtkyMmDX7_MgmKZ5rFPyXGlufkmpw3UdsogUr6JPm_i6t0zcbNNRhd_zRGNH-_Hq1mkgfD4TLGAyun8NvD3utVRqPQfl5vLPGtAK3669QQDCGDxl9mzmPfyHWPAJIjpQEA5luZ7IC0pM7yrUVb7tUiwhuz1VTiYKj1PqmM2q958qvTO9HUd2AnPt5XzRrwYqkIwsezaSfGRthxPcZ52Q3VgJ2jmqUc_4qZInyqrEBBLs0t6Eq5gqtQQGi7XJXRw32u2yJymbg',
 					"Content-Type": "multipart/form-data",
 				},
@@ -36,6 +36,10 @@ async function uploadFile(req, res, next) {
 		})
 		.catch((error) => {
 			console.log("submit job failed");
+			// console.log(req.body)
+			// console.log(error);
+			console.log(error)
+			console.log(error.response.data)
 			res.json(error.response.status);
 		});
 }
