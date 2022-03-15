@@ -34,14 +34,18 @@ const LeftNavBar: React.FC<Props> = ({ children }) => {
 	 * Open the sidebar if screen resized to > 1200, else hide the sidebar
 	 */
 	useEffect(() => {
+		console.log("[DEBUG] leftNavBar -> IS_OPEN Changed");
 		if ((width < 1200 && IS_OPEN) || (width >= 1200 && !IS_OPEN))
 			toggleSidebar();
-	}, [width, height, IS_OPEN, toggleSidebar]);
+	// Only want width and height to trigger this
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [width, height]);
 
 	/**
 	 * Display/hide the sidebar when toggled
 	 */
 	useEffect(() => {
+		console.log("[DEBUG] Set visible: " + IS_OPEN);
 		setVisible(IS_OPEN);
 	}, [IS_OPEN]);
 
