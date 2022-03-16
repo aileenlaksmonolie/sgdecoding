@@ -21,6 +21,12 @@ interface ChangeNameSuccessAction{
 	newName: string
 }
 
+interface SetUserSubscriptionEndedAction{
+	type: AuthTypes.SUBSCRIPTION_ENDED,
+	hasEnded: boolean
+}
+
 
 export type AuthAction = RememberMeAction | LoginSuccessAction 
-												| ChangeNameSuccessAction | DeleteTokenAction;
+												| ChangeNameSuccessAction | DeleteTokenAction
+												| SetUserSubscriptionEndedAction;

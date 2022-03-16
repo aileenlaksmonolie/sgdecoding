@@ -1,10 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { Button, ButtonProps, Card, Container, Dropdown, DropdownProps, Grid, Header, Icon, Label } from "semantic-ui-react";
 import VizFreqBars from "../../components/audio/freq-bars-visualisation.component";
 import LiveDecodeBtns from "../../components/audio/live-transcribe-btns.component";
 import NoMicAccess from "../../components/audio/no-mic-access.component";
 import VizOscilloscope from "../../components/audio/oscilloscope-visualisation";
+import SubscriptionEndPortal from "../../components/audio/subscription-end.component";
+import { RootState } from "../../state/reducers";
 import styles from './live-transcribe.module.scss';
 
 export enum RecordingStates {
@@ -76,6 +79,8 @@ const LiveDecodePage: React.FC = () => {
 	const [showChangeVizOverlay, setShowChangeVizOverlay] = useState(false);
 	const [selectedViz, setSelectedViz] = useState("Oscilloscope");
 	const [selectedLangModel, setSelectedLangModel] = useState<string>("eng_closetalk");
+
+	const { hasSubEnded } = useSelector((state: RootState) => state.authReducer);
 
 	const reqMicrophoneAccess = async (): Promise<MediaStream> => {
 		const stream = await navigator.mediaDevices.getUserMedia({
@@ -308,7 +313,8 @@ const LiveDecodePage: React.FC = () => {
 									options={languageOptions}
 									onChange={onSelLanguageModelChange}
 									disabled={recorder.isRecording === RecordingStates.IN_PROGRESS
-										|| recorder.isRecording === RecordingStates.STOPPED}
+										|| recorder.isRecording === RecordingStates.STOPPED 
+										|| hasSubEnded }
 								/>
 							</Grid.Row>
 
@@ -368,6 +374,7 @@ const LiveDecodePage: React.FC = () => {
 						</Grid>
 					</Card.Content>
 				</Card>
+				<SubscriptionEndPortal shouldOpen={hasSubEnded} />
 			</div>
 		);
 };

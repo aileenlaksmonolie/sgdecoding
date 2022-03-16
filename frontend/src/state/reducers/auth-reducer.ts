@@ -13,7 +13,8 @@ export const INITIAL_STATE = {
 	sub: '',
 	email:'',
 	// logoutMsg: '',
-	lastLogin: new Date()
+	lastLogin: new Date(),
+	hasSubEnded: false
 };
 
 const reducer = (state = INITIAL_STATE, action: AuthAction) => {
@@ -33,6 +34,9 @@ const reducer = (state = INITIAL_STATE, action: AuthAction) => {
 
 		case AuthTypes.DELETE_TOKEN:
 			return { ...state, token: ''};
+
+		case AuthTypes.SUBSCRIPTION_ENDED:
+			return {...state, hasSubEnded: action.hasEnded };
 
 		default:
 			return state;

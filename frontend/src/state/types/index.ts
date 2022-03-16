@@ -11,6 +11,7 @@ export enum NavbarChangeTypes{
 export enum AuthTypes {
 	RMB_ME = 'rmbMe',
 	LOGIN_SUCCESS = 'loginSuccess',
+	SUBSCRIPTION_ENDED = 'subscriptionEnded',
 	DELETE_TOKEN = 'logout',
 	SET_LOGOUT_MSG = 'setLogoutMsg',
 	DELETE_LOGOUT_MSG = 'delLogoutMsg',

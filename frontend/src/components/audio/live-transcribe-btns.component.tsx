@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { bindActionCreators } from "redux";
 import { Button, Container, Icon } from "semantic-ui-react";
 import { liveDecodeSocket } from "../../api/api";
 import { convertToWAVFile, ConvToWavConfig } from "../../helpers/audio-helpers";
 import { AdaptationState, AdaptationStateResponse, isHypothesisResponse, LiveDecodeResponse } from "../../models/live-decode-response.model";
 import { MyRecorder, RecordingStates, Transcription } from "../../pages/user/live-transcribe.page";
+import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
 import styles from './live-transcribe-btns.module.scss';
 
@@ -17,24 +19,25 @@ interface Props {
 	setRecorder: React.Dispatch<React.SetStateAction<MyRecorder>>,
 	webSocketRef: React.MutableRefObject<WebSocket | undefined>,
 	allRecordedChunks: Float32Array[],
-	selectedLangModel: string
+	selectedLangModel: string,
+	// setIsUserSubscriptionEnded: Function
 }
 
 
 const LiveDecodeBtns: React.FC<Props> = (
-	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks, selectedLangModel }
+	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks, selectedLangModel}
 ) => {
 	/* */
 
 	const [webSocketConn, setWebSocketConn] = useState<WebSocket>();
-
 	const [time, setTime] = useState(0);
-
 	const [adaptationState, setAdaptationState] = useState<AdaptationState>();
 	const adaptationStateRef = useRef<AdaptationState>();
 	adaptationStateRef.current = adaptationState;
 
-	const { token } = useSelector((state: RootState) => state.authReducer);
+	const dispatch = useDispatch();
+	const { setUserSubscriptionEnded } = bindActionCreators(actionCreators, dispatch);
+	const { token, hasSubEnded } = useSelector((state: RootState) => state.authReducer);
 	/* 
 		
 	*/
@@ -84,6 +87,11 @@ const LiveDecodeBtns: React.FC<Props> = (
 			conn.onclose = (event) => {
 				console.log("[DEBUG] onclose");
 				console.log(event);
+				const reason = JSON.parse(event.reason);
+				if(reason && reason.message === "Subscription has been expired"){
+					console.log("Your trial has expired, you cannot access this feature");
+					setUserSubscriptionEnded(true);
+				}
 			};
 
 			setWebSocketConn(conn);
@@ -164,14 +172,11 @@ const LiveDecodeBtns: React.FC<Props> = (
 
 	return (
 		<Container id={styles.recordBtnContainer}>
-			{/* <Grid.Row id={styles.langModelDropdown}>
-			</Grid.Row> */}
-			{/* <Grid.Row> */}
 				{
 					recorder.isRecording === RecordingStates.NOT_STARTED
 						?
 						// <Button icon="circle" fluid primary onClick={onStartClick} content="Start" />
-						<Icon.Group size='big' id={styles.recordBtn} onClick={onStartClick}>
+						<Icon.Group size='big' id={hasSubEnded ? styles.recordBtnDisabled : styles.recordBtn} onClick={onStartClick}>
 							<Icon size='huge' name='circle' />
 							<Icon name='microphone' size="large" />
 						</Icon.Group>
@@ -195,8 +200,6 @@ const LiveDecodeBtns: React.FC<Props> = (
 								<Icon name='redo' />
 							</Icon.Group>
 				}
-			{/* </Grid.Row> */}
-			{/* <Grid.Row style={{ marginTop: '12px' }}> */}
 				{
 					recorder.isRecording === RecordingStates.STOPPED
 						?
@@ -222,11 +225,6 @@ const LiveDecodeBtns: React.FC<Props> = (
 						:
 						null
 				}
-			{/* </Grid.Row> */}
-
-			{/* <Grid.Row>
-				<Button className="blue">Test Button</Button>
-			</Grid.Row> */}
 		</Container>
 	);
 };

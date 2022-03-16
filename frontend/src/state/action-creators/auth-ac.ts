@@ -20,6 +20,7 @@ export const login = (userCreds: UserLoginModel) => {
 		try {
 			const { data } = await loginOneUser(userCreds);
 			// console.log("Login successfully");
+			console.log(data);
 			let loginSuccess: AuthAction = {
 				type: AuthTypes.LOGIN_SUCCESS,
 				token: data.accessToken,
@@ -80,8 +81,13 @@ export const changeName = (newNameRequest: UserChangeName) => {
 // }
 
 export const logout = (logoutMsg?: string) => {
-
 	return (dispatch: Dispatch) => {
 		dispatch({ type: AuthTypes.DELETE_TOKEN });
+	};
+};
+
+export const setUserSubscriptionEnded = (hasEnded: boolean) => {
+	return (dispatch: Dispatch) => {
+		dispatch({ type: AuthTypes.SUBSCRIPTION_ENDED, hasEnded });
 	};
 };

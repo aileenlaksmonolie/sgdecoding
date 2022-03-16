@@ -1,8 +1,11 @@
 import axios, { CancelTokenSource } from "axios";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { bindActionCreators } from "redux";
 import { Button, ButtonProps, Card, Checkbox, Container, Dropdown, DropdownProps, Grid, Header, Icon, Progress } from "semantic-ui-react";
 import { submitOneJob } from "../../api/batch-transcribe-api";
+import SubscriptionEndPortal from "../../components/audio/subscription-end.component";
+import { actionCreators } from "../../state";
 import { RootState } from "../../state/reducers";
 import styles from './offline-transcribe-page.module.scss';
 
@@ -60,7 +63,9 @@ const OfflineTranscribePage: React.FC = () => {
 		},
 	];
 
-	const { sub } = useSelector((state: RootState) => state.authReducer);
+	const dispatch = useDispatch();
+	const { setUserSubscriptionEnded } = bindActionCreators(actionCreators, dispatch);
+	const { sub, hasSubEnded } = useSelector((state: RootState) => state.authReducer);
 	const [uploadState, setUploadState] = useState(AudioFileUploadStates.SELECTING_FILES);
 	const [uploadArray, setUploadArray] = useState<
 		Array<{
@@ -226,13 +231,15 @@ const OfflineTranscribePage: React.FC = () => {
 					});
 				} else {
 					console.log(res);
+					const errorMsg = res.data.message ? ": " + res.data.message : "";
 					handleProgressChange(i, {
 						uploadPercent: 0,
 						uploadIsActive: false,
 						uploadIsHidden: false,
 						uploadHasError: true,
-						uploadLabel: "Upload Error: " + res.data.message,
+						uploadLabel: "Upload Error" + errorMsg,
 					});
+					setUserSubscriptionEnded(true);
 				}
 			});
 		})).catch((error) => {
@@ -401,7 +408,7 @@ const OfflineTranscribePage: React.FC = () => {
 						type="button"
 						animated="fade"
 						attached="bottom"
-						disabled={uploadState === AudioFileUploadStates.UPLOADING || uploadState === AudioFileUploadStates.UPLOAD_FINISHED}
+						disabled={uploadState === AudioFileUploadStates.UPLOADING || uploadState === AudioFileUploadStates.UPLOAD_FINISHED || hasSubEnded}
 						id={styles.chooseFileBtn}
 						primary
 					>
@@ -419,7 +426,7 @@ const OfflineTranscribePage: React.FC = () => {
 						(uploadState === AudioFileUploadStates.SELECTING_FILES || uploadState === AudioFileUploadStates.SELECTED_FILES) &&
 						<Button
 							onClick={handleUploadClick}
-							disabled={uploadState === AudioFileUploadStates.SELECTING_FILES}
+							disabled={uploadState === AudioFileUploadStates.SELECTING_FILES || hasSubEnded}
 							primary
 							id={styles.uploadBtn}
 						>
@@ -428,17 +435,17 @@ const OfflineTranscribePage: React.FC = () => {
 					}
 					{
 						uploadState === AudioFileUploadStates.UPLOADING &&
-						<Button onClick={handleCancelUploadClick} secondary id={styles.uploadBtn}>Cancel Upload</Button>
+						<Button onClick={handleCancelUploadClick} disabled={hasSubEnded} secondary id={styles.uploadBtn}>Cancel Upload</Button>
 					}
 					{
 						uploadState === AudioFileUploadStates.UPLOAD_FINISHED &&
-						<Button onClick={handleStartOverClick} color="green" id={styles.uploadBtn}>Start over</Button>
+						<Button onClick={handleStartOverClick} disabled={hasSubEnded} color="green" id={styles.uploadBtn}>Start over</Button>
 					}
 				</Card.Content>
 
 			</Card>
 
-
+			<SubscriptionEndPortal shouldOpen={hasSubEnded} />
 		</div>
 	);
 };
