@@ -80,7 +80,7 @@ async function addUserStatistics(req, res, next) {
 				//console.log(error)
 				//res.status(error.response.status).json(error.response.data)
 			});
-		const userDetails = await User.findById(userID);
+		const userDetails = await User.findById(userID); 	
 		const createdDate = new Date(userDetails.created_at);
 		var today = new Date();
 		var startDate, endDate;
@@ -194,10 +194,10 @@ async function addUserStatistics(req, res, next) {
 		console.log("-----------------------------------------------------------");
 		
 		var liveQuota = false, offlineQuota = false;
-		if (currentStat.monthly_live_minutes >= 60) {
+		if (monthlyLiveDurationMins >= process.env.LIVE_TRANSCRIBE_QUOTA) {
 			liveQuota = true;
 		}
-		if (currentStat.monthly_offline_minutes >= 60) {
+		if (monthlyBatchDurationMins >= process.env.OFFLINE_TRANSCRIBE_QUOTA) {
 			offlineQuota = true;
 		}
 
