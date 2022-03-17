@@ -44,7 +44,7 @@ const OverviewPage: React.FC = () => {
 	const liveUsage = [
 		{
 			"name": "Total Remaining",
-			"value": 400
+			"value": 60 - userStats.monthlyLiveDurationMins
 		},
 		{
 			"name": "Used This Month",
@@ -55,7 +55,7 @@ const OverviewPage: React.FC = () => {
 	const offlineUsage = [
 		{
 			"name": "Total Remaining",
-			"value": 400
+			"value": 60 - userStats.monthlyBatchDurationMins
 		},
 		{
 			"name": "Used This Month",

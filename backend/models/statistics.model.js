@@ -29,6 +29,14 @@ const StatisticsSchema = new mongoose.Schema({
       type: Boolean,
       required: true,
     },
+    start_date: {
+      type: Date,
+      //required: true,
+    },
+    end_date: {
+      type: Date,
+      //required: true,
+    },
   });
 
 const Statistic = mongoose.model("Statistic", StatisticsSchema);
