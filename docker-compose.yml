@@ -40,19 +40,21 @@ services:
     networks:
       - sgdecodenet
   
-  revproxy:
-    depends_on:
-      - backend
-      - frontend
-    restart: always
-    build:
-      context: ./reverse_proxy
-      dockerfile: ./Dockerfile
-    image: "sgdecode_revproxy"
-    networks: 
-      - sgdecodenet
-    ports: 
-      - "80:80"
+  # Reverse Proxy code was shifted to VM Instance
+  # See commit at Mar 17
+  # revproxy:
+  #   depends_on:
+  #     - backend
+  #     - frontend
+  #   restart: always
+  #   build:
+  #     context: ./reverse_proxy
+  #     dockerfile: ./Dockerfile
+  #   image: "sgdecode_revproxy"
+  #   networks: 
+  #     - sgdecodenet
+  #   ports: 
+  #     - "80:80"
 
 networks:
   sgdecodenet:
