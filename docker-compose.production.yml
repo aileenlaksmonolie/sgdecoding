@@ -8,7 +8,7 @@ services:
     # build:
     #   context: ./backend
     #   dockerfile: ./Dockerfile
-    image: "terryjoel/sg_decoding:backend"
+    image: "sgdecodingdevs/sg_decoding:backend"
     ports:
       - "2000:2000"
       - "8080:8080"
@@ -19,7 +19,7 @@ services:
     depends_on: 
       - mongo
   mongo:
-    image: "terryjoel/sg_decoding:mongo"
+    image: "sgdecodingdevs/sg_decoding:mongo"
     restart: always
     ports:
       - "27017:27017"
@@ -32,7 +32,7 @@ services:
     # build:
     #   context: ./frontend
     #   dockerfile: ./Dockerfile
-    image: "terryjoel/sg_decoding:frontend"
+    image: "sgdecodingdevs/sg_decoding:frontend"
     ports:
       - "3000:3000"
     # links:
@@ -40,19 +40,19 @@ services:
     networks:
       - sgdecodenet
   
-  revproxy:
-    depends_on:
-      - backend
-      - frontend
-    restart: always
-    # build:
-    #   context: ./reverse_proxy
-    #   dockerfile: ./Dockerfile
-    image: "terryjoel/sg_decoding:revproxy"
-    networks: 
-      - sgdecodenet
-    ports: 
-      - "80:80"
+  # revproxy:
+  #   depends_on:
+  #     - backend
+  #     - frontend
+  #   restart: always
+  #   # build:
+  #   #   context: ./reverse_proxy
+  #   #   dockerfile: ./Dockerfile
+  #   image: "terryjoel/sg_decoding:revproxy"
+  #   networks: 
+  #     - sgdecodenet
+  #   ports: 
+  #     - "80:80"
 
 networks:
   sgdecodenet:
