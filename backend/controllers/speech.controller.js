@@ -24,7 +24,12 @@ async function uploadFile(req, res, next) {
 					//'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRsdnVAbnR1LmVkdS5zZyIsInJvbGUiOiJ1c2VyIiwibmFtZSI6Ikx5IFZUIiwidHlwZSI6Im5vcm1hbCIsImlhdCI6MTY0MTg2NTc0MiwibmJmIjoxNjQxODY1NzQyLCJleHAiOjE2NDQ0NTc3NDIsImlzcyI6Imh0dHBzOi8vZ2F0ZXdheS5zcGVlY2hsYWIuc2ciLCJzdWIiOiI1ZjM0Y2ExOGJkZDg4ZDAwMjlmMWQ3N2UifQ.qJnlfP779Kwl0k9y9oLZqJjL-PMxfqO6diGkPLyCHkgj-JrEKRDaUdo-gbfSrtPe25XyZqf9vqk4KLtkyMmDX7_MgmKZ5rFPyXGlufkmpw3UdsogUr6JPm_i6t0zcbNNRhd_zRGNH-_Hq1mkgfD4TLGAyun8NvD3utVRqPQfl5vLPGtAK3669QQDCGDxl9mzmPfyHWPAJIjpQEA5luZ7IC0pM7yrUVb7tUiwhuz1VTiYKj1PqmM2q958qvTO9HUd2AnPt5XzRrwYqkIwsezaSfGRthxPcZ52Q3VgJ2jmqUc_4qZInyqrEBBLs0t6Eq5gqtQQGi7XJXRw32u2yJymbg',
 					"Content-Type": "multipart/form-data",
 				},
-				//onUploadProgress: progressEvent => console.log(progressEvent.loaded)
+				onUploadProgress: progressEvent => {
+          console.log("upload progress");
+          console.log(Math.round((progressEvent.loaded * 100) / progressEvent.total));
+
+        }
+        
 			},
 			{ responseType: "json" }
 		)
@@ -40,7 +45,11 @@ async function uploadFile(req, res, next) {
 			// console.log(error);
 			console.log(error)
 			console.log(error.response.data)
-			res.json(error.response.status);
+      res.json(
+        {
+          status: error.response.status,
+          statusText: error.response.statusText,
+        });
 		});
 }
 

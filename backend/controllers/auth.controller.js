@@ -31,7 +31,8 @@ async function register(req, res, next) {
 				_id: gatewayResponse.data.user._id,
 				email: gatewayResponse.data.user.email,
 				role: gatewayResponse.data.user.role,
-				last_login: gatewayResponse.data.user.createdAt,
+				last_login: gatewayResponse.data.user.createdAt, 
+				// add created_at field - using gatewayResponse.data.user.createdAt
 			});
 			res.status(gatewayResponse.status).json(gatewayResponse.data);
 		})
