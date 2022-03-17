@@ -1,0 +1,61 @@
+version: '3.7'
+
+services:
+  # network_mode: "host"  
+  backend:
+    # env_file:
+    #     "./backend/backend.env"
+    # build:
+    #   context: ./backend
+    #   dockerfile: ./Dockerfile
+    image: "terryjoel/sg_decoding:backend"
+    ports:
+      - "2000:2000"
+      - "8080:8080"
+    networks:
+      - sgdecodenet
+    # links:
+    #   - mongo
+    depends_on: 
+      - mongo
+  mongo:
+    image: "terryjoel/sg_decoding:mongo"
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:  
+      - mongo:/data/db
+    networks:
+      - sgdecodenet
+
+  frontend:
+    # build:
+    #   context: ./frontend
+    #   dockerfile: ./Dockerfile
+    image: "terryjoel/sg_decoding:frontend"
+    ports:
+      - "3000:3000"
+    # links:
+    #   - "backend:be"
+    networks:
+      - sgdecodenet
+  
+  revproxy:
+    depends_on:
+      - backend
+      - frontend
+    restart: always
+    # build:
+    #   context: ./reverse_proxy
+    #   dockerfile: ./Dockerfile
+    image: "terryjoel/sg_decoding:revproxy"
+    networks: 
+      - sgdecodenet
+    ports: 
+      - "80:80"
+
+networks:
+  sgdecodenet:
+    driver: bridge
+volumes:
+  mongo: 
