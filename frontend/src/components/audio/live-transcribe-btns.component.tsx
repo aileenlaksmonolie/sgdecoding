@@ -25,7 +25,7 @@ interface Props {
 
 
 const LiveDecodeBtns: React.FC<Props> = (
-	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks, selectedLangModel}
+	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks, selectedLangModel }
 ) => {
 	/* */
 
@@ -87,10 +87,12 @@ const LiveDecodeBtns: React.FC<Props> = (
 			conn.onclose = (event) => {
 				console.log("[DEBUG] onclose");
 				console.log(event);
-				const reason = JSON.parse(event.reason);
-				if(reason && reason.message === "Subscription has been expired"){
-					console.log("Your trial has expired, you cannot access this feature");
-					setUserSubscriptionEnded(true);
+				if (event.reason !== "") {
+					const reason = JSON.parse(event.reason);
+					if (reason && reason.message === "Subscription has been expired") {
+						console.log("Your trial has expired, you cannot access this feature");
+						setUserSubscriptionEnded(true);
+					}
 				}
 			};
 
@@ -172,59 +174,76 @@ const LiveDecodeBtns: React.FC<Props> = (
 
 	return (
 		<Container id={styles.recordBtnContainer}>
-				{
-					recorder.isRecording === RecordingStates.NOT_STARTED
+			{
+				recorder.isRecording === RecordingStates.NOT_STARTED
+					?
+					// <Button icon="circle" fluid primary onClick={onStartClick} content="Start" />
+					<Icon.Group
+						role='button'
+						aria-label='start record button'
+						size='big'
+						id={hasSubEnded ? styles.recordBtnDisabled : styles.recordBtn} onClick={onStartClick}
+					>
+						<Icon size='huge' name='circle' />
+						<Icon name='microphone' size="large" />
+					</Icon.Group>
+					:
+					recorder.isRecording === RecordingStates.IN_PROGRESS
 						?
-						// <Button icon="circle" fluid primary onClick={onStartClick} content="Start" />
-						<Icon.Group size='big' id={hasSubEnded ? styles.recordBtnDisabled : styles.recordBtn} onClick={onStartClick}>
+						// <Button
+						// 	icon="stop" fluid secondary onClick={onStopClick}
+						// 	content={`Stop (${("0" + Math.floor((time / 3600) % 3600)).slice(-1)}:${("0" + Math.floor((time / 60) % 60)).slice(-2)}:${("0" + Math.floor(time % 60)).slice(-2)})`
+						// 	}
+						// />
+						<Icon.Group
+							size='big'
+							id={styles.stopBtn}
+							onClick={onStopClick}
+							role='button'
+							aria-label='stop record button'
+						>
 							<Icon size='huge' name='circle' />
-							<Icon name='microphone' size="large" />
+							<Icon name='stop' />
+							<span>{`${("0" + Math.floor((time / 3600) % 3600)).slice(-1)}:${("0" + Math.floor((time / 60) % 60)).slice(-2)}:${("0" + Math.floor(time % 60)).slice(-2)}`}</span>
 						</Icon.Group>
 						:
-						recorder.isRecording === RecordingStates.IN_PROGRESS
-							?
-							// <Button
-							// 	icon="stop" fluid secondary onClick={onStopClick}
-							// 	content={`Stop (${("0" + Math.floor((time / 3600) % 3600)).slice(-1)}:${("0" + Math.floor((time / 60) % 60)).slice(-2)}:${("0" + Math.floor(time % 60)).slice(-2)})`
-							// 	}
-							// />
-							<Icon.Group size='big' id={styles.stopBtn} onClick={onStopClick}>
-								<Icon size='huge' name='circle' />
-								<Icon name='stop' />
-								<span>{`${("0" + Math.floor((time / 3600) % 3600)).slice(-1)}:${("0" + Math.floor((time / 60) % 60)).slice(-2)}:${("0" + Math.floor(time % 60)).slice(-2)}`}</span>
-							</Icon.Group>
-							:
-							// <Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Reset" />
-							<Icon.Group size='big' id={styles.redoBtn} onClick={onRedoClick}>
-								<Icon size='huge' name='circle outline' color="red" />
-								<Icon name='redo' />
-							</Icon.Group>
-				}
-				{
-					recorder.isRecording === RecordingStates.STOPPED
-						?
-						<div>
-							<Button
-								disabled={recorder.isRecording !== RecordingStates.STOPPED}
-								// fluid
-								color="orange"
-								onClick={onDownloadClick}
-								icon="cloud download"
-								content="Download Recorded Audio"
-								style={{marginRight: '12px'}}
-							/>
-							<Button
-								disabled={recorder.isRecording !== RecordingStates.STOPPED}
-								// fluid
-								color="teal"
-								onClick={onDownloadClick}
-								icon="download"
-								content="Download Transcript (txt)"
-							/>
-						</div>
-						:
-						null
-				}
+						// <Button icon="redo" fluid basic color="orange" onClick={onRedoClick} content="Reset" />
+						<Icon.Group
+							size='big'
+							id={styles.redoBtn}
+							onClick={onRedoClick}
+							role='button'
+							aria-label='redo button'
+						>
+							<Icon size='huge' name='circle outline' color="red" />
+							<Icon name='redo' />
+						</Icon.Group>
+			}
+			{
+				recorder.isRecording === RecordingStates.STOPPED
+					?
+					<div>
+						<Button
+							disabled={recorder.isRecording !== RecordingStates.STOPPED}
+							// fluid
+							color="orange"
+							onClick={onDownloadClick}
+							icon="cloud download"
+							content="Download Recorded Audio"
+							style={{ marginRight: '12px' }}
+						/>
+						<Button
+							disabled={recorder.isRecording !== RecordingStates.STOPPED}
+							// fluid
+							color="teal"
+							onClick={onDownloadClick}
+							icon="download"
+							content="Download Transcript (txt)"
+						/>
+					</div>
+					:
+					null
+			}
 		</Container>
 	);
 };

@@ -75,7 +75,7 @@ const OverviewPage: React.FC = () => {
 	const lastLoginTime = moment(lastLogin).format("ddd D MMM YYYY, h:mma");
 
 	return (<div>
-		<section id={styles.welcomeSection}>
+		<section id={styles.welcomeSection} role="banner" aria-label="WelcomeBanner">
 			<Header as="h1">
 				{
 					currentTime < 12

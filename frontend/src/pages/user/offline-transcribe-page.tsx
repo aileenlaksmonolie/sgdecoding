@@ -134,6 +134,7 @@ const OfflineTranscribePage: React.FC = () => {
 	};
 
 	const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		console.log(e);
 		let selectedFile = e.target.files![0];
 		let newUpload = {
 			file: selectedFile,
@@ -418,7 +419,7 @@ const OfflineTranscribePage: React.FC = () => {
 						</Button.Content>
 					</Button>
 					<input type="file" id="file" hidden onChange={onFileChange} />
-					<input type="file" id="file" hidden />
+					{/* <input type="file" id="file" hidden /> */}
 				</Card.Content>
 
 				<Card.Content>
