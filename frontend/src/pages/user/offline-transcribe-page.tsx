@@ -10,10 +10,10 @@ import { RootState } from "../../state/reducers";
 import styles from './offline-transcribe-page.module.scss';
 
 enum AudioFileUploadStates {
-	SELECTING_FILES = "selectngFiles",
+	SELECTING_FILES = "selectingFiles",
 	SELECTED_FILES = "selectedFiles",
 	UPLOADING = "uploading",
-	UPLOAD_FINISHED = "uploadSuccess",
+	UPLOAD_FINISHED = "uploadFinished",
 }
 
 const OfflineTranscribePage: React.FC = () => {
@@ -324,7 +324,7 @@ const OfflineTranscribePage: React.FC = () => {
 						}
 						{
 							uploadArray.map((item, i) => (
-								<Grid.Row key={i} columns="6" >
+								<Grid.Row key={i} columns={6} id={styles.listItemRow} >
 									<Grid.Column className={styles.mobileGridListItem}>
 										<span className={styles.mobileGridListHeader}>Name:</span>
 										<span>{item.name}</span>

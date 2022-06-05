@@ -25,7 +25,7 @@ interface Props {
 
 
 const LiveDecodeBtns: React.FC<Props> = (
-	{ IS_DEBUGGING, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks, selectedLangModel }
+	{ IS_DEBUGGING, transcription, setTranscription, webSocketRef, recorder, setRecorder, allRecordedChunks, selectedLangModel }
 ) => {
 	/* */
 
@@ -151,6 +151,20 @@ const LiveDecodeBtns: React.FC<Props> = (
 		}
 	};
 
+	const onDownloadTextClick = () => {
+		var element = document.createElement('a');
+		let finalString = transcription.final.join(" ");
+		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(finalString));
+		element.setAttribute('download', "transcribed_text.txt");
+
+		element.style.display = 'none';
+		document.body.appendChild(element);
+
+		element.click();
+
+		document.body.removeChild(element);
+	};
+
 
 	/* */
 	useEffect(() => {
@@ -222,7 +236,7 @@ const LiveDecodeBtns: React.FC<Props> = (
 			{
 				recorder.isRecording === RecordingStates.STOPPED
 					?
-					<div>
+					<div style={{marginTop: '16px'}}>
 						<Button
 							disabled={recorder.isRecording !== RecordingStates.STOPPED}
 							// fluid
@@ -236,7 +250,7 @@ const LiveDecodeBtns: React.FC<Props> = (
 							disabled={recorder.isRecording !== RecordingStates.STOPPED}
 							// fluid
 							color="teal"
-							onClick={onDownloadClick}
+							onClick={onDownloadTextClick}
 							icon="download"
 							content="Download Transcript (txt)"
 						/>
