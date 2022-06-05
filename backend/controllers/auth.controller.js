@@ -94,6 +94,10 @@ async function login(req, res, next) {
 
 async function changePassword(req, res, next) {
 	let newPasswordRequest = req.body;
+
+	console.log("Changing Password")
+	console.log(req.body);
+
 	await axios
 		.post(
 			"https://gateway.speechlab.sg/auth/change-password",
@@ -108,6 +112,8 @@ async function changePassword(req, res, next) {
 		.catch((error) => {
 			console.log("change pw failed");
 			console.log(error.response.status);
+			console.log(error);
+			console.log(error.response.data.message);
 			res.status(error.response.status).json(error.response.data);
 		});
 }

@@ -40,6 +40,13 @@ const ChangeNamePage: React.FC = () => {
 
 	}, [isLoggedIn, navigate, register]);
 
+	useEffect(() => {
+		document.getElementsByClassName('pushable')[0]?.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	}, [formMessage]);
+
 	/* Event Handlers */
 	const onInputChange = (e: React.ChangeEvent<HTMLInputElement>, { name, value }: InputOnChangeData) => {
 		// setValue(name, value, { shouldValidate: true})
@@ -109,6 +116,8 @@ const ChangeNamePage: React.FC = () => {
 						onBlur={onInputBlur}
 						// disabled={isDisabled}
 						error={errors.newName ? { content: errors.newName.message } : false}
+						role="text"
+						aria-label="new name input"
 					/>
 				</Form.Field>
 				

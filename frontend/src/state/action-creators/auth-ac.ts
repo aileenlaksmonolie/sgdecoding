@@ -80,7 +80,7 @@ export const changeName = (newNameRequest: UserChangeName) => {
 // 	}
 // }
 
-export const logout = (logoutMsg?: string) => {
+export const logout = () => {
 	return (dispatch: Dispatch) => {
 		dispatch({ type: AuthTypes.DELETE_TOKEN });
 	};

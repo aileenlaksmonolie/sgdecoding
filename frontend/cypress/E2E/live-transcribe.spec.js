@@ -2,7 +2,7 @@ const dayjs = require("dayjs");
 
 describe('Testing Live Transcribe', () => {
 
-	it('should be able to log in, perform live transcribe, and see new live transcribe', () => {
+	it('should be able to log in, perform live transcribe, and see new live transcribe job, and log out', () => {
 		cy.visit('http://localhost:3000');
 
 		cy.findByRole('text', {  name: /email input/i}).type(Cypress.env('testuserEmail'));

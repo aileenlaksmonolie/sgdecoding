@@ -20,7 +20,7 @@ const NavBar: React.FC = () => {
 	const navigate = useNavigate();
 
 	const onLogoutClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: DropdownItemProps) => {
-		logout("We hope to see you again soon!");
+		logout();
 		navigate('/auth/login?logoutMsg=' + "We hope to see you again soon!");
 	};
 
@@ -44,12 +44,14 @@ const NavBar: React.FC = () => {
 					trigger={(<span><Icon name='user' />{name}</span>)}
 					inline
 					item
-					icon='caret down'>
+					icon='caret down'
+					aria-label="profile dropdown"
+					>
 					<Dropdown.Menu>
-						<Dropdown.Item as={Link} to='profile'>Profile</Dropdown.Item>
+						<Dropdown.Item as={Link} to='profile' aria-label="my profile option">Profile</Dropdown.Item>
 						{/* <Dropdown.Item as={Link} to='changename'>Change Name</Dropdown.Item>
 						<Dropdown.Item as={Link} to='changepassword'>Change Password</Dropdown.Item> */}
-						<Dropdown.Item onClick={onLogoutClick}>Log Out</Dropdown.Item>
+						<Dropdown.Item aria-label="log out option" onClick={onLogoutClick}>Log Out</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
 			</Menu.Menu>

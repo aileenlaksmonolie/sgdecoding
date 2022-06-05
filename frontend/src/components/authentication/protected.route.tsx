@@ -11,9 +11,9 @@ export type ProtectedRouteProps = {
 // export default function ProtectedRoute({isAuthenticated, authenticationPath, ...routeProps}: ProtectedRouteProps) {
 export default function ProtectedRoute({ children }: { children: JSX.Element }) {
 	const isLoggedIn = useSelector((state: RootState) => state.authReducer.token) !== '';
-	// const { logoutMsg } = store.getState().authReducer;
 	const dispatch = useDispatch();
-	// const { clearLogoutMsg } = bindActionCreators(actionCreators, dispatch);
+	// const { logout } = bindActionCreators(actionCreators, dispatch);
+	// const location = useLocation();
 
   if(isLoggedIn) {
 		// console.info("[DEBUG] ProtectedRoute: User is logged in, navigating to protected route");
@@ -22,6 +22,6 @@ export default function ProtectedRoute({ children }: { children: JSX.Element }) 
 
 	let loginPath = '/auth/login';
 
-	// console.info("[DEBUG] ProtectedRoute: User is NOT logged in, going to /login");
+	console.info("[DEBUG] ProtectedRoute: User is NOT logged in, going to /login");
   return <Navigate to={loginPath} />;
 };

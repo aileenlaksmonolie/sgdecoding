@@ -1,8 +1,8 @@
 const dayjs = require("dayjs");
 
-describe.skip('Testing Offline Transcribe', () => {
+describe('Testing Offline Transcribe', () => {
 
-	it('should be able to upload file and see changes in view-all-jobs', () => {
+	it('should be able to log in, upload an audio file and see changes in view-all-jobs and log out', () => {
 		cy.visit('http://localhost:3000');
 
 		cy.findByRole('text', { name: /email input/i }).type(Cypress.env('testuserEmail'));

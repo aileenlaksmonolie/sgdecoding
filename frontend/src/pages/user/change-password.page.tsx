@@ -29,7 +29,7 @@ const ChangePasswordPage: React.FC = () => {
 	const newPassword = useRef({});
 	newPassword.current = watch('newPassword', '');
 
-	const { token, rmbMeEmail } = useSelector((state: RootState) => state.authReducer);
+	const { token, email } = useSelector((state: RootState) => state.authReducer);
 	const isLoggedIn = token !== '';
 	const dispatch = useDispatch();
 	const { logout } = bindActionCreators(actionCreators, dispatch);
@@ -71,7 +71,7 @@ const ChangePasswordPage: React.FC = () => {
 		// console.log(data)
 
 		const newPasswordRequest: UserChangePassword = {
-			email: rmbMeEmail,
+			email: email,
 			currentPassword: data.currentPassword,
 			newPassword: data.newPassword,
 			confirmNewPassword: data.passwordCfm,
@@ -82,7 +82,9 @@ const ChangePasswordPage: React.FC = () => {
 				// console.log("[DEBUG] Successful Reset") 
 				setIsLoading(false);
 				// setFormMessage({ isShown: true, isError: false, msg: res.data.message });
-				logout("Password changed successfully, please log in again!");
+				console.log("Successfully changed password!");
+				navigate('/auth/login?logoutMsg=' + "Password changed successfully, please log in again!");
+				logout();
 			})
 			.catch((err: AxiosError) => {
 				// console.log("[DEBUG] Error Resetting!")
@@ -103,6 +105,7 @@ const ChangePasswordPage: React.FC = () => {
 				onSubmit={handleSubmit(onSubmit)}
 				// {...formMessage.isError ? 'error' : 'positive' }
 				error={formMessage.isShown && formMessage.isError}
+				aria-label="Change Password Form"
 				noValidate>
 				<Message
 					hidden={formMessage.isShown === false}
@@ -122,6 +125,8 @@ const ChangePasswordPage: React.FC = () => {
 						onBlur={onInputBlur}
 						// disabled={isDisabled}
 						error={errors.currentPassword ? { content: errors.currentPassword.message } : false}
+						role="text"
+						aria-label="Current Password Input"
 					/>
 				</Form.Field>
 				<Form.Field>
@@ -133,6 +138,8 @@ const ChangePasswordPage: React.FC = () => {
 						placeholder='Enter new password'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
+						role="text"
+						aria-label="new password input"
 						// disabled={isDisabled}
 						error={errors.newPassword ? { content: errors.newPassword.message } : false}
 					/>
@@ -146,6 +153,8 @@ const ChangePasswordPage: React.FC = () => {
 						placeholder='Enter new password again'
 						onChange={onInputChange}
 						onBlur={onInputBlur}
+						role="text"
+						aria-label="confirm password input"
 						// disabled={isDisabled}
 						error={errors.passwordCfm ? { content: errors.passwordCfm.message } : false}
 					/>
