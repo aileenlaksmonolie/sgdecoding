@@ -15,9 +15,44 @@ The backend is built with the following:
 2. Additional helper libs specified in _package.json_
 
 
-# Running the Project
+# Set up .Env Files
 
-**Running Locally**
+Prior to running the project, please set up these .env files. Don't push these files as you may add sensitive values in future development like API keys.
+
+**./backend/.env/**
+```text
+DB_CONNECTION_STRING=mongodb://localhost:27017/SG_Decoding
+LIVE_TRANSCRIBE_QUOTA=60
+OFFLINE_TRANSCRIBE_QUOTA=60
+```
+ 
+
+**./frontend/.env.development.local**
+```text
+FAST_REFRESH=false
+REACT_APP_API="http://localhost:2000"
+REACT_APP_LIVE_WSS="ws://localhost:8080/client/ws/speech"
+```
+
+**./frontend/.env.production.local**
+
+```text
+REACT_APP_API="/api"
+REACT_APP_LIVE_WSS="wss://sgdecoding.speechlab.sg/wslive/client/ws/speech"
+```
+
+**./frontend/cypress.env.json**
+```text
+{
+	"url_to_visit": "http://localhost:3000",
+	"testuserEmail": <Create Another Account yourself>,
+	"testuserPassword": <Create Another Account yourself>,
+	"testuserNewPassword": <Create Another Test Account yourself>
+}
+```
+
+
+# Running Locally
 ```text
 // Frontend
 cd frontend && npm run start
@@ -25,7 +60,7 @@ cd frontend && npm run start
 // Backend
 cd backend && node server.js
 
-// Alternative for backend with nodemon (restarts server when file changes)
+// Alternative for backend with nodemon (restarts node server when file changes)
 cd backend && npm run dev
 ```
 
@@ -51,15 +86,15 @@ For the frontend
 
 Due to time constraints, limited test cases were written and could be expanded upon in future development.
 
-## Running Tests
+## Running Frontend Tests
 
 ```
 // Unit/Integration
 
-npm run test
+cd frontend && npm run test
 
 // End-to-End
-npm run cypress:open
+cd frontend && npm run cypress:open
 
 ```
 
@@ -73,11 +108,6 @@ Documentation for this project can be found in our FYP reports as hyperlinked:
 
 The API documentation for Speech Gateway can be found in this [gitbook](https://speech-ntu.gitbook.io/speech-gateway/).
 
-
-
-## Acknowledgements
-
-This project is done under the supervision of Prof. Chng Eng Siong and under the  mentorship of Ms. Vu Thi Ly and Mr. Kyaw Zin Tun.
 
 ---
 *Last updated 5th June 2022*
