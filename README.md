@@ -108,7 +108,7 @@ Documentation for this project can be found in our FYP reports as hyperlinked:
 - [THZ's FYP report](https://hdl.handle.net/10356/157669)
 - [Terry's FYP report](https://hdl.handle.net/10356/157441) 
 
-# Speech Gateway Docs
+## Speech Gateway Docs
 
 The API documentation for Speech Gateway can be found in this [gitbook](https://speech-ntu.gitbook.io/speech-gateway/).
 
