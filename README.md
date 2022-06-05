@@ -55,10 +55,14 @@ REACT_APP_LIVE_WSS="wss://sgdecoding.speechlab.sg/wslive/client/ws/speech"
 # Running Locally
 ```text
 // Frontend
-cd frontend && npm run start
+cd frontend
+npm i
+npm run start
 
 // Backend
-cd backend && node server.js
+cd backend
+npm i
+node server.js
 
 // Alternative for backend with nodemon (restarts node server when file changes)
 cd backend && npm run dev
