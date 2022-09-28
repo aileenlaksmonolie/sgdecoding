@@ -14,7 +14,7 @@ jobs:
         with:
           envkey_REACT_APP_API: "/api"
           envkey_REACT_APP_LIVE_WSS: "wss://sgdecoding.speechlab.sg/wslive/client/ws/speech"
-          directory: ${{ github.workspace }}/frontend
+          directory: "sgdecoding/frontend"
           file_name: .env
           fail_on_empty: true
   build:
