@@ -6,7 +6,17 @@ on:
     branches: [ main ]
 
 jobs:
-  
+  create-envfile:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_REACT_APP_API: "/api"
+          envkey_REACT_APP_LIVE_WSS: "wss://sgdecoding.speechlab.sg/wslive/client/ws/speech"
+          directory: "frontend"
+          file_name: .env
+          fail_on_empty: false
   build:
     
     name: Build Image
