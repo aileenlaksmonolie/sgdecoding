@@ -8,12 +8,17 @@ import { UserLoginModel } from '../../models/user-authentication.model';
 import { actionCreators } from '../../state';
 import { RootState } from '../../state/reducers';
 import authModStyles from './authentication.module.scss';
+//https://stackoverflow.com/questions/71275687/type-of-handlesubmit-parameter-in-react-hook-form
 
 
 const LoginPage: React.FC = () => {
 	/* Declarations */
 	const [showError, setShowError] = useState(false);
 	const navigate = useNavigate();
+	type Data = {
+		 email: string, password: string, rmbMe: undefined | boolean 
+
+	}
 	const {
 		register,
 		handleSubmit,
@@ -79,7 +84,7 @@ const LoginPage: React.FC = () => {
 	const onSubmit = async (data: { email: string, password: string, rmbMe: undefined | boolean }) => {
 		// console.log("[DEBUG] LoginCard rmbMe: " + data.rmbMe)
 		setIsLoading(true);
-		// console.log('email ' + data.email);
+		console.log('email ' + data.email);
 		if (data.email && data.password) {
 			const userCreds: UserLoginModel = {
 				email: data.email,
@@ -114,7 +119,7 @@ const LoginPage: React.FC = () => {
 				hidden={logoutMsg === null || showError}
 			/>
 			<Form
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(onSubmit as any)}
 				error={showError}
 				noValidate
 				role="form"

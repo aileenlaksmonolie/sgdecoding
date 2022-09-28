@@ -21,7 +21,7 @@ const ForgotPwdPage: React.FC = () => {
 	const { token } = useSelector((state: RootState) => state.authReducer);
 	const isLoggedIn = token !== '';
 	const [isLoading, setIsLoading] = useState(false);
-
+	type Data = { email: string };
 	useEffect(() => {
 		register("email", {
 			required: 'Email field is empty!',
@@ -64,7 +64,7 @@ const ForgotPwdPage: React.FC = () => {
 				<div id={authModStyles.blockDivider}></div>
 			</Container>
 			<Form
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(onSubmit as any)}
 				noValidate
 				role="form"
 				aria-label="Forgot Password Form"

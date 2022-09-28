@@ -11,10 +11,9 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 	const { audioContext, stream, isRecording } = recorder;
 	const [mediaError, setMediaError] = useState(false);
 
-
 	// const containerRef = useRef<HTMLDivElement>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const analyserRef = useRef<AnalyserNode>(null!);
+	const analyserRef = useRef<AnalyserNode | null>(null);
 	const isRecordingRef = useRef(isRecording);
 	const dataArray = useRef(new Uint8Array());
 
@@ -28,8 +27,8 @@ const VizFreqBars: React.FC<Props> = ({ recorder }) => {
 		if (canvasRef.current) // Stop Recursive Call when component unmounts
 			requestAnimationFrame(draw);
 
-		var bufferLength: number = analyserRef.current.frequencyBinCount;
-		analyserRef.current.getByteFrequencyData(dataArray.current);
+		var bufferLength: number = analyserRef.current!.frequencyBinCount;
+		analyserRef.current!.getByteFrequencyData(dataArray.current);
 
 		canvasCtx!.fillStyle = 'rgba(255,255,255,1)';
 		if (canvasRef.current) {

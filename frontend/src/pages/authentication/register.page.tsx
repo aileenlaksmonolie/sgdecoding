@@ -113,7 +113,7 @@ const RegisterPage: React.FC = () => {
 			</Container>
 
 			<Form
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(onSubmit as any)}
 				// {...regMessage.isError ? 'error' : 'positive' }
 				error={regMessage.isShown && regMessage.isError}
 				noValidate

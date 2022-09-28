@@ -16,7 +16,7 @@ const ChangePasswordPage: React.FC = () => {
 	const [formMessage, setFormMessage] = useState({ isShown: false, isError: false, msg: '' });
 	const [isLoading, setIsLoading] = useState(false);
 	// const [isDisabled, setIsDiabled] = useState(false)
-
+	type Data ={ currentPassword: string, newPassword: string, passwordCfm: string };
 	const navigate = useNavigate();
 	const {
 		register,
@@ -25,7 +25,7 @@ const ChangePasswordPage: React.FC = () => {
 		watch,
 		formState: { errors }
 	} = useForm({ mode: 'onBlur' });
-
+	
 	const newPassword = useRef({});
 	newPassword.current = watch('newPassword', '');
 
@@ -67,6 +67,7 @@ const ChangePasswordPage: React.FC = () => {
 
 	const onSubmit = async (data: { currentPassword: string, newPassword: string, passwordCfm: string }) => {
 		setIsLoading(true);
+		
 		// console.log("[DEBUG] onSubmit: ")
 		// console.log(data)
 
@@ -102,7 +103,7 @@ const ChangePasswordPage: React.FC = () => {
 			</Container>
 
 			<Form
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(onSubmit as any)}
 				// {...formMessage.isError ? 'error' : 'positive' }
 				error={formMessage.isShown && formMessage.isError}
 				aria-label="Change Password Form"

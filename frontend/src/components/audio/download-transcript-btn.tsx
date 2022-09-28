@@ -40,7 +40,7 @@ const DownloadTranscriptButton: React.FC<Props> = ({ transcriptHistory, isDisabl
 			}; // END anchor.onclick
 			setIsLoadingTranscript(false);
 			anchor.click();
-		} catch (error: any) {
+		} catch (error) {
 			console.error("[ERROR] Unable to download!");
 			console.error({ error });
 		}

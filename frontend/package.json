@@ -12,19 +12,6 @@
     "cypress:run": "cypress run",
     "cypress:run:mobile": "cypress run --config viewportWidth=375,viewportHeight=667"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "rules": {
-      "no-control-regex": 0,
-      "semi": [
-        2,
-        "always"
-      ]
-    }
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -44,7 +31,6 @@
     "@types/jest": "^26.0.24",
     "@types/jwt-decode": "^3.1.0",
     "@types/node": "^12.20.37",
-    "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
     "@types/react-redux": "^7.1.20",
     "axios": "^0.24.0",
@@ -53,6 +39,7 @@
     "query-string": "^7.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-error-overlay": "^6.0.11",
     "react-hook-form": "^7.21.2",
     "react-moment": "^1.1.1",
     "react-redux": "^7.2.6",
@@ -66,7 +53,17 @@
     "sass": "^1.45.0",
     "semantic-ui-react": "^2.0.4",
     "typescript": "^4.4.3",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "yarn": "^1.22.19"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "resolutions": {
+    "react-error-overlay": "6.0.9"
   },
   "devDependencies": {
     "@craco/craco": "^6.4.3",

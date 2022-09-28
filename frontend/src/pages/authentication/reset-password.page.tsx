@@ -110,7 +110,7 @@ const ResetPasswordPage: React.FC = () => {
 			</Container>
 
 			<Form
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(onSubmit as any)}
 				// {...formMessage.isError ? 'error' : 'positive' }
 				error={formMessage.isShown && formMessage.isError}
 				noValidate
