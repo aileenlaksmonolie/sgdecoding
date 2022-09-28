@@ -2,7 +2,7 @@ name: Deploy to ECR
 
 on:
   push:
-    branches: [ backend ]
+    branches: [ main ]
 jobs:
   # create-envfile:
   #     runs-on: ubuntu-latest
