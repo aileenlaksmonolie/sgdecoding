@@ -4,7 +4,7 @@ import { store } from "../state";
 const proxyAPI = axios.create({
 	// baseURL: process.env.REACT_APP_API,
 	// baseURL : (os.environ['REDIS_DB'])
-	"13.56.16.20:2000"
+	baseURL : "13.56.16.20:2000"
 });
 
 proxyAPI.interceptors.request.use(
