@@ -55,12 +55,18 @@ proxy.on("close", function (res, socket, head) {
 });
 
 // Mongoose (MongoDB) Database
+const MONGO_URL = process.env.MONGO_URL;
+
 mongoose.connect(
   // "mongodb+srv://terry:node1234@cluster0.m84iv.mongodb.net/SG_Decoding?retryWrites=true&w=majority"
   //"mongodb://localhost:27017/SG_Decoding?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false"
   //"mongodb://localhost:27017/SG_Decoding"
   // "mongodb://mongo:27017/SG_Decoding"
-  process.env.DB_CONNECTION_STRING
+  // process.env.DB_CONNECTION_STRING
+  "mongodb://mongodb-app:27017/myapp"
+  // "mongodb+srv://aileenlaksmono:sgdecoding@cluster0.ro7oklm.mongodb.net/?retryWrites=true&w=majority"
+
+  // MONGO_URL
 );
 const db = mongoose.connection;
 

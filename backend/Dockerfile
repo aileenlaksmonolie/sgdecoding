@@ -15,4 +15,4 @@ EXPOSE 2000 8080
 
 COPY . .
 
-CMD ["node", "server.js"]
+CMD ["node", "server.js", "curl", "mongodb-app:27017"]
