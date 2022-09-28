@@ -2,7 +2,9 @@ import axios from "axios";
 import { store } from "../state";
 
 const proxyAPI = axios.create({
-	baseURL: process.env.REACT_APP_API,
+	// baseURL: process.env.REACT_APP_API,
+	// baseURL : (os.environ['REDIS_DB'])
+	"13.56.16.20:2000"
 });
 
 proxyAPI.interceptors.request.use(
@@ -20,7 +22,8 @@ proxyAPI.interceptors.request.use(
 
 const liveDecodeSocket = (accessToken: string, langModel: string) => {
 
-	return new WebSocket(`${process.env.REACT_APP_LIVE_WSS}?` +
+	// return new WebSocket(`${process.env.REACT_APP_LIVE_WSS}?` +
+		return new WebSocket(`wss://gateway.speechlab.sg/client/ws/speech?` +
 		`content-type=audio/x-raw,+layout=(string)interleaved,+rate=(int)16000,+format=(string)S16LE,+channels=(int)1` +
 		`&accessToken=${accessToken}` + 
 		`&model=${langModel}`);
