@@ -2,15 +2,19 @@ version: '3.7'
 
 services:
   backend:
-    image: "sgdecodingdevs/sg_decoding:backend"
+    image: "156711951873.dkr.ecr.us-west-1.amazonaws.com/sg_decoding:backend"
     ports:
       - "2000:2000"
       - "8080:8080"
+    environment:
+      MONGO_URL: "mongodb://mongodb-app:27017/myapp"
     networks:
       - sgdecodenet
     depends_on: 
-      - mongo
-  mongo:
+      - mongodb-app
+    links:
+      - mongodb-app
+  mongodb-app:
     image: mongo
     restart: always
     ports:
@@ -21,7 +25,7 @@ services:
       - sgdecodenet
 
   frontend:
-    image: "sgdecodingdevs/sg_decoding:frontend"
+    image: "156711951873.dkr.ecr.us-west-1.amazonaws.com/sg_decoding:frontend"
     ports:
       - "3000:3000"
     networks:
@@ -32,3 +36,5 @@ networks:
     driver: bridge
 volumes:
   mongo: 
+  
+
