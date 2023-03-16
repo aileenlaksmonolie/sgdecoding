@@ -2,7 +2,7 @@ name: Deploy to ECR
 
 on:
   push:
-    branches: [ main_v3_react_nodeExpressJs ]
+    branches: [ main ]
 jobs:
   build:
     name: Build Image
