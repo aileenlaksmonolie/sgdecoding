@@ -47,6 +47,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ./sgdecoding-frontend.json
+        container-name: frontend
         image: "861814105207.dkr.ecr.us-west-1.amazonaws.com/sg_decoding_frontend_test:latest"
 
     - name: Deploy Amazon ECS task definition
@@ -62,6 +63,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ./sgdecoding-backend.json
+        container-name: backend
         image: "861814105207.dkr.ecr.us-west-1.amazonaws.com/sg_decoding_backend_test:latest"
 
     - name: Deploy Amazon ECS task definition
