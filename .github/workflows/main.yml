@@ -2,28 +2,14 @@ name: Deploy to ECR
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main_v3_react_nodeExpressJs ]
 jobs:
-  # create-envfile:
-  #     runs-on: ubuntu-latest
-  #     steps:
-  #     - name: Check out code
-  #       uses: actions/checkout@v2
-  #     - name: Make envfile
-  #       uses: SpicyPizza/create-envfile@v1.3
-  #       with:
-  #         envkey_REACT_APP_API: "/api"
-  #         envkey_REACT_APP_LIVE_WSS: "wss://sgdecoding.speechlab.sg/wslive/client/ws/speech"
-  #         directory: frontend
-  #         file_name: .env
-  #         fail_on_empty: true
-
   build:
     name: Build Image
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -37,9 +23,10 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Frontend :Build, tag, and push image to Amazon ECR
+      id: frontend-image-build
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: sg_decoding_frontend
+        ECR_REPOSITORY: sg_decoding_frontend_test
         IMAGE_TAG: latest
       run: |
         cd frontend
@@ -48,12 +35,41 @@ jobs:
     - name: Backend :Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: sg_decoding_backend	
+        ECR_REPOSITORY: sg_decoding_backend_test
         IMAGE_TAG: latest
       run: |
         cd backend
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         
+    - name: Frontend :Fill in the new image ID in the Amazon ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: sgdecoding-frontend.json
+        container-name: sgdecoding_frontend_test
+        image: "861814105207.dkr.ecr.us-west-1.amazonaws.com/sg_decoding_frontend_test:latest"
 
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: sgdecoding-FrontendService-TAsHcNSECd5u
+        cluster: sgdecoding
+        wait-for-service-stability: true
 
+    - name: Backend :Fill in the new image ID in the Amazon ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: sgdecoding-backend.json
+        container-name: sgdecoding_backend_test
+        image: "861814105207.dkr.ecr.us-west-1.amazonaws.com/sg_decoding_backend_test:latest"
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: sgdecoding-BackendService-eVfZhzednVEH
+        cluster: sgdecoding
+        wait-for-service-stability: true
