@@ -43,7 +43,7 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         
     - name: Frontend :Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
+      id: task-def-frontend
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: sgdecoding-frontend.json
@@ -53,13 +53,13 @@ jobs:
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        task-definition: ${{ steps.task-def-frontend.outputs.task-definition }}
         service: sgdecoding-FrontendService-TAsHcNSECd5u
         cluster: sgdecoding
         wait-for-service-stability: true
 
     - name: Backend :Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
+      id: task-def-backend
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: sgdecoding-backend.json
@@ -69,7 +69,7 @@ jobs:
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        task-definition: ${{ steps.task-def-backend.outputs.task-definition }}
         service: sgdecoding-BackendService-eVfZhzednVEH
         cluster: sgdecoding
         wait-for-service-stability: true
