@@ -1,6 +1,6 @@
 # About
 
-**SG Decoding Web Portal** provides transcribing (speech-to-text) services for users. Features include live transcribing and transcribing of uploaded audio files. The frontend project is built with the following:
+**Test SG Decoding Web Portal** provides transcribing (speech-to-text) services for users. Features include live transcribing and transcribing of uploaded audio files. The frontend project is built with the following:
 
 1. [React](https://reactjs.org/docs/getting-started.html)
 2. [Semantic UI as Styling Library](https://react.semantic-ui.com/)
