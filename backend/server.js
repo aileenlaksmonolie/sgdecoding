@@ -1,16 +1,58 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const axios = require("axios").default;
-const compression = require("compression");
+const app = require("./app");
 const { setUpdatedFalse } = require("./helpers");
 const mongoose = require("mongoose");
 const User = require("./models/user.model");
 const httpProxy = require("http-proxy");
 const jwt_decode = require("jwt-decode");
+const Notes = require("./models/notes.model");
+
 require('dotenv').config();
 
-// Live Transcribe Proxy
+////////////////////////////////////////////////////// Collaborative Editing //////////////////////////////////////////////////////
+var http = require('http');
+var ShareDB = require('sharedb');
+var richText = require('rich-text');
+var WebSocket = require('ws');
+var WebSocketJSONStream = require('websocket-json-stream');
+ShareDB.types.register(richText.type);
+const mongoDBUrl = "mongodb+srv://aileenlaksmono:sgdecoding@cluster0.ro7oklm.mongodb.net/?retryWrites=true&w=majority";
+const shareMongoDB = require('sharedb-mongo')(mongoDBUrl);
+
+// Create a web server to serve files and listen to WebSocket connections
+var backend = new ShareDB({shareMongoDB});
+var server = http.createServer(app);
+var connection = backend.connect();
+
+// Connect any incoming WebSocket connection to ShareDB
+var wss = new WebSocket.Server({server: server});
+
+wss.on('connection', function(ws, req) {
+  var stream = new WebSocketJSONStream(ws);
+  backend.listen(stream);
+});
+
+server.listen(8081, () => console.log(`quilljs socket listening on port 8081`));
+
+app.get('/notes/edit/:id', async (req, res) => {
+  console.log("notesid",req.params.id);
+  const id = req.params.id;
+  var doc = connection.get('collaborative_community', id);
+  doc.fetch(async function(err) {
+    if (err) throw err;
+    if (doc.type === null) {
+      const foundNotes = await Notes.findOne({"_id":id});
+      doc.create(JSON.parse(foundNotes.text), 'rich-text');
+      return res.status(200).send();
+    }
+    return res.status(200).send();
+  });
+})
+
+////////////////////////////////////////////////////// Collaborative Editing //////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////// Live Transcribe Proxy //////////////////////////////////////////////////////
+
 var liveJobOpen = false;
 var proxyUserID = "";
 const proxy = httpProxy
@@ -54,8 +96,10 @@ proxy.on("close", function (res, socket, head) {
   }
 });
 
-// Mongoose (MongoDB) Database
-const MONGO_URL = process.env.MONGO_URL;
+////////////////////////////////////////////////////// Live Transcribe Proxy //////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////// MongoDB //////////////////////////////////////////////////////
 
 mongoose.connect(
   // "mongodb+srv://terry:node1234@cluster0.m84iv.mongodb.net/SG_Decoding?retryWrites=true&w=majority"
@@ -63,8 +107,8 @@ mongoose.connect(
   //"mongodb://localhost:27017/SG_Decoding"
   // "mongodb://mongo:27017/SG_Decoding"
   // process.env.DB_CONNECTION_STRING
-  "mongodb://mongodb-app:27017/myapp"
-  // "mongodb+srv://aileenlaksmono:sgdecoding@cluster0.ro7oklm.mongodb.net/?retryWrites=true&w=majority"
+  // "mongodb://mongodb-app:27017/myapp"
+  "mongodb+srv://aileenlaksmono:sgdecoding@cluster0.ro7oklm.mongodb.net/?retryWrites=true&w=majority"
 
   // MONGO_URL
 );
@@ -76,55 +120,10 @@ db.once("open", function () {
   console.log("Mongoose Connection Successful!");
 });
 
-app.use(cors());
-app.use(express.json());
-app.use(compression());
+////////////////////////////////////////////////////// MongoDB //////////////////////////////////////////////////////
 
-app.use(require('./routes'));
 
-app.post("/add_user", async (request, response) => {
-  const user = new User(request.body);
-  try {
-    await user.save();
-    response.send(user);
-  } catch (error) {
-    response.status(500).send(error);
-  }
+app.listen(2000,'0.0.0.0',()=>{
+  console.log("server is listening on 2000 port");
 });
 
-app.get("/users", async (request, response) => {
-  const users = await User.find({});
-  try {
-    response.send(users);
-  } catch (error) {
-    response.status(500).send(error);
-  }
-});
-
-
-app.get("/files/:id/download", async (req, res) => {
-  const { id } = req.params;
-
-  await axios
-    .get(
-      `https://gateway.speechlab.sg/files/${id}/download`,
-      {
-        headers: {
-          Authorization: `${req.headers.authorization}`,
-        },
-      },
-      { responseType: "json" }
-    )
-    .then((response) => {
-      res.status(200).json(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({ msg: "Something went wrong with your request!" });
-    });
-});
-
-
-app.listen(2000, () => {
-  console.log("Server started on port 2000");
-});
